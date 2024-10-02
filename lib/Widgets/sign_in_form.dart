@@ -1,0 +1,132 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Repositories/auth_repository.dart';
+
+class SignInForm extends StatefulWidget {
+  const SignInForm({super.key});
+
+  @override
+  _SignInFormState createState() => _SignInFormState();
+}
+
+class _SignInFormState extends State<SignInForm> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final AuthRepository _authRepository = AuthRepository();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  void _signIn() async {
+  final email = _emailController.text;
+  final password = _passwordController.text;
+
+  if (email.isEmpty || password.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Credenziali mancanti')),
+    );
+    return;
+  }
+
+  try {
+    final user = await _authRepository.loginApi({
+      'email': email,
+      'password': password,
+    });
+
+    // Controlla se l'utente è stato restituito
+    if (user != null) {
+      Navigator.pushReplacementNamed(context, '/dashboard');
+    }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(e.toString())),
+    );
+  }
+}
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Container(
+        padding: EdgeInsets.all(20),
+        margin: EdgeInsets.symmetric(horizontal: 20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Colors.grey.shade300, width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 10,
+              offset: Offset(0, 5),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Accedi',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.orange,
+              ),
+            ),
+            SizedBox(height: 20),
+            Text(
+              'Email',
+              style: TextStyle(fontSize: 16),
+            ),
+            SizedBox(height: 8),
+            TextFormField(
+              controller: _emailController,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Inserisci la tua email',
+              ),
+            ),
+            SizedBox(height: 20),
+            Text(
+              'Password',
+              style: TextStyle(fontSize: 16),
+            ),
+            SizedBox(height: 8),
+            TextFormField(
+              controller: _passwordController,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Inserisci la tua password',
+              ),
+              obscureText: true,
+            ),
+            SizedBox(height: 30),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _signIn,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange,
+                  padding: EdgeInsets.symmetric(vertical: 15),
+                ),
+                child: Text(
+                  'Accedi',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
