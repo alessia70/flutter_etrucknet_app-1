@@ -37,14 +37,14 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
     'Trasporto Ferroviario'
   ];
 
-  final String _selectedVehicleType = 'Seleziona...';
+  /*final String _selectedVehicleType = 'Seleziona...';
   final List<String> _vehicleTypes = [
     'Seleziona...',
     'Furgone',
     'Camion',
     'Motocarro',
     'Auto'
-  ];
+  ];*/
 
   String _selectedPackagingType = 'Seleziona...';
   final List<String> _packagingTypes = [

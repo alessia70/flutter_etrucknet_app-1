@@ -1,4 +1,3 @@
-// ignore_for_file: unused_local_variable, equal_keys_in_map
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,14 +8,13 @@ class ApiProvider extends ChangeNotifier {
   String? token;
 
   ApiProvider({required this.baseUrl, this.token});
+  
+  Object? get body => null;
 
-  // Imposta il token di autenticazione (Opzionale)
-  /*void setToken(String token) {
+  void setToken(String token) {
     token = token;
     notifyListeners();
-  }*/
-
-  // Esegue una chiamata API GET
+  }
   Future<http.Response> get(String endpoint) async {
     final uri = Uri.parse('$baseUrl/$endpoint');
     final headers = _builderHeaders();
@@ -24,7 +22,6 @@ class ApiProvider extends ChangeNotifier {
     return http.get(uri, headers: headers);
   }
 
-  // Esegue una chiamata API POST
   Future<http.Response> post(String endpoint, bool contentJson,
       {dynamic body}) async {
     final uri = Uri.parse('$baseUrl/$endpoint');
@@ -33,30 +30,17 @@ class ApiProvider extends ChangeNotifier {
     return http.post(uri, headers: headers, body: body);
   }
 
-  // Esegue una chiamata API GET con token
   Future<http.Response> getWithToken(String endpoint, String token) {
     final uri = Uri.parse('$baseUrl/$endpoint');
     final headers = _builderHeaders(withToken: true, token: token);
     return http.get(uri, headers: headers);
   }
 
-  /*Future<http.Response> postWithToken(
+  Future<http.Response> postWithToken(
       String endpoint, String token, Map<String, dynamic> data) async {
-    final uri = Uri.parse('$BaseUrl/$endpoint');
-    final headers =
-        _builderHeaders(withToken: true, contentJson: true, token: token);
-
-
-
-    final response = await http.post(uri, headers: headers, body: json.encode(body));
-
-    return response;
-  }*/
-
-  Future<http.Response> postWithToken(String endpoint, String token, String body) async {
     final uri = Uri.parse('$baseUrl/$endpoint');
     final headers =
-    _builderHeaders(withToken: true, contentJson: true, token: token);
+        _builderHeaders(withToken: true, contentJson: true, token: token);
 
     final response = await http.post(uri, headers: headers, body: json.encode(body));
 
@@ -76,14 +60,13 @@ class ApiProvider extends ChangeNotifier {
 
   Future<http.Response> deleteWithToken(String endPoint, String token) async {
     final uri = Uri.parse('$baseUrl/$endPoint');
-    final headers = _builderHeaders(withToken: true, contentJson: false, token: token);
+    _builderHeaders(withToken: true, contentJson: false, token: token);
 
     final response = await http.delete(uri);
 
     return response;
   }
-
-  // Costruisce le headers per le richieste
+  
   Map<String, String> _builderHeaders(
       {bool withToken = false, bool contentJson = false, String? token}) {
     Map<String, String> headers = {};

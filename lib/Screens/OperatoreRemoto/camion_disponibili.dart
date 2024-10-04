@@ -1,8 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/camion_disponibili_grid.dart';
 import 'package:flutter_etrucknet_new/Widgets/side_menu.dart';
+import 'package:intl/intl.dart';
 
-class AvailableTrucksScreen extends StatelessWidget {
+class AvailableTrucksScreen extends StatefulWidget {
   const AvailableTrucksScreen({super.key});
+
+  @override
+  _AvailableTrucksScreenState createState() => _AvailableTrucksScreenState();
+}
+
+class _AvailableTrucksScreenState extends State<AvailableTrucksScreen> {
+  String? _selectedType;
+  DateTime? _selectedDateFrom;
+  DateTime? _selectedDateTo;
+  final TextEditingController _searchCarrierController = TextEditingController();
+  final TextEditingController _searchTruckController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -12,11 +25,130 @@ class AvailableTrucksScreen extends StatelessWidget {
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
       ),
-      drawer: SideMenu(),
-      body: const Center(
-        child: Text(
-          'Contenuto dei Camion Disponibili',
-          style: TextStyle(fontSize: 24),
+      drawer: const SideMenu(),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Cerca Camion',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 16),
+            TextField(
+              controller: _searchCarrierController,
+              decoration: InputDecoration(
+                labelText: 'Cerca Carrier',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _searchTruckController,
+                    decoration: InputDecoration(
+                      labelText: 'Cerca Camion',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 16),
+                DropdownButton<String>(
+                  hint: Text('Tipo'),
+                  value: _selectedType,
+                  items: <String>['In corso', 'Annullati', 'Liberi']
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _selectedType = newValue;
+                    });
+                  },
+                ),
+              ],
+            ),
+            SizedBox(height: 16),
+            Text(
+              'Filtra per Data',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    readOnly: true,
+                    decoration: InputDecoration(
+                      labelText: 'Data Inizio',
+                      border: OutlineInputBorder(),
+                    ),
+                    onTap: () async {
+                      DateTime? picked = await showDatePicker(
+                        context: context,
+                        initialDate: _selectedDateFrom ?? DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2101),
+                      );
+
+                      if (picked != null) {
+                        setState(() {
+                          _selectedDateFrom = picked;
+                        });
+                      }
+                    },
+                    controller: TextEditingController(text: _selectedDateFrom != null 
+                      ? DateFormat('dd/MM/yyyy').format(_selectedDateFrom!)
+                      : ''),
+                  ),
+                ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: TextField(
+                    readOnly: true,
+                    decoration: InputDecoration(
+                      labelText: 'Data Fine',
+                      border: OutlineInputBorder(),
+                    ),
+                    onTap: () async {
+                      DateTime? picked = await showDatePicker(
+                        context: context,
+                        initialDate: _selectedDateTo ?? DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2101),
+                      );
+
+                      if (picked != null) {
+                        setState(() {
+                          _selectedDateTo = picked;
+                        });
+                      }
+                    },
+                    controller: TextEditingController(text: _selectedDateTo != null 
+                      ? DateFormat('dd/MM/yyyy').format(_selectedDateTo!)
+                      : ''),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                print('Cerca camion con i filtri applicati');
+              },
+              child: Text('Cerca'),
+            ),
+            SizedBox(height: 20),
+            Expanded(
+              child: CamionDisponibiliGrid(),
+            ),
+          ],
         ),
       ),
     );

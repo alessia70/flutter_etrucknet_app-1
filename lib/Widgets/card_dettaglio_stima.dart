@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:latlong2/latlong.dart';
+//import 'package:latlong2/latlong.dart';
 
 class CardDettaglioStima extends StatelessWidget {
   final Map<String, dynamic> estimate;
@@ -8,7 +8,7 @@ class CardDettaglioStima extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    LatLng caricoCoordinates = LatLng(
+    /*LatLng caricoCoordinates = LatLng(
       estimate['carico_lat'] ?? 45.5236, // Latitudine predefinita
       estimate['carico_lon'] ?? -122.6750, // Longitudine predefinita
     );
@@ -16,13 +16,9 @@ class CardDettaglioStima extends StatelessWidget {
     LatLng scaricoCoordinates = LatLng(
       estimate['scarico_lat'] ?? 45.5236,
       estimate['scarico_lon'] ?? -122.6750,
-    );
+    );*/
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Dettaglio Stima'),
-        backgroundColor: Colors.orange,
-      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Card(
@@ -45,7 +41,6 @@ class CardDettaglioStima extends StatelessWidget {
                 ),
               ),
 
-              // Divider per separare la sezione titolo dalla mappa
               Divider(
                 thickness: 1,
                 color: Colors.grey.shade300,

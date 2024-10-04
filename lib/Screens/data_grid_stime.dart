@@ -1,5 +1,11 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+//import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/add_ordine.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/change_stima_to_order.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/condividi_stima.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/dettagli_stima_screen.dart';
+import 'package:flutter_etrucknet_new/Screens/pdf_viewer_screen.dart';
+import 'package:flutter_etrucknet_new/Widgets/generate_pdf.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_etrucknet_new/Services/estimates_provider.dart';
 
@@ -85,20 +91,44 @@ class _DataGridStimeState extends State<DataGridStime> {
         ),
         IconButton(
           icon: Icon(Icons.picture_as_pdf_rounded, color: Colors.orange),
-          onPressed: () {
-            // Logica per eliminare la stima
-          },
+          onPressed: () async{
+            try {
+              Uint8List pdfData = await PDFGenerator.generatePDF(estimate);
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PDFViewerScreen(pdfData: pdfData),
+                ),
+              );
+            } catch (e) {
+              print("Errore nella generazione del PDF: $e");
+            }
+          }, 
         ),
         IconButton(
           icon: Icon(Icons.emoji_transportation_outlined, color: const Color.fromARGB(255, 179, 107, 0)),
           onPressed: () {
-            // Logica per visualizzare la stima
+              Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ChangeStimaToOrder(
+                  stimaMerceList: estimate['merce'] ?? [],
+                  stimaTransportType: estimate['transportType'] ?? '',
+                ),
+              ),
+            );
           },
         ),
         IconButton(
           icon: Icon(Icons.share, color: const Color.fromARGB(255, 40, 158, 24)),
           onPressed: () {
-            // Logica per condividere la stima
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return CondividiStima(estimate: estimate);
+              },
+            );
           },
         ),
         IconButton(

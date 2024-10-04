@@ -36,8 +36,6 @@ class _SignInFormState extends State<SignInForm> {
       'email': email,
       'password': password,
     });
-
-    // Controlla se l'utente è stato restituito
     if (user != null) {
       Navigator.pushReplacementNamed(context, '/dashboard');
     }

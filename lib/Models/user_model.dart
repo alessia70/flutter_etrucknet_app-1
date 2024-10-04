@@ -1,6 +1,6 @@
+import 'user_role_model.dart'; // Importa il modello per i ruoli
 
 class UserModel {
-  
   final int id;
   final String userName;
   final String email;
@@ -12,8 +12,7 @@ class UserModel {
   final String? lastName;
   final String? fullName;
   final String? companyName;
-  final int? roleId;
-  final String? role;
+  final List<RuoloModel> ruoli; // Cambia il campo role in una lista di RuoloModel
   final int? contractId;
   final bool? firstAccess;
   final int? status;
@@ -35,18 +34,20 @@ class UserModel {
     this.lastName,
     this.fullName,
     this.companyName,
-    this.roleId,
-    this.role,
+    required this.ruoli, // Modificato per utilizzare la lista di ruoli
     this.contractId,
     this.firstAccess,
     this.status,
     this.acceptContrastCarriers,
     this.acceptContractShippers,
     this.acceptContractStandard,
-    this.token
+    this.token,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
+    var roleList = json['user']['ruoli'] as List; // Assicurati che il JSON contenga una lista di ruoli
+    List<RuoloModel> ruoli = roleList.map((role) => RuoloModel.fromJson(role)).toList(); // Mappa i ruoli dalla lista
+
     return UserModel(
       id: json['user']['id'],
       userName: json['user']['userName'],
@@ -59,15 +60,14 @@ class UserModel {
       lastName: json['user']['cognome'],
       fullName: json['user']['nomeCompleto'],
       companyName: json['user']['ragioneSociale'],
-      roleId: json['user']['idTipoRuolo'],
-      role: json['user']['tipoRuolo'],
+      ruoli: ruoli, // Aggiunto il campo ruoli
       contractId: json['user']['idContratto'],
       firstAccess: json['user']['primoAccesso'],
       status: json['user']['status'],
       acceptContrastCarriers: json['user']['accettazioneContrattoCarriers'],
       acceptContractShippers: json['user']['accettazioneContrattoShippers'],
       acceptContractStandard: json['user']['accettazioneContrattoStandard'],
-      token: json['token']
+      token: json['token'],
     );
   }
 
@@ -84,15 +84,14 @@ class UserModel {
       'cognome': lastName,
       'nomeCompleto': fullName,
       'ragioneSociale': companyName,
-      'idTipoRuolo': roleId,
-      'tipoRuolo': role,
+      'ruoli': ruoli.map((role) => role.toJson()).toList(), // Aggiunto per serializzare i ruoli
       'idContratto': contractId,
       'primoAccesso': firstAccess,
       'status': status,
       'accettazioneContrattoCarriers': acceptContrastCarriers,
       'accettazioneContrattoShippers': acceptContractShippers,
       'accettazioneContrattoStandard': acceptContractStandard,
-      'token': token
+      'token': token,
     };
   }
 }
