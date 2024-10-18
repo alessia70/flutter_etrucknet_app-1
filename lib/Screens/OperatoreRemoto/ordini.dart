@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter_etrucknet_new/Models/order_model.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/add_ordine.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/data_grid_ordini.dart';
 
 class OrdiniScreen extends StatefulWidget {
   const OrdiniScreen({super.key});
@@ -12,6 +15,32 @@ class _OrdiniScreenState extends State<OrdiniScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _selectedOption = 'Tutti'; // Valore iniziale per il dropdown
   DateTimeRange? _selectedDateRange; // Valore per il selettore di date
+
+  // Esempio di lista di ordini
+  final List<Order> orders = List.generate(10, (index) {
+    return Order(
+      id: '${index + 1}',
+      customerName: 'Cliente_${index + 1}',
+      customerContact: 'Contatto_${index + 1}',
+      date: DateTime.now().subtract(Duration(days: index)), // Data decrescente
+      companyName: 'Azienda_${index + 1}',
+      loadingDate: '2024-10-10',
+      loadingLocation: 'Luogo_${index + 1}',
+      loadingProvince: 'Provincia_${index + 1}',
+      loadingCountry: 'Nazione_${index + 1}',
+      isLoadingMandatory: index % 2 == 0,
+      isUnloadingMandatory: index % 2 == 0,
+      unloadingDate: '2024-10-15',
+      unloadingLocation: 'Luogo_${index + 2}',
+      unloadingProvince: 'Provincia_${index + 2}',
+      unloadingCountry: 'Nazione_${index + 2}',
+      offerAmount: (index + 1) * 100.0,
+      activeOffers: 5 - index,
+      expiredOffers: index,
+      correspondenceCount: 3,
+      estimatedBudget: (index + 1) * 1000.0,
+    );
+  });
 
   Future<void> _selectDateRange(BuildContext context) async {
     final DateTimeRange? picked = await showDateRangePicker(
@@ -34,24 +63,13 @@ class _OrdiniScreenState extends State<OrdiniScreen> {
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
       ),
-      body: Stack(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SingleChildScrollView(
+          Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Gestione Ordini',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-                SizedBox(height: 20),
-
-                // Barra di ricerca
                 TextField(
                   controller: _searchController,
                   decoration: InputDecoration(
@@ -61,16 +79,13 @@ class _OrdiniScreenState extends State<OrdiniScreen> {
                   ),
                   onChanged: (value) {
                     setState(() {
-                      // Logica per aggiornare i risultati della ricerca
+
                     });
                   },
                 ),
                 SizedBox(height: 20),
-
-                // Dropdown e Selettore di Date
                 Row(
                   children: [
-                    // Dropdown per filtro
                     Expanded(
                       child: DropdownButtonFormField<String>(
                         value: _selectedOption,
@@ -93,17 +108,15 @@ class _OrdiniScreenState extends State<OrdiniScreen> {
                       ),
                     ),
                     SizedBox(width: 20),
-
-                    // TextField per il selettore del periodo
                     Expanded(
                       child: TextField(
                         readOnly: true,
                         decoration: InputDecoration(
                           labelText: 'Seleziona periodo',
                           border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.calendar_today), // Icona del calendario
+                          prefixIcon: Icon(Icons.calendar_today, color: Colors.orange,),
                         ),
-                        onTap: () => _selectDateRange(context), // Mostra il selettore di date al tap
+                        onTap: () => _selectDateRange(context),
                         controller: TextEditingController(
                           text: _selectedDateRange == null
                               ? ''
@@ -113,41 +126,34 @@ class _OrdiniScreenState extends State<OrdiniScreen> {
                     ),
                   ],
                 ),
-                SizedBox(height: 20),
-
-                // Contenuto aggiuntivo scrollabile qui (es. DataGrid, lista di ordini, ecc.)
-                SizedBox(
-                  height: 600, // Aggiungi contenuto di esempio per mostrare la scrollabilità
-                  child: Center(
-                    child: Text(
-                      'Contenuto degli ordini qui...',
-                      style: TextStyle(fontSize: 18),
-                    ),
-                  ),
-                ),
               ],
             ),
           ),
-
-
-          Positioned(
-            bottom: 20,
-            right: 20,
-            child: FloatingActionButton(
-              onPressed: () {
-                 Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AddOrdineScreen(),
-                  ),
-                );
-              },
-              backgroundColor: Colors.orange, 
-              foregroundColor: Colors.white,
-              child: Icon(Icons.add_rounded, size: 30),
-            ),
+          Expanded(
+            child: OrdersGrid(orders: orders),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          final newOrder = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AddOrdineScreen(),
+            ),
+          );
+
+          if (newOrder != null && newOrder is Order) {
+            SchedulerBinding.instance.addPostFrameCallback((_) {
+              setState(() {
+                orders.add(newOrder);
+              });
+            });
+          }
+        },
+        backgroundColor: Colors.orange,
+        foregroundColor: Colors.white,
+        child: Icon(Icons.add_rounded, size: 30),
       ),
     );
   }

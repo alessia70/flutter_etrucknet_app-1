@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Repositories/auth_repository.dart';
+import 'package:flutter_etrucknet_new/Models/user_model.dart';
 
 class SignInForm extends StatefulWidget {
   const SignInForm({super.key});
@@ -32,20 +33,28 @@ class _SignInFormState extends State<SignInForm> {
   }
 
   try {
-    final user = await _authRepository.loginApi({
+    // Chiamata all'API di login e ricezione del JSON di risposta
+    final UserModel? user = await _authRepository.loginApi({
       'email': email,
       'password': password,
     });
+
+    print('Response: $user');
+
     if (user != null) {
+      print('User: ${user.userName}, Ruoli: ${user.ruoli.map((ruolo) => ruolo.nome).toList()}');
       Navigator.pushReplacementNamed(context, '/dashboard');
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Login fallito. Verifica le credenziali')),
+      );
     }
   } catch (e) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(e.toString())),
+      SnackBar(content: Text('Errore: ${e.toString()}')),
     );
   }
 }
-
 
   @override
   Widget build(BuildContext context) {

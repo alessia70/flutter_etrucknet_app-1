@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Services/estimates_provider.dart';
+import 'package:flutter_etrucknet_new/Services/message_provider.dart';
 import 'Widgets/sign_in_form.dart'; 
 import 'Screens/OperatoreRemoto/dashboard.dart';
 import 'package:provider/provider.dart';
@@ -8,7 +9,8 @@ void main() {
  runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => EstimatesProvider()), 
+        ChangeNotifierProvider(create: (_) => EstimatesProvider()),
+        ChangeNotifierProvider(create: (_) => MessagesProvider()),
       ],
       child: const MyApp(),
     ),

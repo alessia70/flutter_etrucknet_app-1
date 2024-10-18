@@ -1,10 +1,10 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-//import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/add_ordine.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/change_stima_to_order.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/condividi_stima.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/dettagli_stima_screen.dart';
-import 'package:flutter_etrucknet_new/Screens/pdf_viewer_screen.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/modifica_stima_page.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/pdf_viewer_screen.dart';
 import 'package:flutter_etrucknet_new/Widgets/generate_pdf.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_etrucknet_new/Services/estimates_provider.dart';
@@ -41,7 +41,7 @@ class _DataGridStimeState extends State<DataGridStime> {
           child: Column(
             children: [
               ListTile(
-                title: Text('Stima ${estimate['id']}'),
+                title: Text('Stima ${estimate['id']}', style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold)),
                 subtitle: Text('Carico: ${estimate['carico']} - Scarico: ${estimate['scarico']}'),
                 trailing: Text('${estimate['stimato']}'),
                 onTap: () {
@@ -91,18 +91,42 @@ class _DataGridStimeState extends State<DataGridStime> {
         ),
         IconButton(
           icon: Icon(Icons.picture_as_pdf_rounded, color: Colors.orange),
-          onPressed: () async{
+          onPressed: () async {
             try {
+              // Genera il PDF utilizzando i dati specifici della stima
               Uint8List pdfData = await PDFGenerator.generatePDF(estimate);
 
+              // Passa i dati specifici per il visualizzatore PDF
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => PDFViewerScreen(pdfData: pdfData),
+                  builder: (context) => PDFViewerScreen(
+                    pdfData: pdfData,
+                    customerName: estimate['cliente'] ?? 'N/A',
+                    route: 'da ${estimate['carico']} a ${estimate['scarico']}',
+                    possibleEquipments: estimate['specifiche'] ?? 'N/A',
+                    requestDate: estimate['dataRichiesta'] ?? 'N/A',
+                    distance: estimate['distanza'] ?? 0.0,
+                    items: estimate['items'] != null
+                        ? (estimate['items'] as List).map<Item>((item) {
+                            return Item(
+                              quantity: item['quantita'],
+                              type: item['tipoMerce'],
+                              dimensions: item['dimensioni'],
+                              height: item['altezza'],
+                              totalWeight: item['pesoTotale'],
+                            );
+                          }).toList()
+                        : [],
+                    estimatedCostRange: estimate['costoStimato'] ?? 'N/A',
+                  ),
                 ),
               );
             } catch (e) {
-              print("Errore nella generazione del PDF: $e");
+              print('Si è verificato un errore: $e');
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Errore nella generazione del PDF')),
+              );
             }
           }, 
         ),
@@ -134,7 +158,12 @@ class _DataGridStimeState extends State<DataGridStime> {
         IconButton(
           icon: Icon(Icons.draw_rounded, color: const Color.fromARGB(255, 5, 105, 9)),
           onPressed: () {
-            // Logica per stampare la stima
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ModificaStimaScreen(estimate: estimate), // Passa l'oggetto stima
+              ),
+            );
           },
         ),
       ],

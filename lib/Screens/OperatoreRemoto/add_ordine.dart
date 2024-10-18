@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Models/order_model.dart';
 
 class Merce {
   String tipoImballo;
@@ -73,6 +74,7 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
 
   List<Merce> merceList = [];
 
+   // ignore: unused_field
    final Map<String, dynamic> _orderData = {
     'altreInfo': '',
   };
@@ -135,9 +137,32 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
   }
 
   void _saveOrder() {
-  setState(() {
-    _orderData['altreInfo'] = _altreInfoController.text;
-  });
+    String orderId = DateTime.now().millisecondsSinceEpoch.toString(); 
+
+    // ignore: unused_local_variable
+    final newOrder = Order(
+      id: orderId,
+      customerName: 'Customer Name',
+      customerContact: 'Customer Contact',
+      date: DateTime.now(),
+      companyName: 'Company Name',
+      loadingDate: _pickupDate?.toIso8601String() ?? '',
+      loadingLocation: 'Loading Location',
+      loadingProvince: 'Province',
+      loadingCountry: 'Country',
+      isLoadingMandatory: true,
+      isUnloadingMandatory: false,
+      unloadingDate: _deliveryDate?.toIso8601String() ?? '',
+      unloadingLocation: 'Unloading Location',
+      unloadingProvince: 'Province',
+      unloadingCountry: 'Country',
+      offerAmount: 0.0, 
+      activeOffers: 0,
+      expiredOffers: 0,
+      correspondenceCount: 0,
+      estimatedBudget: 0.0, 
+    );
+    Navigator.of(context).pop(); 
   }
 
   void _cancelOrder() {
@@ -614,7 +639,7 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
                   padding: const EdgeInsets.all(8.0),
                   child: TextField(
                     controller: _altreInfoController,
-                    maxLines: 5, // Numero di righe visibili
+                    maxLines: 5,
                     decoration: InputDecoration.collapsed(
                       hintText: 'Inserisci ulteriori informazioni...',
                     ),
@@ -629,16 +654,16 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           FloatingActionButton(
-            onPressed: _saveOrder, // Funzione per salvare l'ordine
+            onPressed: _saveOrder,
             backgroundColor: Colors.orange,
             foregroundColor: Colors.white,
             tooltip: 'Salva Ordine',
             child: Icon(Icons.save, size: 30),
           ),
-          SizedBox(width: 10), // Spazio tra i due bottoni
+          SizedBox(width: 10), 
           FloatingActionButton(
-            onPressed: _cancelOrder, // Funzione per tornare indietro
-            backgroundColor: Colors.red, // Colore diverso per l'annullamento
+            onPressed: _cancelOrder,
+            backgroundColor: Colors.red,
             foregroundColor: Colors.white,
             tooltip: 'Annulla',
             child: Icon(Icons.close, size: 30),

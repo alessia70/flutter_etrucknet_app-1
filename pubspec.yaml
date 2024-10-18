@@ -20,6 +20,9 @@ dependencies:
   country_picker: ^2.0.2
   pdf: ^3.8.0
   printing: ^5.11.0
+  font_awesome_flutter: ^10.0.0
+  path_provider: ^2.0.11
+  open_file: ^3.2.1
 
   cupertino_icons: ^1.0.8
   flutter_map: ^4.0.0

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/modifca_anagrafiche_screen.dart';
 
 class AnagraficheDataGrid extends StatelessWidget {
   final List<Map<String, dynamic>> anagrafiche = [
@@ -24,7 +25,6 @@ class AnagraficheDataGrid extends StatelessWidget {
       'quotazioni': 8,
       'email': 'luca.bianchi@example.com',
     },
-    // Aggiungi altre anagrafiche qui
   ];
 
   @override
@@ -41,57 +41,46 @@ class AnagraficheDataGrid extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Dati Anagrafica (Colonna Sinistra)
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // ID
                       Text(
                         'ID: ${anagrafica['id']}',
                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       SizedBox(height: 8),
-
-                      // Nome Utente e Icona per Contatto
                       Row(
                         children: [
-                          Text(
-                            'Nome: ${anagrafica['nome']}',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.email_outlined, color: Colors.blue),
-                            onPressed: () {
+                          GestureDetector(
+                            onTap: () {
                               _contactUser(anagrafica['email']);
                             },
+                            child: Icon(Icons.email_outlined, color: Colors.deepOrange),
+                          ),
+                          SizedBox(width: 8),
+                          Text(
+                            '${anagrafica['nome']}',
+                            style: TextStyle(fontSize: 16),
                           ),
                         ],
                       ),
                       SizedBox(height: 8),
-
-                      // Località e Provincia
                       Text(
                         'Località: ${anagrafica['localita']} (${anagrafica['provincia']})',
                         style: TextStyle(fontSize: 16),
                       ),
                       SizedBox(height: 8),
-
-                      // Ruolo
                       Text(
                         'Ruolo: ${anagrafica['ruolo']}',
                         style: TextStyle(fontSize: 16),
                       ),
                       SizedBox(height: 8),
-
-                      // Tipo di Contratto
                       Text(
                         'Contratto: ${anagrafica['contratto']}',
                         style: TextStyle(fontSize: 16),
                       ),
                       SizedBox(height: 8),
-
-                      // Ordini e Quotazioni
                       Row(
                         children: [
                           Text(
@@ -109,31 +98,33 @@ class AnagraficheDataGrid extends StatelessWidget {
                   ),
                 ),
 
-                // Bottoni Azione (Colonna Destra)
                 Column(
                   mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Bottone 1 (Da Implementare)
                     IconButton(
                       icon: Icon(Icons.edit, color: Colors.orange),
                       onPressed: () {
-                        // Logica per il primo bottone
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ModifyAnagraficaScreen(
+                              anagrafica: anagrafica, // Passiamo i dati qui
+                            ),
+                          ),
+                        );
                       },
                     ),
-
-                    // Bottone 2 (Da Implementare)
                     IconButton(
-                      icon: Icon(Icons.delete, color: Colors.red),
+                      icon: Icon(Icons.mail_outlined, color: Colors.red),
                       onPressed: () {
-                        // Logica per il secondo bottone
+                        _inviaCredenziali(context, anagrafica);
                       },
                     ),
-
-                    // Bottone 3 (Da Implementare)
                     IconButton(
-                      icon: Icon(Icons.info_outline, color: Colors.blue),
+                      icon: Icon(Icons.rate_review_outlined, color: Colors.green),
                       onPressed: () {
-                        // Logica per il terzo bottone
+                         _showRatingDialog(context);
                       },
                     ),
                   ],
@@ -147,7 +138,92 @@ class AnagraficheDataGrid extends StatelessWidget {
   }
 
   void _contactUser(String email) {
-    // Logica per contattare l'utente via email (puoi usare package come url_launcher)
     print('Contattare l\'utente via email: $email');
+  }
+
+  void _showRatingDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Valutazione Anagrafica'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: [
+                TextField(
+                  decoration: InputDecoration(labelText: 'Generato da'),
+                ),
+                TextField(
+                  decoration: InputDecoration(labelText: 'Data inizio'),
+                  keyboardType: TextInputType.datetime,
+                ),
+                TextField(
+                  decoration: InputDecoration(labelText: 'Data fine'),
+                  keyboardType: TextInputType.datetime,
+                ),
+                TextField(
+                  decoration: InputDecoration(labelText: 'Descrizione'),
+                ),
+                TextField(
+                  decoration: InputDecoration(labelText: 'Fido'),
+                  keyboardType: TextInputType.number,
+                ),
+                TextField(
+                  decoration: InputDecoration(labelText: 'Note'),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Chiudi il dialogo
+              },
+              child: const Text('Indietro', style: TextStyle(color:Colors.orange)),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Chiudi il dialogo
+              },
+              child: const Text('Invia', style: TextStyle(color:Colors.orange)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _inviaCredenziali(BuildContext context, Map<String, dynamic> anagrafica) async {
+    // Simula una chiamata API
+    bool invioRiuscito = await _simulaInvioCredenziali(anagrafica);
+
+    // Mostra un pop-up in base al risultato
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(invioRiuscito ? 'Invio riuscito' : 'Errore di invio'),
+          content: Text(
+            invioRiuscito
+                ? 'Le credenziali sono state inviate correttamente a ${anagrafica['nome']}.'
+                : 'C\'è stato un errore durante l\'invio delle credenziali.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Chiude il dialog
+              },
+              child: Text('OK', style: TextStyle(color:Colors.orange)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Funzione simulata per l'invio credenziali (potrebbe essere un'API call reale)
+  Future<bool> _simulaInvioCredenziali(Map<String, dynamic> anagrafica) async {
+    await Future.delayed(Duration(seconds: 2)); // Simula un ritardo
+    return true; // Restituisce true se invio riuscito, false se fallito
   }
 }

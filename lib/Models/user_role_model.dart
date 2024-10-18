@@ -1,6 +1,6 @@
 class RuoloModel {
-  final int id; // ID del ruolo
-  final String nome; // Nome del ruolo
+  final int id; 
+  final String nome;
 
   RuoloModel({
     required this.id,
@@ -10,7 +10,7 @@ class RuoloModel {
   factory RuoloModel.fromJson(Map<String, dynamic> json) {
     return RuoloModel(
       id: json['id'],
-      nome: json['nome'],
+      nome: json['nome'] as String,
     );
   }
 

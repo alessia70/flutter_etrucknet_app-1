@@ -35,14 +35,6 @@ class _AnagraficheGridScreenState extends State<AnagraficheGridScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Titolo
-            Text(
-              'Gestione Anagrafiche',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 16),
-
-            // Barra di Ricerca
             TextField(
               controller: _searchController,
               decoration: InputDecoration(
@@ -52,81 +44,113 @@ class _AnagraficheGridScreenState extends State<AnagraficheGridScreen> {
             ),
             SizedBox(height: 16),
 
-            // Dropdown dei Valori
-            DropdownButtonFormField<String>(
-              value: _selectedCategory,
-              hint: Text('Seleziona categoria'),
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-              ),
-              items: _categories.map((String category) {
-                return DropdownMenuItem<String>(
-                  value: category,
-                  child: Text(category),
-                );
-              }).toList(),
-              onChanged: (String? newValue) {
-                setState(() {
-                  _selectedCategory = newValue;
-                });
-              },
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: DropdownButtonFormField<String>(
+                    value: _selectedCategory,
+                    hint: Text('Seleziona categoria'),
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                    ),
+                    items: _categories.map((String category) {
+                      return DropdownMenuItem<String>(
+                        value: category,
+                        child: Text(category),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedCategory = newValue;
+                      });
+                    },
+                  ),
+                ),
+                SizedBox(width: 130),
+                ElevatedButton(
+                  onPressed: () {
+                    print('Ricerca per: ${_searchController.text}, Categoria: $_selectedCategory');
+                  },
+                  child: Text(
+                    'Cerca',
+                    style: TextStyle(color: Colors.orange),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.orange, 
+                    side: BorderSide(
+                      color: Colors.orange,
+                      width: 2,
+                    ),
+                    elevation: 0,
+                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8), 
+                    ),
+                  ),
+                ),
+              ],
             ),
             SizedBox(height: 20),
 
-            // Bottone di Ricerca
-            ElevatedButton(
-              onPressed: () {
-                // Logica di ricerca da implementare
-                print('Ricerca per: ${_searchController.text}, Categoria: $_selectedCategory');
-              },
-              child: Text('Cerca'),
-            ),
-            SizedBox(height: 20),
-
-            // Griglia delle Anagrafiche
             Expanded(
-              child: AnagraficheDataGrid(), // Richiama la griglia in un file separato
+              child: AnagraficheDataGrid(),
             ),
           ],
         ),
       ),
 
-      // Bottoni Flottanti per Aggiungere Committente e Trasportatore
-      floatingActionButton: Column(
+      floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          // Bottone Aggiungi Committente
-          FloatingActionButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => NuovoCommittenteScreen(), // Pagina "Aggiungi Committente"
-                ),
-              );
-            },
-            heroTag: "addCommittente",
-            tooltip: 'Aggiungi Committente',
-            child: Icon(Icons.person_add, color: Colors.white),
-            backgroundColor: Colors.blue,
+          Container(
+            height: 56,
+            width: 56,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(15),
+              border: Border.all(
+                color: Colors.orange,
+                width: 3,
+              ),
+            ),
+            child: FloatingActionButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => NuovoCommittenteScreen(),
+                  ),
+                );
+              },
+              heroTag: "addCommittente",
+              tooltip: 'Aggiungi Committente',
+              backgroundColor: Colors.white,
+              elevation: 0,
+              child: Icon(
+                Icons.person_add,
+                color: Colors.orange,
+              ),
+            ),
           ),
-          SizedBox(height: 16), // Spazio tra i due bottoni
 
-          // Bottone Aggiungi Trasportatore
+          SizedBox(width: 15),
+
           FloatingActionButton(
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => NuovoTrasportatoreScreen(), // Pagina "Aggiungi Trasportatore"
+                  builder: (context) => NuovoTrasportatoreScreen(),
                 ),
               );
             },
             heroTag: "addTrasportatore",
             tooltip: 'Aggiungi Trasportatore',
             child: Icon(Icons.local_shipping, color: Colors.white),
-            backgroundColor: Colors.green,
+            backgroundColor: Colors.orange,
           ),
         ],
       ),

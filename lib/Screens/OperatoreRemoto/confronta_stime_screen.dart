@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-// Dialogo per mostrare il risultato del confronto
 void RisultatoConfrontoStimeDialog(BuildContext context, List<Map<String, dynamic>> selectedEstimates) {
   showDialog(
     context: context,
@@ -30,15 +29,14 @@ void RisultatoConfrontoStimeDialog(BuildContext context, List<Map<String, dynami
               DataColumn(label: Text('Stimato')),
             ],
             rows: selectedEstimates.map((estimate) {
-              // Visualizza le stime selezionate
               return DataRow(
                 cells: [
-                  DataCell(Text('${estimate['id']}')),
-                  DataCell(Text('${estimate['data']}')),
-                  DataCell(Text('${estimate['utente']}')),
-                  DataCell(Text('${estimate['carico']}')),
-                  DataCell(Text('${estimate['scarico']}')),
-                  DataCell(Text('${estimate['stimato']}')),
+                  DataCell(Text('${estimate['id'] ?? 'N/A'}')),
+                  DataCell(Text('${estimate['data'] ?? 'N/A'}')),
+                  DataCell(Text('${estimate['utente'] ?? 'N/A'}')),
+                  DataCell(Text('${estimate['carico'] ?? 'N/A'}')),
+                  DataCell(Text('${estimate['scarico'] ?? 'N/A'}')),
+                  DataCell(Text('${estimate['stimato'] ?? 'N/A'}')),
                 ],
               );
             }).toList(),
@@ -60,7 +58,6 @@ void RisultatoConfrontoStimeDialog(BuildContext context, List<Map<String, dynami
   );
 }
 
-// Dialogo per selezionare le stime da confrontare
 void showConfrontaStimeDialog(BuildContext context, List<Map<String, dynamic>> stime) {
   showDialog(
     context: context,
@@ -71,9 +68,9 @@ void showConfrontaStimeDialog(BuildContext context, List<Map<String, dynamic>> s
 }
 
 class ConfrontaStimeDialog extends StatefulWidget {
-  final List<Map<String, dynamic>> stime; // Lista delle stime disponibili
+  final List<Map<String, dynamic>> stime;
 
-  const ConfrontaStimeDialog({super.key, required this.stime}); // Costruttore con la lista delle stime
+  const ConfrontaStimeDialog({super.key, required this.stime}); 
 
   @override
   _ConfrontaStimeDialogState createState() => _ConfrontaStimeDialogState();
@@ -142,7 +139,7 @@ class _ConfrontaStimeDialogState extends State<ConfrontaStimeDialog> {
                 itemCount: widget.stime.length,
                 itemBuilder: (context, index) {
                   return CheckboxListTile(
-                    title: Text(widget.stime[index]['stimato']), // Mostra il nome della stima
+                    title: Text(widget.stime[index]['stimato']),
                     value: _selectedItems[index],
                     onChanged: (bool? value) {
                       setState(() {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_etrucknet_new/Screens/confronta_stime_screen.dart';
-import 'package:flutter_etrucknet_new/Screens/data_grid_stime.dart';
-import 'package:flutter_etrucknet_new/Screens/nuova_stima_screen.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/confronta_stime_screen.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/data_grid_stime.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/nuova_stima_screen.dart';
 import 'package:flutter_etrucknet_new/Widgets/side_menu.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_etrucknet_new/Services/estimates_provider.dart';
@@ -15,8 +15,8 @@ class StimeScreen extends StatefulWidget {
 
 class _EstimatesScreenState extends State<StimeScreen> {
   final TextEditingController _searchController = TextEditingController();
-  String _selectedOption = 'Tutte'; // Valore iniziale per il dropdown
-  DateTimeRange? _selectedDateRange; // Valore per il selettore di date
+  String _selectedOption = 'Tutte';
+  DateTimeRange? _selectedDateRange;
 
   Future<void> _selectDateRange(BuildContext context) async {
     final DateTimeRange? picked = await showDateRangePicker(
@@ -32,10 +32,8 @@ class _EstimatesScreenState extends State<StimeScreen> {
   }
 
   void _handleCompare() {
-  // Recupera il provider di stime
   final estimatesProvider = Provider.of<EstimatesProvider>(context, listen: false);
-  
-  // Passa le stime al dialogo
+
   Navigator.of(context).push(
     MaterialPageRoute(
       builder: (BuildContext context) => ConfrontaStimeDialog(stime: estimatesProvider.estimates),
@@ -59,13 +57,12 @@ class _EstimatesScreenState extends State<StimeScreen> {
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
       ),
-      drawer: SideMenu(), // Side menu già implementato
+      drawer: SideMenu(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Titolo "Le mie simulazioni"
             Text(
               'Le mie simulazioni',
               style: TextStyle(

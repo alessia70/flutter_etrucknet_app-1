@@ -14,9 +14,7 @@ class Localita {
   });
 }
 
-// Esempio di utilizzo
 List<Localita> localitaList = [
   Localita(nazione: "Italia", regione: "Lazio", citta: "Roma", indirizzo: "Via Roma 1", cap: "00100"),
   Localita(nazione: "Italia", regione: "Lombardia", citta: "Milano", indirizzo: "Via Milano 2", cap: "20100"),
-  // Aggiungi altre località
 ];
