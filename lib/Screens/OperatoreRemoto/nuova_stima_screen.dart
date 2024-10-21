@@ -537,8 +537,8 @@ class _NuovaStimaScreenState extends State<NuovaStimaScreen> {
     final newEstimate = {
       'data': DateTime.now().toString(),
       'utente': 'Utente A',
-      'carico': _ritiro ?? '',
-      'scarico': _consegna ?? '',
+      'carico': _ritiro ?? 'N/A', // Valore di default se _ritiro è null
+      'scarico': _consegna ?? 'N/A', // Valore di default se _consegna è null
       'quantita': int.tryParse(_quantitaController.text) ?? 0, 
       'peso': double.tryParse(_pesoController.text) ?? 0.0, 
       'lunghezza': double.tryParse(_lunghezzaController.text) ?? 0.0, 
@@ -546,7 +546,6 @@ class _NuovaStimaScreenState extends State<NuovaStimaScreen> {
       'altezza': double.tryParse(_altezzaController.text) ?? 0.0, 
       'stimato': '1000 USD',
     };
-
 
     print(newEstimate);
 

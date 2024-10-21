@@ -79,7 +79,7 @@ class _AvailableTrucksScreenState extends State<AvailableTrucksScreen> {
                       labelText: 'Data Inizio',
                       border: OutlineInputBorder(),
                       prefixIcon: IconButton(
-                        icon: Icon(Icons.calendar_today, color: Colors.orange), // Icona del calendario
+                        icon: Icon(Icons.calendar_today, color: Colors.orange),
                         onPressed: () async {
                           DateTime? picked = await showDatePicker(
                             context: context,
@@ -153,6 +153,10 @@ class _AvailableTrucksScreenState extends State<AvailableTrucksScreen> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
+                  ),
+                  child: Text(
+                    'Cerca',
+                    style: TextStyle(color: Colors.orange),
                   ),
                 ),
               ],

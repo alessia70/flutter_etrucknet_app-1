@@ -127,7 +127,7 @@ class _AnagraficheGridScreenState extends State<AnagraficheGridScreen> {
               },
               heroTag: "addCommittente",
               tooltip: 'Aggiungi Committente',
-              backgroundColor: Colors.transparent,
+              backgroundColor: Colors.white,
               elevation: 0,
               child: Icon(
                 Icons.person_add,

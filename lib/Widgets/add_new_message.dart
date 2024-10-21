@@ -1,25 +1,79 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Services/message_provider.dart';
 import 'package:provider/provider.dart';
+//import 'package:geocoding/geocoding.dart';
 
 class AddMessageScreen extends StatefulWidget {
   const AddMessageScreen({super.key});
-
+>>>>>>> 66f1e8c60103416a20b43ec7dedd566b35954e36
   @override
   _AddMessageScreenState createState() => _AddMessageScreenState();
 }
 
 class _AddMessageScreenState extends State<AddMessageScreen> {
-  final List<String> _options = [
-    'Opzione 1',
-    'Opzione 2',
-    'Opzione 3',
-    'Opzione 4',
-    'Opzione 5',
-    'Opzione 6',
+  final List<String> _userTypes = [
+    'Trasportatore>',
+    'Committente',
+    'Operatore Remoto',
   ];
 
-  final List<String?> _selectedValues = List.filled(7, null); // Cambia a 7 per includere il Tipo Trasporto
+  final List<String> _vehicleTypes = [
+    'Termoregistratore',
+    'Doppio piano',
+    'Sponda idraulica - sponda caricatrice',
+    'Televigilanza',
+    'Scambio pallets',
+    'Controllo distribuzione peso',
+    'Paratia',
+    'Copri scopri(per carico dall\'alto)',
+    'Gru',
+    'Ragno',
+    'Alza e abbassa(centina)',
+    'Piantana',
+    'Porta Coils',
+    'Transpallet',
+    'Verricello',
+    'Rampe',
+    'Teli',
+  ];
+
+  final List<String> _setupTypes = [
+    'Coperta',
+    'Coperta o Scoperta',
+    'Allestimenti speciali',
+    'Temperatura controllata',
+  ];
+
+  final List<String> _countries = [
+    'Italia',
+    'Francia',
+    'Germania',
+    'Spagna',
+  ];
+
+  final List<String> _regions = [
+    'Lombardia',
+    'Lazio',
+    'Sicilia',
+    'Veneto',
+  ];
+
+  final List<String> _provinces = [
+    'Milano',
+    'Roma',
+    'Palermo',
+    'Verona',
+  ];
+
+  final List<String> _transportTypes = [
+    'Merce pericolosa',
+    'Merce normale',
+    'Frigorifero',
+    'Animali',
+  ];
+
+  final List<String?> _selectedValues = List.filled(7, null); // Selezioni iniziali
+>>>>>>> 66f1e8c60103416a20b43ec7dedd566b35954e36
   final Set<int> _expandedBoxes = <int>{}; // Set per gestire le box espanse
 
   final TextEditingController _partenzaController = TextEditingController();
@@ -217,6 +271,33 @@ class _AddMessageScreenState extends State<AddMessageScreen> {
   }
 
   Widget _buildDropdown(String title, int index) {
+     List<String> options;
+    switch (index) {
+      case 0:
+        options = _userTypes; // Lista per "Tipologia Utente"
+        break;
+      case 1:
+        options = _vehicleTypes; // Lista per "Tipologia Automezzo"
+        break;
+      case 2:
+        options = _setupTypes; // Lista per "Tipologia Allestimento"
+        break;
+      case 3:
+        options = _countries; // Lista per "Nazione di Residenza"
+        break;
+      case 4:
+        options = _regions; // Lista per "Regione di Residenza"
+        break;
+      case 5:
+        options = _provinces; // Lista per "Provincia di Residenza"
+        break;
+      case 6:
+        options = _transportTypes; // Lista per "Tipo Trasporto"
+        break;
+      default:
+        options = []; // Default, nel caso non ci siano opzioni definite
+    }
+>>>>>>> 66f1e8c60103416a20b43ec7dedd566b35954e36
     return Expanded(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -239,7 +320,7 @@ class _AddMessageScreenState extends State<AddMessageScreen> {
                   child: const Text('Seleziona...'),
                 ),
                 value: _selectedValues[index],
-                items: _options.map((option) {
+                items: options.map((option) {
                   return DropdownMenuItem(
                     value: option,
                     child: Text(option),

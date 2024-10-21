@@ -33,7 +33,7 @@ class CondividiStima extends StatelessWidget {
           onPressed: () {
             Navigator.of(context).pop();
           },
-          child: Text('Annulla'),
+          child: Text('Annulla', style: TextStyle(color: Colors.grey),),
         ),
         TextButton(
           onPressed: () {

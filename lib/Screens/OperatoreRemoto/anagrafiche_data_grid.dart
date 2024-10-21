@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/modifca_anagrafiche_screen.dart';
 
 class AnagraficheDataGrid extends StatelessWidget {
   final List<Map<String, dynamic>> anagrafiche = [
@@ -97,27 +98,34 @@ class AnagraficheDataGrid extends StatelessWidget {
                   ),
                 ),
 
-                // Colonna per i pulsanti di modifica, eliminazione e informazioni
                 Column(
                   mainAxisAlignment: MainAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min, // Modifica qui
+                  mainAxisSize: MainAxisSize.min,
+>>>>>>> 66f1e8c60103416a20b43ec7dedd566b35954e36
                   children: [
                     IconButton(
                       icon: Icon(Icons.edit, color: Colors.orange),
                       onPressed: () {
-                        // Azione per modifica
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ModifyAnagraficaScreen(
+                              anagrafica: anagrafica, // Passiamo i dati qui
+                            ),
+                          ),
+                        );
                       },
                     ),
                     IconButton(
-                      icon: Icon(Icons.delete, color: Colors.red),
+                      icon: Icon(Icons.mail_outlined, color: Colors.red),
                       onPressed: () {
-                        // Azione per eliminare
+                        _inviaCredenziali(context, anagrafica);
                       },
                     ),
                     IconButton(
-                      icon: Icon(Icons.info_outline, color: Colors.green),
+                      icon: Icon(Icons.rate_review_outlined, color: Colors.green),
                       onPressed: () {
-                        // Azione per mostrare informazioni
+                         _showRatingDialog(context);
                       },
                     ),
                   ],
@@ -132,5 +140,91 @@ class AnagraficheDataGrid extends StatelessWidget {
 
   void _contactUser(String email) {
     print('Contattare l\'utente via email: $email');
+  }
+
+  void _showRatingDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Valutazione Anagrafica'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: [
+                TextField(
+                  decoration: InputDecoration(labelText: 'Generato da'),
+                ),
+                TextField(
+                  decoration: InputDecoration(labelText: 'Data inizio'),
+                  keyboardType: TextInputType.datetime,
+                ),
+                TextField(
+                  decoration: InputDecoration(labelText: 'Data fine'),
+                  keyboardType: TextInputType.datetime,
+                ),
+                TextField(
+                  decoration: InputDecoration(labelText: 'Descrizione'),
+                ),
+                TextField(
+                  decoration: InputDecoration(labelText: 'Fido'),
+                  keyboardType: TextInputType.number,
+                ),
+                TextField(
+                  decoration: InputDecoration(labelText: 'Note'),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Chiudi il dialogo
+              },
+              child: const Text('Indietro', style: TextStyle(color:Colors.orange)),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Chiudi il dialogo
+              },
+              child: const Text('Invia', style: TextStyle(color:Colors.orange)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _inviaCredenziali(BuildContext context, Map<String, dynamic> anagrafica) async {
+    // Simula una chiamata API
+    bool invioRiuscito = await _simulaInvioCredenziali(anagrafica);
+
+    // Mostra un pop-up in base al risultato
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(invioRiuscito ? 'Invio riuscito' : 'Errore di invio'),
+          content: Text(
+            invioRiuscito
+                ? 'Le credenziali sono state inviate correttamente a ${anagrafica['nome']}.'
+                : 'C\'è stato un errore durante l\'invio delle credenziali.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Chiude il dialog
+              },
+              child: Text('OK', style: TextStyle(color:Colors.orange)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Funzione simulata per l'invio credenziali (potrebbe essere un'API call reale)
+  Future<bool> _simulaInvioCredenziali(Map<String, dynamic> anagrafica) async {
+    await Future.delayed(Duration(seconds: 2)); // Simula un ritardo
+    return true; // Restituisce true se invio riuscito, false se fallito
   }
 }

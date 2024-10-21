@@ -29,6 +29,7 @@ class _OrdiniScreenState extends State<OrdiniScreen> {
       loadingProvince: 'Provincia_${index + 1}',
       loadingCountry: 'Nazione_${index + 1}',
       isLoadingMandatory: index % 2 == 0,
+      isUnloadingMandatory: index % 2 == 0,
       unloadingDate: '2024-10-15',
       unloadingLocation: 'Luogo_${index + 2}',
       unloadingProvince: 'Provincia_${index + 2}',
@@ -78,7 +79,7 @@ class _OrdiniScreenState extends State<OrdiniScreen> {
                   ),
                   onChanged: (value) {
                     setState(() {
-                      // Logica per aggiornare i risultati della ricerca
+
                     });
                   },
                 ),

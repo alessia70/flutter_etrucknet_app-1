@@ -74,6 +74,7 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
 
   List<Merce> merceList = [];
 
+   // ignore: unused_field
    final Map<String, dynamic> _orderData = {
     'altreInfo': '',
   };
@@ -136,28 +137,30 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
   }
 
   void _saveOrder() {
-    String orderId = DateTime.now().millisecondsSinceEpoch.toString(); 
-
+    String orderId = DateTime.now().millisecondsSinceEpoch.toString();
+    // ignore: unused_local_variable
     final newOrder = Order(
       id: orderId,
-      customerName: 'Customer Name', // You can replace this with the actual customer name from the input
-      customerContact: 'Customer Contact', // Replace with actual contact info
+      customerName: 'Customer Name',
+      customerContact: 'Customer Contact',
       date: DateTime.now(),
-      companyName: 'Company Name', // Replace with actual company name
+      companyName: 'Company Name',
       loadingDate: _pickupDate?.toIso8601String() ?? '',
-      loadingLocation: 'Loading Location', // Replace with actual loading location
-      loadingProvince: 'Province', // Replace with actual province
-      loadingCountry: 'Country', // Replace with actual country
-      isLoadingMandatory: true, // Adjust based on your logic
+      loadingLocation: 'Loading Location',
+      loadingProvince: 'Province',
+      loadingCountry: 'Country',
+      isLoadingMandatory: true,
+      isUnloadingMandatory: false,
       unloadingDate: _deliveryDate?.toIso8601String() ?? '',
-      unloadingLocation: 'Unloading Location', // Replace with actual unloading location
-      unloadingProvince: 'Province', // Replace with actual province
-      unloadingCountry: 'Country', // Replace with actual country
-      offerAmount: 0.0, // Replace with actual offer amount
-      activeOffers: 0, // Adjust based on your logic
-      expiredOffers: 0, // Adjust based on your logic
-      correspondenceCount: 0, // Adjust based on your logic
-      estimatedBudget: 0.0, // Replace with the actual estimated budget
+      unloadingLocation: 'Unloading Location',
+      unloadingProvince: 'Province',
+      unloadingCountry: 'Country',
+      offerAmount: 0.0, 
+      activeOffers: 0,
+      expiredOffers: 0,
+      correspondenceCount: 0,
+      estimatedBudget: 0.0, 
+>>>>>>> 66f1e8c60103416a20b43ec7dedd566b35954e36
     );
     Navigator.of(context).pop(); 
   }
@@ -636,7 +639,7 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
                   padding: const EdgeInsets.all(8.0),
                   child: TextField(
                     controller: _altreInfoController,
-                    maxLines: 5, // Numero di righe visibili
+                    maxLines: 5,
                     decoration: InputDecoration.collapsed(
                       hintText: 'Inserisci ulteriori informazioni...',
                     ),

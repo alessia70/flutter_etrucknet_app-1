@@ -1,13 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Models/order_model.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/dettagli_ordine.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/modifica_ordine_page.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/quota_trasportatore_page.dart';
 
-class OrdersGrid extends StatelessWidget {
+class OrdersGrid extends StatefulWidget {
   final List<Order> orders;
 
   const OrdersGrid({Key? key, required this.orders}) : super(key: key);
 
   @override
+  _OrdersGridState createState() => _OrdersGridState();
+}
+
+class _OrdersGridState extends State<OrdersGrid> {
+  late List<Order> orders;
+
+  @override
+  void initState() {
+    super.initState();
+    // Copia la lista degli ordini
+    orders = widget.orders;
+  }
+
+  @override
+>>>>>>> 66f1e8c60103416a20b43ec7dedd566b35954e36
   Widget build(BuildContext context) {
     return ListView.builder(
       itemCount: orders.length,
@@ -24,10 +41,9 @@ class OrdersGrid extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: Colors.orange, // Colore arancione per l'ID
+                    color: Colors.orange,
                   ),
                 ),
-                // Data con solo il titolo in grassetto
                 RichText(
                   text: TextSpan(
                     children: [
@@ -35,12 +51,12 @@ class OrdersGrid extends StatelessWidget {
                         text: 'Data: ',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: Colors.black, // Titolo "Data" in nero e bold
+                          color: Colors.black,
                         ),
                       ),
                       TextSpan(
-                        text: '${order.date.toLocal().toString().split(' ')[0]}', // Valore della data normale
-                        style: const TextStyle(color: Colors.black), // Colore del testo
+                        text: '${order.date.toLocal().toString().split(' ')[0]}',
+                        style: const TextStyle(color: Colors.black),
                       ),
                     ],
                   ),
@@ -51,10 +67,10 @@ class OrdersGrid extends StatelessWidget {
               'Nome Cliente: ${order.customerName}',
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
-                color: Colors.black, // Nome cliente in nero e bold
+                color: Colors.black,
               ),
             ),
-            iconColor: Colors.orange, // Colore dell'icona di espansione
+            iconColor: Colors.orange,
             children: [
               Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -70,33 +86,27 @@ class OrdersGrid extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Informazioni sul carico
                               const SizedBox(height: 8),
                               Text('Carico:', style: const TextStyle(fontWeight: FontWeight.bold)),
                               Text('${order.loadingDate} a ${order.loadingLocation}, ${order.loadingProvince}, ${order.loadingCountry}'),
-
-                              // Blocco Carico Tassativo
                               if (order.isLoadingMandatory)
                                 Container(
-                                  padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0), // Ridotto il padding
+                                  padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
                                   decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.red), // Bordo rosso
+                                    border: Border.all(color: Colors.red),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: const Text('Carico Tassativo', style: TextStyle(color: Colors.red)),
                                 ),
+                              const SizedBox(height: 16),
 
-                              const SizedBox(height: 16), // Spazio tra Carico e Scarico
-
-                              // Informazioni sullo scarico
                               Text('Scarico:', style: const TextStyle(fontWeight: FontWeight.bold)),
                               Text('${order.unloadingDate} a ${order.unloadingLocation}, ${order.unloadingProvince}, ${order.unloadingCountry}'),
 
-                              // Blocco Scarico Non Tassativo
                               Container(
-                                padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0), // Ridotto il padding
+                                padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
                                 decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.green), // Bordo verde per indicare scarico non tassativo
+                                  border: Border.all(color: Colors.green),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: const Text('Scarico Non Tassativo', style: TextStyle(color: Colors.green)),
@@ -104,30 +114,20 @@ class OrdersGrid extends StatelessWidget {
                             ],
                           ),
                         ),
-
-                        const SizedBox(width: 16), // Spazio tra le colonne
-
-                        // Colonna di destra per Offerta, Corresponsdenze, e Budget Stimato
+                        const SizedBox(width: 16),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Offerte
                               const SizedBox(height: 8),
                               Text('Offerta:', style: const TextStyle(fontWeight: FontWeight.bold)),
                               Text('€${order.offerAmount}'),
-
-                              // Corresponsdenze
                               const SizedBox(height: 8),
                               Text('Corresponsdenze:', style: const TextStyle(fontWeight: FontWeight.bold)),
                               Text('${order.correspondenceCount}'),
-
-                              // Budget stimato
                               const SizedBox(height: 8),
                               Text('Budget Stimato:', style: const TextStyle(fontWeight: FontWeight.bold)),
                               Text('€${order.estimatedBudget}'),
-
-                              const SizedBox(height: 16), // Spazio sopra i bottoni
                             ],
                           ),
                         ),
@@ -141,33 +141,48 @@ class OrdersGrid extends StatelessWidget {
                 children: [
                   IconButton(
                     onPressed: () {
-                       Navigator.push(
+                      Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => OrderDetailsPage(),
                         ),
                       );
                     },
-                    icon: const Icon(Icons.details, color: Colors.orange), // Icona per dettagli
-                    tooltip: 'Dettagli', // Tooltip per il bottone
+                    icon: const Icon(Icons.details, color: Colors.orange),
+                    tooltip: 'Dettagli',
                   ),
                   IconButton(
                     onPressed: () {
-                      // Logica per modificare ordine
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => EditOrderForm(order: order),
+                        ),
+                      ).then((updatedOrder) {
+                        if (updatedOrder != null) {
+                          setState(() {
+                            // Aggiorna l'ordine nella lista se necessario
+                          });
+                        }
+                      });
                     },
-                    icon: const Icon(Icons.edit, color: Colors.orange), // Icona per modificare
-                    tooltip: 'Modifica', // Tooltip per il bottone
+                    icon: const Icon(Icons.edit, color: Colors.orange),
+                    tooltip: 'Modifica',
                   ),
                   IconButton(
                     onPressed: () {
-                      // Logica per inserire quota trasportatore
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SendQuotePage(orderId: order.id),
+                        ),
+                      );
                     },
-                    icon: const Icon(Icons.attach_money, color: Colors.orange), // Icona per quota trasportatore
-                    tooltip: 'Quota Trasportatore', // Tooltip per il bottone
+                    icon: const Icon(Icons.attach_money, color: Colors.orange),
+                    tooltip: 'Quota Trasportatore',
                   ),
                   IconButton(
                     onPressed: () {
-                       // Chiedi conferma prima di eliminare
+>>>>>>> 66f1e8c60103416a20b43ec7dedd566b35954e36
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
@@ -178,14 +193,16 @@ class OrdersGrid extends StatelessWidget {
                               TextButton(
                                 child: const Text('Annulla'),
                                 onPressed: () {
-                                  Navigator.of(context).pop(); // Chiudi il dialogo
+                                  Navigator.of(context).pop();
                                 },
                               ),
                               TextButton(
                                 child: const Text('Elimina'),
                                 onPressed: () {
-                                  onDeleteOrder(order); // Chiama la funzione di eliminazione
-                                  Navigator.of(context).pop(); // Chiudi il dialogo
+                                  setState(() {
+                                    onDeleteOrder(order);
+                                  });
+                                  Navigator.of(context).pop();
                                 },
                               ),
                             ],
@@ -193,8 +210,8 @@ class OrdersGrid extends StatelessWidget {
                         },
                       );
                     },
-                    icon: const Icon(Icons.delete, color: Colors.orange), // Icona per eliminare
-                    tooltip: 'Elimina', // Tooltip per il bottone
+                    icon: const Icon(Icons.delete, color: Colors.orange),
+                    tooltip: 'Elimina',
                   ),
                 ],
               ),
@@ -204,7 +221,6 @@ class OrdersGrid extends StatelessWidget {
       },
     );
   }
-  
   void onDeleteOrder(Order order) {
     orders.removeWhere((o) => o.id == order.id);
   }

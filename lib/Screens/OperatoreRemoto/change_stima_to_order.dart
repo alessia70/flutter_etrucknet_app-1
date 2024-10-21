@@ -21,8 +21,8 @@ class Merce {
 }
 
 class ChangeStimaToOrder extends StatefulWidget {
-  final List<Merce> stimaMerceList; // Lista della merce già stimata
-  final String stimaTransportType;  // Dati stimati per il tipo di trasporto
+  final List<Merce> stimaMerceList;
+  final String stimaTransportType;
 
   const ChangeStimaToOrder({
     super.key,
@@ -106,7 +106,7 @@ class _ChangeStimaToOrderState extends State<ChangeStimaToOrder> {
   }
 
   void _saveStimaasOrder() {
-    // Logica per salvare l'ordine aggiornato
+
   }
 
   void _cancelStima() {
@@ -179,7 +179,6 @@ class _ChangeStimaToOrderState extends State<ChangeStimaToOrder> {
               ),
               SizedBox(height: 10),
               
-              // Sezione per aggiungere nuova merce
               TextField(
                 controller: _descriptionController,
                 decoration: InputDecoration(

@@ -32,4 +32,14 @@ class EstimatesProvider with ChangeNotifier {
     _estimates.add(estimate);
     notifyListeners(); 
   }
+
+  void updateEstimate(int id, Map<String, dynamic> updatedEstimate) {
+    final index = _estimates.indexWhere((estimate) => estimate['id'] == id);
+    if (index != -1) {
+      _estimates[index] = updatedEstimate;
+      notifyListeners();
+    } else {
+      throw Exception('Stima con ID $id non trovata.');
+    }
+  }
 }

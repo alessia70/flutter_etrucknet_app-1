@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_etrucknet_new/Screens/confronta_stime_screen.dart';
-import 'package:flutter_etrucknet_new/Screens/data_grid_stime.dart';
-import 'package:flutter_etrucknet_new/Screens/nuova_stima_screen.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/confronta_stime_screen.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/data_grid_stime.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/nuova_stima_screen.dart';
 import 'package:flutter_etrucknet_new/Widgets/side_menu.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_etrucknet_new/Services/estimates_provider.dart';
