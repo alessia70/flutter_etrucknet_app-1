@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Models/order_model.dart';
 
 class Merce {
   String tipoImballo;
@@ -135,9 +136,30 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
   }
 
   void _saveOrder() {
-  setState(() {
-    _orderData['altreInfo'] = _altreInfoController.text;
-  });
+    String orderId = DateTime.now().millisecondsSinceEpoch.toString(); 
+
+    final newOrder = Order(
+      id: orderId,
+      customerName: 'Customer Name', // You can replace this with the actual customer name from the input
+      customerContact: 'Customer Contact', // Replace with actual contact info
+      date: DateTime.now(),
+      companyName: 'Company Name', // Replace with actual company name
+      loadingDate: _pickupDate?.toIso8601String() ?? '',
+      loadingLocation: 'Loading Location', // Replace with actual loading location
+      loadingProvince: 'Province', // Replace with actual province
+      loadingCountry: 'Country', // Replace with actual country
+      isLoadingMandatory: true, // Adjust based on your logic
+      unloadingDate: _deliveryDate?.toIso8601String() ?? '',
+      unloadingLocation: 'Unloading Location', // Replace with actual unloading location
+      unloadingProvince: 'Province', // Replace with actual province
+      unloadingCountry: 'Country', // Replace with actual country
+      offerAmount: 0.0, // Replace with actual offer amount
+      activeOffers: 0, // Adjust based on your logic
+      expiredOffers: 0, // Adjust based on your logic
+      correspondenceCount: 0, // Adjust based on your logic
+      estimatedBudget: 0.0, // Replace with the actual estimated budget
+    );
+    Navigator.of(context).pop(); 
   }
 
   void _cancelOrder() {
@@ -629,16 +651,16 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           FloatingActionButton(
-            onPressed: _saveOrder, // Funzione per salvare l'ordine
+            onPressed: _saveOrder,
             backgroundColor: Colors.orange,
             foregroundColor: Colors.white,
             tooltip: 'Salva Ordine',
             child: Icon(Icons.save, size: 30),
           ),
-          SizedBox(width: 10), // Spazio tra i due bottoni
+          SizedBox(width: 10), 
           FloatingActionButton(
-            onPressed: _cancelOrder, // Funzione per tornare indietro
-            backgroundColor: Colors.red, // Colore diverso per l'annullamento
+            onPressed: _cancelOrder,
+            backgroundColor: Colors.red,
             foregroundColor: Colors.white,
             tooltip: 'Annulla',
             child: Icon(Icons.close, size: 30),

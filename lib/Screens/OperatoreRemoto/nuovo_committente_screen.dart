@@ -10,14 +10,14 @@ class NuovoCommittenteScreen extends StatefulWidget {
 class _NuovoCommittenteScreenState extends State<NuovoCommittenteScreen> {
   //String? _selectedEmail;
   bool _welcomeEmail = false;
-  bool _showAdditionalEmails = false; // Variabile per gestire la visibilità delle email aggiuntive
-  bool _showGradimento = false; // Variabile per gestire la visibilità del campo di gradimento
+  bool _showAdditionalEmails = false; 
+  bool _showGradimento = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Nuovo Trasportatore'),
+        title: Text('Nuovo Committente'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
       ),
@@ -27,64 +27,52 @@ class _NuovoCommittenteScreenState extends State<NuovoCommittenteScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Nazione
               _buildLabel('Nazione'),
               _buildTextField('Inserisci Nazione'),
               SizedBox(height: 16.0),
 
-              // Provincia
               _buildLabel('Provincia'),
               _buildTextField('Inserisci Provincia'),
               SizedBox(height: 16.0),
 
-              // Ragione Sociale
               _buildLabel('Ragione Sociale'),
               _buildTextField('Inserisci Ragione Sociale'),
               SizedBox(height: 16.0),
 
-              // Partita IVA
               _buildLabel('Partita IVA'),
               _buildTextField('Inserisci Partita IVA'),
               SizedBox(height: 16.0),
 
-              // Indirizzo
               _buildLabel('Indirizzo'),
               _buildTextField('Inserisci Indirizzo'),
               SizedBox(height: 16.0),
 
-              // CAP
               _buildLabel('CAP'),
               _buildTextField('Inserisci CAP'),
               SizedBox(height: 16.0),
 
-              // Località
               _buildLabel('Località'),
               _buildTextField('Inserisci Località'),
               SizedBox(height: 16.0),
 
-              // Telefono e Cellulare
               _buildRowWithLabels('Telefono', 'Cellulare'),
               SizedBox(height: 16.0),
 
-              // Nome e Cognome
               _buildRowWithLabels('Nome', 'Cognome'),
               SizedBox(height: 16.0),
 
-              // Email e Username
               _buildLabel('Email/Username'),
               _buildTextField('Inserisci Email/Username'),
               SizedBox(height: 16.0),
 
-              // Password
               _buildLabel('Password'),
               _buildTextField('Inserisci Password'),
               SizedBox(height: 16.0),
 
-              // Titolo per email aggiuntive
               GestureDetector(
                 onTap: () {
                   setState(() {
-                    _showAdditionalEmails = !_showAdditionalEmails; // Cambia la visibilità delle email
+                    _showAdditionalEmails = !_showAdditionalEmails;
                   });
                 },
                 child: Text(

@@ -1,4 +1,4 @@
-import 'user_role_model.dart'; // Importa il modello per i ruoli
+import 'user_role_model.dart';
 
 class UserModel {
   final int id;
@@ -12,7 +12,7 @@ class UserModel {
   final String? lastName;
   final String? fullName;
   final String? companyName;
-  final List<RuoloModel> ruoli; // Cambia il campo role in una lista di RuoloModel
+  final List<RuoloModel> ruoli;
   final int? contractId;
   final bool? firstAccess;
   final int? status;
@@ -26,6 +26,7 @@ class UserModel {
     required this.id,
     required this.userName,
     required this.email,
+    required this.ruoli,
     this.emailConfirmed,
     this.phoneNumber,
     this.twoFactorEnabled,
@@ -34,7 +35,6 @@ class UserModel {
     this.lastName,
     this.fullName,
     this.companyName,
-    required this.ruoli, // Modificato per utilizzare la lista di ruoli
     this.contractId,
     this.firstAccess,
     this.status,
@@ -45,31 +45,32 @@ class UserModel {
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
-    var roleList = json['user']['ruoli'] as List; // Assicurati che il JSON contenga una lista di ruoli
-    List<RuoloModel> ruoli = roleList.map((role) => RuoloModel.fromJson(role)).toList(); // Mappa i ruoli dalla lista
+  var roleList = (json['ruoli'] ?? []) as List;
+  List<RuoloModel> ruoli = roleList.map((role) => RuoloModel.fromJson(role)).toList();
 
-    return UserModel(
-      id: json['user']['id'],
-      userName: json['user']['userName'],
-      email: json['user']['email'],
-      emailConfirmed: json['user']['emailConfirmed'],
-      phoneNumber: json['user']['phoneNumber'],
-      twoFactorEnabled: json['user']['twoFactorEnabled'],
-      isAuthenticated: json['user']['isAuthenticated'],
-      firstName: json['user']['nome'],
-      lastName: json['user']['cognome'],
-      fullName: json['user']['nomeCompleto'],
-      companyName: json['user']['ragioneSociale'],
-      ruoli: ruoli, // Aggiunto il campo ruoli
-      contractId: json['user']['idContratto'],
-      firstAccess: json['user']['primoAccesso'],
-      status: json['user']['status'],
-      acceptContrastCarriers: json['user']['accettazioneContrattoCarriers'],
-      acceptContractShippers: json['user']['accettazioneContrattoShippers'],
-      acceptContractStandard: json['user']['accettazioneContrattoStandard'],
-      token: json['token'],
-    );
-  }
+  return UserModel(
+    id: json['user']['id'],
+    userName: json['user']['userName'],
+    email: json['user']['email'],
+    emailConfirmed: json['user']['emailConfirmed'],
+    phoneNumber: json['user']['phoneNumber'],
+    twoFactorEnabled: json['user']['twoFactorEnabled'],
+    isAuthenticated: json['user']['isAuthenticated'],
+    firstName: json['user']['nome'],
+    lastName: json['user']['cognome'],
+    fullName: json['user']['nomeCompleto'],
+    companyName: json['user']['ragioneSociale'],
+    ruoli: ruoli, 
+    contractId: json['user']['idContratto'],
+    firstAccess: json['user']['primoAccesso'],
+    status: json['user']['status'],
+    acceptContrastCarriers: json['user']['accettazioneContrattoCarriers'],
+    acceptContractShippers: json['user']['accettazioneContrattoShippers'],
+    acceptContractStandard: json['user']['accettazioneContrattoStandard'],
+    token: json['token'],
+  );
+}
+
 
   Map<String, dynamic> toJson() {
     return {
@@ -84,7 +85,7 @@ class UserModel {
       'cognome': lastName,
       'nomeCompleto': fullName,
       'ragioneSociale': companyName,
-      'ruoli': ruoli.map((role) => role.toJson()).toList(), // Aggiunto per serializzare i ruoli
+      'ruoli': ruoli.map((role) => role.toJson()).toList(),
       'idContratto': contractId,
       'primoAccesso': firstAccess,
       'status': status,

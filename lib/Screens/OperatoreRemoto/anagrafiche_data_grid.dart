@@ -24,7 +24,6 @@ class AnagraficheDataGrid extends StatelessWidget {
       'quotazioni': 8,
       'email': 'luca.bianchi@example.com',
     },
-    // Aggiungi altre anagrafiche qui
   ];
 
   @override
@@ -41,57 +40,46 @@ class AnagraficheDataGrid extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Dati Anagrafica (Colonna Sinistra)
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // ID
                       Text(
                         'ID: ${anagrafica['id']}',
                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       SizedBox(height: 8),
-
-                      // Nome Utente e Icona per Contatto
                       Row(
                         children: [
-                          Text(
-                            'Nome: ${anagrafica['nome']}',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.email_outlined, color: Colors.blue),
-                            onPressed: () {
+                          GestureDetector(
+                            onTap: () {
                               _contactUser(anagrafica['email']);
                             },
+                            child: Icon(Icons.email_outlined, color: Colors.deepOrange),
+                          ),
+                          SizedBox(width: 8),
+                          Text(
+                            '${anagrafica['nome']}',
+                            style: TextStyle(fontSize: 16),
                           ),
                         ],
                       ),
                       SizedBox(height: 8),
-
-                      // Località e Provincia
                       Text(
                         'Località: ${anagrafica['localita']} (${anagrafica['provincia']})',
                         style: TextStyle(fontSize: 16),
                       ),
                       SizedBox(height: 8),
-
-                      // Ruolo
                       Text(
                         'Ruolo: ${anagrafica['ruolo']}',
                         style: TextStyle(fontSize: 16),
                       ),
                       SizedBox(height: 8),
-
-                      // Tipo di Contratto
                       Text(
                         'Contratto: ${anagrafica['contratto']}',
                         style: TextStyle(fontSize: 16),
                       ),
                       SizedBox(height: 8),
-
-                      // Ordini e Quotazioni
                       Row(
                         children: [
                           Text(
@@ -109,31 +97,27 @@ class AnagraficheDataGrid extends StatelessWidget {
                   ),
                 ),
 
-                // Bottoni Azione (Colonna Destra)
+                // Colonna per i pulsanti di modifica, eliminazione e informazioni
                 Column(
                   mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min, // Modifica qui
                   children: [
-                    // Bottone 1 (Da Implementare)
                     IconButton(
                       icon: Icon(Icons.edit, color: Colors.orange),
                       onPressed: () {
-                        // Logica per il primo bottone
+                        // Azione per modifica
                       },
                     ),
-
-                    // Bottone 2 (Da Implementare)
                     IconButton(
                       icon: Icon(Icons.delete, color: Colors.red),
                       onPressed: () {
-                        // Logica per il secondo bottone
+                        // Azione per eliminare
                       },
                     ),
-
-                    // Bottone 3 (Da Implementare)
                     IconButton(
-                      icon: Icon(Icons.info_outline, color: Colors.blue),
+                      icon: Icon(Icons.info_outline, color: Colors.green),
                       onPressed: () {
-                        // Logica per il terzo bottone
+                        // Azione per mostrare informazioni
                       },
                     ),
                   ],
@@ -147,7 +131,6 @@ class AnagraficheDataGrid extends StatelessWidget {
   }
 
   void _contactUser(String email) {
-    // Logica per contattare l'utente via email (puoi usare package come url_launcher)
     print('Contattare l\'utente via email: $email');
   }
 }

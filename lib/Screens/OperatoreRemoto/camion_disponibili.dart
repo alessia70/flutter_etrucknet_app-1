@@ -31,11 +31,6 @@ class _AvailableTrucksScreenState extends State<AvailableTrucksScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Cerca Camion',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 16),
             TextField(
               controller: _searchCarrierController,
               decoration: InputDecoration(
@@ -75,11 +70,6 @@ class _AvailableTrucksScreenState extends State<AvailableTrucksScreen> {
               ],
             ),
             SizedBox(height: 16),
-            Text(
-              'Filtra per Data',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 8),
             Row(
               children: [
                 Expanded(
@@ -88,21 +78,24 @@ class _AvailableTrucksScreenState extends State<AvailableTrucksScreen> {
                     decoration: InputDecoration(
                       labelText: 'Data Inizio',
                       border: OutlineInputBorder(),
-                    ),
-                    onTap: () async {
-                      DateTime? picked = await showDatePicker(
-                        context: context,
-                        initialDate: _selectedDateFrom ?? DateTime.now(),
-                        firstDate: DateTime(2000),
-                        lastDate: DateTime(2101),
-                      );
+                      prefixIcon: IconButton(
+                        icon: Icon(Icons.calendar_today, color: Colors.orange), // Icona del calendario
+                        onPressed: () async {
+                          DateTime? picked = await showDatePicker(
+                            context: context,
+                            initialDate: _selectedDateFrom ?? DateTime.now(),
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime(2101),
+                          );
 
-                      if (picked != null) {
-                        setState(() {
-                          _selectedDateFrom = picked;
-                        });
-                      }
-                    },
+                          if (picked != null) {
+                            setState(() {
+                              _selectedDateFrom = picked;
+                            });
+                          }
+                        },
+                      ),
+                    ),
                     controller: TextEditingController(text: _selectedDateFrom != null 
                       ? DateFormat('dd/MM/yyyy').format(_selectedDateFrom!)
                       : ''),
@@ -115,34 +108,54 @@ class _AvailableTrucksScreenState extends State<AvailableTrucksScreen> {
                     decoration: InputDecoration(
                       labelText: 'Data Fine',
                       border: OutlineInputBorder(),
-                    ),
-                    onTap: () async {
-                      DateTime? picked = await showDatePicker(
-                        context: context,
-                        initialDate: _selectedDateTo ?? DateTime.now(),
-                        firstDate: DateTime(2000),
-                        lastDate: DateTime(2101),
-                      );
+                      prefixIcon: IconButton(
+                        icon: Icon(Icons.calendar_month, color: Colors.orange),
+                        onPressed: () async {
+                          DateTime? picked = await showDatePicker(
+                            context: context,
+                            initialDate: _selectedDateTo ?? DateTime.now(),
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime(2101),
+                          );
 
-                      if (picked != null) {
-                        setState(() {
-                          _selectedDateTo = picked;
-                        });
-                      }
-                    },
+                          if (picked != null) {
+                            setState(() {
+                              _selectedDateTo = picked;
+                            });
+                          }
+                        },
+                      ),
+                    ),
                     controller: TextEditingController(text: _selectedDateTo != null 
                       ? DateFormat('dd/MM/yyyy').format(_selectedDateTo!)
                       : ''),
                   ),
                 ),
+                SizedBox(width: 25),
+
+                ElevatedButton(
+                  onPressed: () {
+                    print('Ricerca');
+                  },
+                  child: Text(
+                    'Cerca',
+                    style: TextStyle(color: Colors.orange),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.orange,
+                    side: BorderSide(
+                      color: Colors.orange,
+                      width: 2,
+                    ),
+                    elevation: 0,
+                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
               ],
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                print('Cerca camion con i filtri applicati');
-              },
-              child: Text('Cerca'),
             ),
             SizedBox(height: 20),
             Expanded(

@@ -37,7 +37,6 @@ class CondividiStima extends StatelessWidget {
         ),
         TextButton(
           onPressed: () {
-            // Logica per inviare la stima via email
             _sendEstimateByEmail(_emailController.text, estimate);
             Navigator.of(context).pop();
           },
@@ -48,7 +47,6 @@ class CondividiStima extends StatelessWidget {
   }
 
   void _sendEstimateByEmail(String email, Map<String, dynamic> estimate) {
-    // Implementa la logica per inviare la stima via email
     print('Inviando stima a: $email');
     print('Dati della stima: ${estimate.toString()}');
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/anagrafiche_screen.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/marketing_screen.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/messaggi_clienti_screen.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/procedure_screen.dart';
@@ -10,7 +11,6 @@ import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/camion_disponibili
 
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/nuovo_trasportatore_screen.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/nuovo_committente_screen.dart';
-import 'package:flutter_etrucknet_new/Screens/anagrafiche_screen.dart';
 
 class SideMenu extends StatelessWidget {
   const SideMenu({super.key});
@@ -72,7 +72,7 @@ class SideMenu extends StatelessWidget {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => AnagraficheScreen()),
+                      MaterialPageRoute(builder: (context) => AnagraficheGridScreen()),
                     );
                   },
                 ),
@@ -113,7 +113,7 @@ class SideMenu extends StatelessWidget {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => MarketingScreen()),
+                      MaterialPageRoute(builder: (context) => MarketingFilesScreen()),
                     );
                   },
                 ),
@@ -137,7 +137,7 @@ class SideMenu extends StatelessWidget {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => MessaggiClientiScreen()),
+                      MaterialPageRoute(builder: (context) => MessagesScreen()),
                     );
                   },
                 ),

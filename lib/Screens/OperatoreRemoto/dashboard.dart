@@ -11,6 +11,7 @@ class DashboardScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Bacheca'),
         backgroundColor: Colors.orange,
+        foregroundColor: Colors.white,
       ),
       drawer: SideMenu(),
       body: Center(

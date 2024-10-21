@@ -41,7 +41,7 @@ class _DataGridStimeState extends State<DataGridStime> {
           child: Column(
             children: [
               ListTile(
-                title: Text('Stima ${estimate['id']}'),
+                title: Text('Stima ${estimate['id']}', style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold)),
                 subtitle: Text('Carico: ${estimate['carico']} - Scarico: ${estimate['scarico']}'),
                 trailing: Text('${estimate['stimato']}'),
                 onTap: () {
