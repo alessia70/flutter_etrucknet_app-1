@@ -133,7 +133,6 @@ class _CamionDisponibiliGridState extends State<CamionDisponibiliGrid> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
->>>>>>> 66f1e8c60103416a20b43ec7dedd566b35954e36
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -192,11 +191,6 @@ class _CamionDisponibiliGridState extends State<CamionDisponibiliGrid> {
               ],
             ),
           ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.0),
-          ),
-          elevation: 4,
-          margin: const EdgeInsets.all(8),
         );
       },
     );

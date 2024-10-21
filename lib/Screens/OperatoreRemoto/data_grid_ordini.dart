@@ -24,7 +24,6 @@ class _OrdersGridState extends State<OrdersGrid> {
   }
 
   @override
->>>>>>> 66f1e8c60103416a20b43ec7dedd566b35954e36
   Widget build(BuildContext context) {
     return ListView.builder(
       itemCount: orders.length,
@@ -182,7 +181,6 @@ class _OrdersGridState extends State<OrdersGrid> {
                   ),
                   IconButton(
                     onPressed: () {
->>>>>>> 66f1e8c60103416a20b43ec7dedd566b35954e36
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {

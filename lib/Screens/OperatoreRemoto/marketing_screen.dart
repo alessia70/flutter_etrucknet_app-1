@@ -13,34 +13,6 @@ class MarketingFilesScreen extends StatefulWidget {
 }
 
 class _MarketingFilesScreenState extends State<MarketingFilesScreen> {
-<<<<<<< HEAD
-  final List<Map<String, dynamic>> files = [
-    {
-      'date': '08/10/2024',
-      'name': 'file1.pdf',
-      'type': 'PDF',
-      'size': '2 MB',
-      'path': 'path/to/file1.pdf'
-    },
-    {
-      'date': '07/10/2024',
-      'name': 'file2.docx',
-      'type': 'Word',
-      'size': '1.5 MB',
-      'path': 'path/to/file2.docx'
-    },
-    {
-      'date': '06/10/2024',
-      'name': 'file3.xlsx',
-      'type': 'Excel',
-      'size': '3 MB',
-      'path': 'path/to/file3.xlsx'
-    },
-  ];
-
-  void _openFile(String path) {
-    print('Apri file: $path');
-=======
   List<Map<String, dynamic>> files = [];
 
   @override
@@ -82,7 +54,6 @@ class _MarketingFilesScreenState extends State<MarketingFilesScreen> {
   void _openFile(String path) async {
     final result = await OpenFile.open(path);
     print('Result: ${result.message}');
->>>>>>> 66f1e8c60103416a20b43ec7dedd566b35954e36
   }
 
   @override
@@ -162,7 +133,6 @@ class _MarketingFilesScreenState extends State<MarketingFilesScreen> {
                 },
               )
             : const Center(child: Text('Nessun file disponibile.')),
->>>>>>> 66f1e8c60103416a20b43ec7dedd566b35954e36
       ),
     );
   }

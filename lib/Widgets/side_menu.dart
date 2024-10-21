@@ -77,7 +77,6 @@ class _SideMenuState extends State<SideMenu> {
                 page: 'anagrafiche',
                 screen: AnagraficheGridScreen(),
                 isNested: true,
->>>>>>> 66f1e8c60103416a20b43ec7dedd566b35954e36
               ),
               _buildListTile(
                 icon: Icons.directions_bus_outlined,
@@ -106,7 +105,6 @@ class _SideMenuState extends State<SideMenu> {
                 page: 'marketing',
                 screen: MarketingFilesScreen(),
                 isNested: true,
->>>>>>> 66f1e8c60103416a20b43ec7dedd566b35954e36
               ),
               _buildListTile(
                 icon: Icons.receipt_outlined,
@@ -121,7 +119,6 @@ class _SideMenuState extends State<SideMenu> {
                 page: 'messaggi_clienti',
                 screen: MessagesScreen(),
                 isNested: true,
->>>>>>> 66f1e8c60103416a20b43ec7dedd566b35954e36
               ),
             ],
           ),

@@ -42,7 +42,6 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
     ));
 
     mapController.moveCamera(CameraUpdate.newLatLngZoom(_pickupLocation, 6));
->>>>>>> 66f1e8c60103416a20b43ec7dedd566b35954e36
   }
 
   @override
@@ -324,7 +323,6 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
               ),
             ],
           ),
->>>>>>> 66f1e8c60103416a20b43ec7dedd566b35954e36
         ),
       ),
     );

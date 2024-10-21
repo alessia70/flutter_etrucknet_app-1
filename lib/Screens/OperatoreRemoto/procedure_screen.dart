@@ -127,7 +127,6 @@ class _ProcedureScreenState extends State<ProcedureScreen> {
                   );
                 },
               ),
->>>>>>> 66f1e8c60103416a20b43ec7dedd566b35954e36
       ),
     );
   }

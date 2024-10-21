@@ -154,10 +154,6 @@ class _AvailableTrucksScreenState extends State<AvailableTrucksScreen> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: Text(
-                    'Cerca',
-                    style: TextStyle(color: Colors.orange),
-                  ),
                 ),
               ],
             ),

@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 
 class AddMessageScreen extends StatefulWidget {
   const AddMessageScreen({super.key});
->>>>>>> 66f1e8c60103416a20b43ec7dedd566b35954e36
   @override
   _AddMessageScreenState createState() => _AddMessageScreenState();
 }
@@ -73,7 +72,6 @@ class _AddMessageScreenState extends State<AddMessageScreen> {
   ];
 
   final List<String?> _selectedValues = List.filled(7, null); // Selezioni iniziali
->>>>>>> 66f1e8c60103416a20b43ec7dedd566b35954e36
   final Set<int> _expandedBoxes = <int>{}; // Set per gestire le box espanse
 
   final TextEditingController _partenzaController = TextEditingController();
@@ -297,7 +295,6 @@ class _AddMessageScreenState extends State<AddMessageScreen> {
       default:
         options = []; // Default, nel caso non ci siano opzioni definite
     }
->>>>>>> 66f1e8c60103416a20b43ec7dedd566b35954e36
     return Expanded(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

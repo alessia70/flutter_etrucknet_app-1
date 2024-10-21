@@ -55,14 +55,6 @@ class _SignInFormState extends State<SignInForm> {
     );
   }
 }
-
-<<<<<<< HEAD
-
-
-
-
-=======
->>>>>>> 66f1e8c60103416a20b43ec7dedd566b35954e36
   @override
   Widget build(BuildContext context) {
     return Center(

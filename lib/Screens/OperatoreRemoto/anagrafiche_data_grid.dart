@@ -101,7 +101,6 @@ class AnagraficheDataGrid extends StatelessWidget {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
->>>>>>> 66f1e8c60103416a20b43ec7dedd566b35954e36
                   children: [
                     IconButton(
                       icon: Icon(Icons.edit, color: Colors.orange),
