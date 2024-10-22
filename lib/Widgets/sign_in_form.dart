@@ -39,11 +39,23 @@ class _SignInFormState extends State<SignInForm> {
       'password': password,
     });
 
-    print('Response: $user');
+    // Stampa l'oggetto UserModel ricevuto
+    print('User model completo: $user');
 
     if (user != null) {
-      print('User: ${user.userName}, Ruoli: ${user.ruoli.map((ruolo) => ruolo.nome).toList()}');
-      Navigator.pushReplacementNamed(context, '/dashboard');
+      // Stampa i ruoli ricevuti
+      print('Ruoli ricevuti: ${user.ruoli.map((ruolo) => ruolo.nome).toList()}');
+
+      // Verifica il ruolo dell'utente
+      if (user.ruoli.any((ruolo) => ruolo.nome == 'trasportatore')) {
+        Navigator.pushReplacementNamed(context, '/dashboard_trasportatore');
+      } else if (user.ruoli.any((ruolo) => ruolo.nome == 'operatore_remoto')) {
+        Navigator.pushReplacementNamed(context, '/dashboard_operatore');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Ruolo utente non valido')),
+        );
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Login fallito. Verifica le credenziali')),
@@ -55,6 +67,7 @@ class _SignInFormState extends State<SignInForm> {
     );
   }
 }
+
 
   @override
   Widget build(BuildContext context) {

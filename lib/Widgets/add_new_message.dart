@@ -79,30 +79,26 @@ class _AddMessageScreenState extends State<AddMessageScreen> {
   final TextEditingController _oggettoController = TextEditingController();
   final TextEditingController _corpoMessaggioController = TextEditingController();
 
-  bool _isBold = false; // Stato per grassetto
-  bool _isItalic = false; // Stato per corsivo
-  bool _isUnderlined = false; // Stato per sottolineato
+  bool _isBold = false; 
+  bool _isItalic = false;
+  bool _isUnderlined = false; 
 
     void _applyFormatting() {
     final String currentText = _corpoMessaggioController.text;
 
-    // Iniziamo a creare il nuovo testo
     String newText = currentText;
 
-    // Applica la formattazione in base agli stati
     if (_isBold) {
-      newText = '*$newText*'; // Aggiunge i marker per grassetto
+      newText = '*$newText*';
     }
     if (_isItalic) {
-      newText = '_$newText'; // Aggiunge i marker per corsivo
+      newText = '_$newText';
     }
     if (_isUnderlined) {
-      newText = '~$newText~'; // Aggiunge i marker per sottolineato
+      newText = '~$newText~';
     }
 
-    // Imposta il nuovo testo
     _corpoMessaggioController.text = newText;
-    // Posiziona il cursore alla fine del campo di testo
     _corpoMessaggioController.selection = TextSelection.fromPosition(TextPosition(offset: newText.length));
   }
 
@@ -115,7 +111,7 @@ class _AddMessageScreenState extends State<AddMessageScreen> {
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
       ),
-      body: SingleChildScrollView( // Aggiunto per la scorribilità
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,7 +121,7 @@ class _AddMessageScreenState extends State<AddMessageScreen> {
             _buildExpandableBox(1, 'Tratta', Icons.directions, _buildTrattaFields()),
             const SizedBox(height: 20),
             Row(
-              mainAxisAlignment: MainAxisAlignment.end, // Allinea a destra
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 ElevatedButton(
                   onPressed: () {
@@ -135,11 +131,10 @@ class _AddMessageScreenState extends State<AddMessageScreen> {
                     final arrivo = _arrivoController.text;
 
                     if (oggetto.isNotEmpty && corpo.isNotEmpty && partenza.isNotEmpty && arrivo.isNotEmpty) {
-                      // Crea una mappa con i dati del messaggio
                       final newMessage = {
                         'id': DateTime.now().millisecondsSinceEpoch.toString(),
                         'date': DateTime.now().toLocal().toString().split(' ')[0],
-                        'object': oggetto, // Usa oggetto
+                        'object': oggetto,
                         'user_type': _selectedValues[0], // Assicurati di usare i valori corretti
                         'setup_type': _selectedValues[2], // Assicurati di usare i valori corretti
                         'country': _selectedValues[3], // Assicurati di usare i valori corretti
@@ -242,25 +237,25 @@ class _AddMessageScreenState extends State<AddMessageScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             _buildDropdown('Tipologia Utente', 0),
-            const SizedBox(width: 16), // Maggiore spazio tra le colonne
+            const SizedBox(width: 16),
             _buildDropdown('Tipologia Automezzo', 1),
           ],
         ),
-        const SizedBox(height: 16), // Spazio tra le righe
+        const SizedBox(height: 16),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             _buildDropdown('Tipologia Allestimento', 2),
-            const SizedBox(width: 16), // Maggiore spazio tra le colonne
+            const SizedBox(width: 16),
             _buildDropdown('Nazione di Residenza', 3),
           ],
         ),
-        const SizedBox(height: 16), // Spazio tra le righe
+        const SizedBox(height: 16),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             _buildDropdown('Regione di Residenza', 4),
-            const SizedBox(width: 16), // Maggiore spazio tra le colonne
+            const SizedBox(width: 16),
             _buildDropdown('Provincia di Residenza', 5),
           ],
         ),

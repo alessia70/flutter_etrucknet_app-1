@@ -4,12 +4,12 @@ List<T> searchItems<T extends HasToJson>(
   List<String> searchFields,
 ) {
   if (query.isEmpty) {
-    return List.from(items); // Restituisce tutti gli elementi se la query è vuota
+    return List.from(items); 
   }
 
   return items.where((item) {
     return searchFields.any((field) {
-      var value = item.toJson()[field]; // Assicurati che toJson() sia definito
+      var value = item.toJson()[field];
       return value != null && value.toString().toLowerCase().contains(query.toLowerCase());
     });
   }).toList();

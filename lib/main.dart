@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/Trasportatore/dashboard_trasportatore.dart';
 import 'package:flutter_etrucknet_new/Services/estimates_provider.dart';
 import 'package:flutter_etrucknet_new/Services/message_provider.dart';
 import 'Widgets/sign_in_form.dart'; 
@@ -30,6 +31,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const SignInScreen(),
+        '/dashboard_trasportatore': (context) => TrasportatoreDashboardScreen(),
         '/dashboard': (context) => DashboardScreen(),
       },
     );

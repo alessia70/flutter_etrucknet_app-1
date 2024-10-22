@@ -50,13 +50,12 @@ class _CamionDisponibiliGridState extends State<CamionDisponibiliGrid> {
           truck: truck,
           onSave: (updatedTruck) {
             setState(() {
-              // Trova l'indice del camion da aggiornare
               final index = trucks.indexWhere((t) => t['id'] == updatedTruck['id']);
               if (index != -1) {
-                trucks[index] = updatedTruck; // Aggiorna il camion
+                trucks[index] = updatedTruck;
               }
             });
-            Navigator.of(context).pop(); // Chiudi solo il dialogo
+            Navigator.of(context).pop();
           },
         );
       },
