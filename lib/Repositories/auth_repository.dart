@@ -1,47 +1,38 @@
-// ignore_for_file: use_rethrow_when_possible, unused_import
 import 'dart:convert';
-import 'package:flutter_etrucknet_new/Models/user_model.dart';
-import 'package:http/http.dart' as http;
-import 'package:flutter_etrucknet_new/Provider/api_provider.dart';
 import 'package:flutter_etrucknet_new/res/app_urls.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_etrucknet_new/Models/user_model.dart';
 
 class AuthRepository {
-  final ApiProvider apiProvider = ApiProvider(baseUrl: AppUrl.baseUrl);
-
-
-  Future<UserModel?> loginApi(Map<String, dynamic> data) async {
+  Future<UserModel?> loginApi(Map<String, String> credentials) async {
     try {
-      http.Response response = await apiProvider.post(
-        AppUrl.loginEndPoint,
-        false,
-        body: data,
+      // Esegui la chiamata API per il login utilizzando l'endpoint definito in AppUrl
+      final response = await http.post(
+        Uri.parse('${AppUrl.baseUrl}/${AppUrl.loginEndPoint}'), // Usa l'URL corretto per il login
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(credentials),
       );
 
+      // Stampa la risposta dell'API per il debug
+      print('Response body: ${response.body}');
+
+      // Verifica lo stato della risposta
       if (response.statusCode == 200) {
-        var responseUser = jsonDecode(response.body);
-        final UserModel user = UserModel.fromJson(responseUser);
-        return user;
-      } else if (response.statusCode == 401) {
-        throw Exception("Username o password errate");
+        final jsonResponse = jsonDecode(response.body);
+
+        // Verifica se la risposta contiene i ruoli
+        if (jsonResponse['anagraficaRoles'] != null) {
+          // Mappa il JSON nel modello UserModel
+          return UserModel.fromJson(jsonResponse);
+        } else {
+          print('Ruoli non trovati nella risposta');
+        }
       } else {
-        throw Exception("Errore di connessione: ${response.reasonPhrase}");
+        print('Errore: ${response.statusCode}');
       }
     } catch (e) {
-      throw Exception("Errore durante il login: $e");
+      print('Errore durante il login: $e');
     }
-  }
-
-  Future<dynamic> signupApi(Map<String, dynamic> data) async {
-    try {
-      dynamic response = await apiProvider.post(
-        AppUrl.registerApiEndPoint,
-        false,
-        body: data,
-      );
-      return response;
-    } catch (e) {
-      print('Caught error: $e'); 
-      throw Exception("Errore durante la registrazione: $e");
-    }
+    return null;
   }
 }

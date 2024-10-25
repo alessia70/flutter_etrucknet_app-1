@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/Trasportatore/add_camion_disponibile_t.dart';
 
 class TrasportatoreDashboardScreen extends StatelessWidget {
   @override
@@ -13,7 +14,9 @@ class TrasportatoreDashboardScreen extends StatelessWidget {
           children: [
             _buildCard(context, 'Aggiungi', Icons.add, '/aggiungi'),
             SizedBox(height: 16),
-            _buildCard(context, 'Camion Disponibili', Icons.local_shipping, '/camion_disponibili'),
+            _buildCard(context, 'Camion Disponibili', Icons.local_shipping, () {
+              _showAddTruckDialog(context); // Apri il dialog per aggiungere camion
+            } as String),
             SizedBox(height: 16),
             _buildCard(context, 'Trova i Tuoi Carichi', Icons.search, '/trova_carichi'),
             SizedBox(height: 16),
@@ -25,6 +28,14 @@ class TrasportatoreDashboardScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+  void _showAddTruckDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AddTruckTDialog(); // Ritorna il dialog
+      },
     );
   }
 

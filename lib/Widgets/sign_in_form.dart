@@ -1,6 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_etrucknet_new/Repositories/auth_repository.dart';
 import 'package:flutter_etrucknet_new/Models/user_model.dart';
+import 'package:flutter_etrucknet_new/res/app_urls.dart';
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class SignInForm extends StatefulWidget {
   const SignInForm({super.key});
@@ -12,8 +14,7 @@ class SignInForm extends StatefulWidget {
 class _SignInFormState extends State<SignInForm> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final AuthRepository _authRepository = AuthRepository();
-
+  
   @override
   void dispose() {
     _emailController.dispose();
@@ -32,28 +33,43 @@ class _SignInFormState extends State<SignInForm> {
     return;
   }
 
+  final credentials = {
+    'Email': email.trim(),
+    'Password': password.trim(),
+  };
+
+  print('Login endpoint: ${AppUrl.loginEndPoint}');
+
   try {
-    // Chiamata all'API di login e ricezione del JSON di risposta
-    final UserModel? user = await _authRepository.loginApi({
-      'email': email,
-      'password': password,
-    });
+    final response = await http.post(
+      Uri.parse(AppUrl.loginEndPoint),
+      headers: {"Content-Type": "application/json; charset=UTF-8"},
+      body: jsonEncode(credentials),
+    );
 
-    // Stampa l'oggetto UserModel ricevuto
-    print('User model completo: $user');
+    print('Email: $email'); // Controlla che l'email sia corretta
+    print('Password: $password'); // Controlla che la password sia corretta
 
-    if (user != null) {
-      // Stampa i ruoli ricevuti
-      print('Ruoli ricevuti: ${user.ruoli.map((ruolo) => ruolo.nome).toList()}');
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
 
-      // Verifica il ruolo dell'utente
-      if (user.ruoli.any((ruolo) => ruolo.nome == 'trasportatore')) {
-        Navigator.pushReplacementNamed(context, '/dashboard_trasportatore');
-      } else if (user.ruoli.any((ruolo) => ruolo.nome == 'operatore_remoto')) {
-        Navigator.pushReplacementNamed(context, '/dashboard_operatore');
+    if (response.statusCode == 200) {
+      final user = UserModel.fromJson(jsonDecode(response.body));
+      print('User model completo: $user');
+
+      if (user.ruoli.isNotEmpty) {
+        if (user.ruoli.any((ruolo) => ruolo.nome == 'trasportatore')) {
+          Navigator.pushReplacementNamed(context, '/dashboard_trasportatore');
+        } else if (user.ruoli.any((ruolo) => ruolo.nome == 'operatore_remoto')) {
+          Navigator.pushReplacementNamed(context, '/dashboard_operatore');
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Ruolo utente non valido')),
+          );
+        }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Ruolo utente non valido')),
+          const SnackBar(content: Text('Nessun ruolo associato all\'utente')),
         );
       }
     } else {
@@ -67,6 +83,9 @@ class _SignInFormState extends State<SignInForm> {
     );
   }
 }
+
+
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -98,10 +117,7 @@ class _SignInFormState extends State<SignInForm> {
               ),
             ),
             SizedBox(height: 20),
-            Text(
-              'Email',
-              style: TextStyle(fontSize: 16),
-            ),
+            Text('Email', style: TextStyle(fontSize: 16)),
             SizedBox(height: 8),
             TextFormField(
               controller: _emailController,
@@ -111,10 +127,7 @@ class _SignInFormState extends State<SignInForm> {
               ),
             ),
             SizedBox(height: 20),
-            Text(
-              'Password',
-              style: TextStyle(fontSize: 16),
-            ),
+            Text('Password', style: TextStyle(fontSize: 16)),
             SizedBox(height: 8),
             TextFormField(
               controller: _passwordController,
@@ -135,10 +148,7 @@ class _SignInFormState extends State<SignInForm> {
                 ),
                 child: Text(
                   'Accedi',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                  ),
+                  style: TextStyle(color: Colors.white, fontSize: 18),
                 ),
               ),
             ),
