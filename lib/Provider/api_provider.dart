@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -11,10 +10,11 @@ class ApiProvider extends ChangeNotifier {
   
   Object? get body => null;
 
-  void setToken(String token) {
-    token = token;
+  void setToken(String newToken) {
+    token = newToken;
     notifyListeners();
   }
+
   Future<http.Response> get(String endpoint) async {
     final uri = Uri.parse('$baseUrl/$endpoint');
     final headers = _builderHeaders();
@@ -22,12 +22,12 @@ class ApiProvider extends ChangeNotifier {
     return http.get(uri, headers: headers);
   }
 
-  Future<http.Response> post(String endpoint, bool contentJson,
-      {dynamic body}) async {
+  Future<http.Response> post(String endpoint, Map<String, String> data) async {
     final uri = Uri.parse('$baseUrl/$endpoint');
-    final headers = _builderHeaders(contentJson: contentJson);
+    final headers = _builderHeaders(isJsonFormat: false); // Imposta isJsonFormat a false
 
-    return http.post(uri, headers: headers, body: body);
+    // Usa FormData per il body
+    return http.post(uri, headers: headers, body: data);
   }
 
   Future<http.Response> getWithToken(String endpoint, String token) {
@@ -36,48 +36,47 @@ class ApiProvider extends ChangeNotifier {
     return http.get(uri, headers: headers);
   }
 
-  Future<http.Response> postWithToken(
-      String endpoint, String token, Map<String, dynamic> data) async {
+  Future<http.Response> postWithToken(String endpoint, String token, Map<String, String> data) async {
     final uri = Uri.parse('$baseUrl/$endpoint');
-    final headers =
-        _builderHeaders(withToken: true, contentJson: true, token: token);
+    final headers = _builderHeaders(withToken: true, isJsonFormat: false, token: token); // Imposta isJsonFormat a false
 
-    final response = await http.post(uri, headers: headers, body: json.encode(body));
+    // Usa FormData per il body
+    final response = await http.post(uri, headers: headers, body: data);
 
     return response;
   }
 
-  Future<http.Response> putWithToken(
-      String endpoint, String token, String body) async {
+  Future<http.Response> putWithToken(String endpoint, String token, Map<String, String> data) async {
     final uri = Uri.parse('$baseUrl/$endpoint');
-    final headers =
-    _builderHeaders(withToken: true, contentJson: true, token: token);
+    final headers = _builderHeaders(withToken: true, isJsonFormat: false, token: token); // Imposta isJsonFormat a false
 
-    final response = await http.put(uri, headers: headers, body: json.encode(body));
+    // Usa FormData per il body
+    final response = await http.put(uri, headers: headers, body: data);
 
     return response;
   }
 
   Future<http.Response> deleteWithToken(String endPoint, String token) async {
     final uri = Uri.parse('$baseUrl/$endPoint');
-    _builderHeaders(withToken: true, contentJson: false, token: token);
+    final headers = _builderHeaders(withToken: true, isJsonFormat: false, token: token); // Imposta isJsonFormat a false
 
-    final response = await http.delete(uri);
+    final response = await http.delete(uri, headers: headers); // Assicurati di passare i headers
 
     return response;
   }
-  
-  Map<String, String> _builderHeaders(
-      {bool withToken = false, bool contentJson = false, String? token}) {
+
+  Map<String, String> _builderHeaders({bool withToken = false, bool isJsonFormat = false, String? token}) {
     Map<String, String> headers = {};
-    if (contentJson) {
+    
+    // Cambiato per gestire x-www-form-urlencoded
+    if (isJsonFormat) {
       headers = <String, String>{
-        'Content-type': 'application/json',
+        'Content-Type': 'application/json',
         'Accept': 'application/json'
       };
     } else {
       headers = <String, String>{
-        'Context-Type': 'multipart/form-data',
+        'Content-Type': 'application/x-www-form-urlencoded',
         'Accept': 'application/json'
       };
     }

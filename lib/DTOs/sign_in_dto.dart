@@ -4,7 +4,7 @@ class SignInDTO {
 
   SignInDTO({required this.email, required this.password});
 
-  Map<String, dynamic> toJson() {
+  Map<String, String> toForm() {
     return {
       'email': email,
       'password': password,

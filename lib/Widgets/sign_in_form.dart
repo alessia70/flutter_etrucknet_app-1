@@ -1,4 +1,4 @@
-import 'package:flutter_etrucknet_new/Models/user_model.dart';
+import 'package:flutter_etrucknet_new/DTOs/sign_in_dto.dart';
 import 'package:flutter_etrucknet_new/res/app_urls.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -33,57 +33,57 @@ class _SignInFormState extends State<SignInForm> {
     return;
   }
 
-  final credentials = {
-    'Email': email.trim(),
-    'Password': password.trim(),
-  };
+  final credentials = SignInDTO(email: email.trim(), password: password.trim());
 
-  print('Login endpoint: ${AppUrl.loginEndPoint}');
+  print('URL endpoint: ${AppUrl.loginEndPoint}');
+  print('Headers: {"Content-Type": "application/x-www-form-urlencoded"}');
+  print('Corpo inviato: ${credentials.toForm()}');
 
   try {
     final response = await http.post(
       Uri.parse(AppUrl.loginEndPoint),
-      headers: {"Content-Type": "application/json; charset=UTF-8"},
-      body: jsonEncode(credentials),
+      headers: {"Content-Type": "application/x-www-form-urlencoded"},
+      body: credentials.toForm(),
     );
 
-    print('Email: $email'); // Controlla che l'email sia corretta
-    print('Password: $password'); // Controlla che la password sia corretta
-
-    print('Response status: ${response.statusCode}');
+    print('Status code: ${response.statusCode}');
     print('Response body: ${response.body}');
 
     if (response.statusCode == 200) {
-      final user = UserModel.fromJson(jsonDecode(response.body));
-      print('User model completo: $user');
+      // Decodifica la risposta direttamente come JSON
+      final responseData = jsonDecode(response.body);
 
-      if (user.ruoli.isNotEmpty) {
-        if (user.ruoli.any((ruolo) => ruolo.nome == 'trasportatore')) {
-          Navigator.pushReplacementNamed(context, '/dashboard_trasportatore');
-        } else if (user.ruoli.any((ruolo) => ruolo.nome == 'operatore_remoto')) {
-          Navigator.pushReplacementNamed(context, '/dashboard_operatore');
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Ruolo utente non valido')),
-          );
-        }
+      // Stampa l'intera risposta per il debug
+      print('Response data: $responseData');
+
+      // Controlla se lo stato è presente
+      if (responseData['token'] != null) {
+        final token = responseData['token'];
+        final user = responseData['user'];
+
+        print('Token ricevuto: $token');
+        print('User: $user');
+
+        Navigator.pushReplacementNamed(context, '/dashboard');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Nessun ruolo associato all\'utente')),
+          SnackBar(content: Text('Login fallito. Stato: ${responseData['status'] ?? "null"}')),
         );
       }
     } else {
+      // Stampa il codice di stato e il corpo della risposta in caso di errore
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Login fallito. Verifica le credenziali')),
+        SnackBar(content: Text('Login fallito. Codice: ${response.statusCode}, Corpo: ${response.body}')),
       );
+      print('Errore: Codice: ${response.statusCode}, Corpo: ${response.body}');
     }
   } catch (e) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Errore: ${e.toString()}')),
     );
+    print('Eccezione catturata: $e');
   }
 }
-
 
 
   @override

@@ -7,7 +7,8 @@ import 'Screens/OperatoreRemoto/dashboard.dart';
 import 'package:provider/provider.dart';
 
 void main() {
- runApp(
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => EstimatesProvider()),

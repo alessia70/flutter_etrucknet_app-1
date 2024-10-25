@@ -44,35 +44,35 @@ class UserModel {
     this.token,
   });
 
-  factory UserModel.fromJson(Map<String, dynamic> json) {
+  factory UserModel.fromForm(Map<String, dynamic> form) {
     // Mappa la lista di ruoli dal JSON
-    var ruoloList = (json['anagraficaRoles'] ?? []) as List;
-    List<RuoloModel> ruoli = ruoloList.map((i) => RuoloModel.fromJson(i)).toList();
+    var ruoloList = (form['anagraficaRoles'] ?? []) as List;
+    List<RuoloModel> ruoli = ruoloList.map((i) => RuoloModel.fromForm(i)).toList();
 
     return UserModel(
-      id: json['user']['id'],
-      userName: json['user']['userName'],
-      email: json['user']['email'],
-      emailConfirmed: json['user']['emailConfirmed'],
-      phoneNumber: json['user']['phoneNumber'],
-      twoFactorEnabled: json['user']['twoFactorEnabled'],
-      isAuthenticated: json['user']['isAuthenticated'] ?? false,
-      firstName: json['user']['nome'],
-      lastName: json['user']['cognome'],
-      fullName: json['user']['nomeCompleto'],
-      companyName: json['user']['ragioneSociale'],
+      id: form['user']['id'],
+      userName: form['user']['userName'],
+      email: form['user']['email'],
+      emailConfirmed: form['user']['emailConfirmed'],
+      phoneNumber: form['user']['phoneNumber'],
+      twoFactorEnabled: form['user']['twoFactorEnabled'],
+      isAuthenticated: form['user']['isAuthenticated'] ?? false,
+      firstName: form['user']['nome'],
+      lastName: form['user']['cognome'],
+      fullName: form['user']['nomeCompleto'],
+      companyName: form['user']['ragioneSociale'],
       ruoli: ruoli,
-      contractId: json['user']['idContratto'],
-      firstAccess: json['user']['primoAccesso'],
-      status: json['user']['status'],
-      acceptContrastCarriers: json['user']['accettazioneContrattoCarriers'],
-      acceptContractShippers: json['user']['accettazioneContrattoShippers'],
-      acceptContractStandard: json['user']['accettazioneContrattoStandard'],
-      token: json['token'],
+      contractId: form['user']['idContratto'],
+      firstAccess: form['user']['primoAccesso'],
+      status: form['user']['status'],
+      acceptContrastCarriers: form['user']['accettazioneContrattoCarriers'],
+      acceptContractShippers: form['user']['accettazioneContrattoShippers'],
+      acceptContractStandard: form['user']['accettazioneContrattoStandard'],
+      token: form['token'],
     );
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toForm() {
     return {
       'id': id,
       'userName': userName,
@@ -85,7 +85,7 @@ class UserModel {
       'cognome': lastName,
       'nomeCompleto': fullName,
       'ragioneSociale': companyName,
-      'anagraficaRoles': ruoli.map((role) => role.toJson()).toList(),
+      'anagraficaRoles': ruoli.map((role) => role.toForm()).toList(),
       'idContratto': contractId,
       'primoAccesso': firstAccess,
       'status': status,
