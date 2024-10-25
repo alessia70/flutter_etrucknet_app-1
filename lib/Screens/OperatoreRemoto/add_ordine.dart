@@ -137,8 +137,7 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
   }
 
   void _saveOrder() {
-    String orderId = DateTime.now().millisecondsSinceEpoch.toString(); 
-
+    String orderId = DateTime.now().millisecondsSinceEpoch.toString();
     // ignore: unused_local_variable
     final newOrder = Order(
       id: orderId,

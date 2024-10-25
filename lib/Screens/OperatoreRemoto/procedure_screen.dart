@@ -5,7 +5,6 @@ import 'package:open_file/open_file.dart';
 
 class ProcedureScreen extends StatefulWidget {
   const ProcedureScreen({Key? key}) : super(key: key);
-
   @override
   _ProcedureScreenState createState() => _ProcedureScreenState();
 }

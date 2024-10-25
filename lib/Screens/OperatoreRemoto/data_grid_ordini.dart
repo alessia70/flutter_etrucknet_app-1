@@ -88,7 +88,6 @@ class _OrdersGridState extends State<OrdersGrid> {
                               const SizedBox(height: 8),
                               Text('Carico:', style: const TextStyle(fontWeight: FontWeight.bold)),
                               Text('${order.loadingDate} a ${order.loadingLocation}, ${order.loadingProvince}, ${order.loadingCountry}'),
-
                               if (order.isLoadingMandatory)
                                 Container(
                                   padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
@@ -98,7 +97,6 @@ class _OrdersGridState extends State<OrdersGrid> {
                                   ),
                                   child: const Text('Carico Tassativo', style: TextStyle(color: Colors.red)),
                                 ),
-
                               const SizedBox(height: 16),
 
                               Text('Scarico:', style: const TextStyle(fontWeight: FontWeight.bold)),
@@ -115,9 +113,7 @@ class _OrdersGridState extends State<OrdersGrid> {
                             ],
                           ),
                         ),
-
                         const SizedBox(width: 16),
-
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,11 +121,9 @@ class _OrdersGridState extends State<OrdersGrid> {
                               const SizedBox(height: 8),
                               Text('Offerta:', style: const TextStyle(fontWeight: FontWeight.bold)),
                               Text('€${order.offerAmount}'),
-
                               const SizedBox(height: 8),
                               Text('Corresponsdenze:', style: const TextStyle(fontWeight: FontWeight.bold)),
                               Text('${order.correspondenceCount}'),
-
                               const SizedBox(height: 8),
                               Text('Budget Stimato:', style: const TextStyle(fontWeight: FontWeight.bold)),
                               Text('€${order.estimatedBudget}'),
@@ -225,7 +219,6 @@ class _OrdersGridState extends State<OrdersGrid> {
       },
     );
   }
-
   void onDeleteOrder(Order order) {
     orders.removeWhere((o) => o.id == order.id);
   }

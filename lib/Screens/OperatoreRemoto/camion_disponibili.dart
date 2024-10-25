@@ -135,9 +135,12 @@ class _AvailableTrucksScreenState extends State<AvailableTrucksScreen> {
 
                 ElevatedButton(
                   onPressed: () {
-                    // ignore: avoid_print
                     print('Ricerca');
                   },
+                  child: Text(
+                    'Cerca',
+                    style: TextStyle(color: Colors.orange),
+                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     foregroundColor: Colors.orange,
@@ -150,10 +153,6 @@ class _AvailableTrucksScreenState extends State<AvailableTrucksScreen> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
-                  ),
-                  child: Text(
-                    'Cerca',
-                    style: TextStyle(color: Colors.orange),
                   ),
                 ),
               ],

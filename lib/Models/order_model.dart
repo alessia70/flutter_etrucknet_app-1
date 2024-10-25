@@ -19,7 +19,6 @@ class Order {
   final int expiredOffers;
   final int correspondenceCount;
   final double estimatedBudget;
-
   final String? vehicleType;
   final String? additionalSpecs;
 
