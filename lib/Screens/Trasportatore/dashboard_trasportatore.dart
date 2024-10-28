@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/profile_info_screen.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/add_camion_disponibile_t.dart';
+import 'package:flutter_etrucknet_new/Screens/Trasportatore/side_menu_t.dart';
 
 class TrasportatoreDashboardScreen extends StatelessWidget {
   @override
@@ -7,66 +9,123 @@ class TrasportatoreDashboardScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Bacheca Trasportatore'),
+        backgroundColor: Colors.orange,
+        foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ProfilePage()),
+              );
+            },
+          ),
+        ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            _buildCard(context, 'Aggiungi', Icons.add, '/aggiungi'),
-            SizedBox(height: 16),
-            _buildCard(context, 'Camion Disponibili', Icons.local_shipping, () {
-              _showAddTruckDialog(context); // Apri il dialog per aggiungere camion
-            } as String),
-            SizedBox(height: 16),
-            _buildCard(context, 'Trova i Tuoi Carichi', Icons.search, '/trova_carichi'),
-            SizedBox(height: 16),
-            _buildCard(context, 'Trend Costo Carburante', Icons.trending_up, '/trend_costo_carburante'),
-            SizedBox(height: 20), // Spaziatura tra le card
-            _buildTransportRequestCard(context),
-            SizedBox(height: 20), // Spaziatura tra le card
-            _buildNotificationCard(context),
-          ],
+      drawer: SideMenuT(),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildSquareCard(context, 'Aggiungi', Icons.add, () {
+                      Navigator.pushNamed(context, '/aggiungi');
+                    }),
+                  ),
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: _buildSquareCard(context, 'Camion Disponibili', Icons.local_shipping, () {
+                      _showAddTruckDialog(context);
+                    }),
+                  ),
+                ],
+              ),
+              SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildSquareCard(context, 'Trova i Tuoi Carichi', Icons.search, () {
+                      Navigator.pushNamed(context, '/trova_carichi');
+                    }),
+                  ),
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: _buildSquareCard(context, 'Trend Costo Carburante', Icons.trending_up, () {
+                      Navigator.pushNamed(context, '/trend_costo_carburante');
+                    }),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20),
+              _buildTransportRequestCard(context),
+              SizedBox(height: 20),
+              _buildNotificationCard(context),
+            ],
+          ),
         ),
       ),
     );
   }
+
   void _showAddTruckDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AddTruckTDialog(); // Ritorna il dialog
+        return AddTruckTDialog();
       },
     );
   }
 
-  Widget _buildCard(BuildContext context, String title, IconData icon, String route) {
-    return Card(
-      elevation: 4,
-      child: InkWell(
-        onTap: () {
-          Navigator.pushNamed(context, route); // Naviga verso la rotta specificata
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(icon, size: 50, color: Colors.orange),
-              SizedBox(height: 10),
-              Text(
-                title,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+  Widget _buildSquareCard(BuildContext context, String title, IconData icon, VoidCallback onTap) {
+    return AspectRatio(
+      aspectRatio: 1,
+      child: Card(
+        elevation: 4,
+        child: Stack(
+          children: [
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(icon, size: 50, color: Colors.orange),
+                    SizedBox(height: 10),
+                    Text(
+                      title,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
               ),
-              SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, route);
-                },
-                child: Text('Vai'),
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
+            ),
+            Positioned(
+              top: 6,
+              right: 6,
+              child: OutlinedButton(
+                onPressed: onTap,
+                style: OutlinedButton.styleFrom(
+                  minimumSize: Size(28, 28),
+                  backgroundColor: Colors.white,
+                  side: BorderSide(color: Colors.orange),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  padding: EdgeInsets.zero,
+                ),
+                child: Icon(
+                  Icons.arrow_forward,
+                  size: 18,
+                  color: Colors.orange,
+                ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -85,37 +144,33 @@ class TrasportatoreDashboardScreen extends StatelessWidget {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 16),
-            // Tabella
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: DataTable(
-                columns: const [
-                  DataColumn(label: Text('IdOrdine')),
-                  DataColumn(label: Text('Data Carico')),
-                  DataColumn(label: Text('Luogo Carico')),
-                  DataColumn(label: Text('Luogo Scarico')),
-                  DataColumn(label: Text('')),
-                ],
-                rows: List<DataRow>.generate(
-                  5, // Numero di righe da visualizzare
-                  (index) => DataRow(cells: [
-                    DataCell(Text('${index + 1}')), // IdOrdine
-                    DataCell(Text('01/01/2024')), // Data Carico
-                    DataCell(Text('Luogo ${index + 1}')), // Luogo Carico
-                    DataCell(Text('Luogo ${index + 2}')), // Luogo Scarico
-                    DataCell(
-                      TextButton(
-                        onPressed: () {
-                          // Aggiungi la logica per quotare
-                        },
-                        child: Text(
-                          'Da Quotare',
-                          style: TextStyle(color: Colors.orange),
-                        ),
+            _buildScrollableDataTable(
+              columns: const [
+                DataColumn(label: Text('IdOrdine')),
+                DataColumn(label: Text('Data Carico')),
+                DataColumn(label: Text('Luogo Carico')),
+                DataColumn(label: Text('Luogo Scarico')),
+                DataColumn(label: Text('')),
+              ],
+              rows: List<DataRow>.generate(
+                5,
+                (index) => DataRow(cells: [
+                  DataCell(Text('${index + 1}')),
+                  DataCell(Text('01/01/2024')),
+                  DataCell(Text('Luogo ${index + 1}')),
+                  DataCell(Text('Luogo ${index + 2}')),
+                  DataCell(
+                    TextButton(
+                      onPressed: () {
+                        // Logica per quotare
+                      },
+                      child: Text(
+                        'Da Quotare',
+                        style: TextStyle(color: Colors.orange),
                       ),
                     ),
-                  ]),
-                ),
+                  ),
+                ]),
               ),
             ),
           ],
@@ -137,26 +192,48 @@ class TrasportatoreDashboardScreen extends StatelessWidget {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 16),
-            // Tabella delle notifiche
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: DataTable(
-                columns: const [
-                  DataColumn(label: Text('Data')),
-                  DataColumn(label: Text('Messaggio')),
-                ],
-                rows: List<DataRow>.generate(
-                  5, // Numero di righe da visualizzare
-                  (index) => DataRow(cells: [
-                    DataCell(Text('01/01/2024')), // Data
-                    DataCell(Text('Messaggio di notifica ${index + 1}')), // Messaggio
-                  ]),
-                ),
+            _buildScrollableDataTable(
+              columns: const [
+                DataColumn(label: Text('Data')),
+                DataColumn(label: Text('Messaggio')),
+              ],
+              rows: List<DataRow>.generate(
+                5,
+                (index) => DataRow(cells: [
+                  DataCell(Text('01/01/2024')),
+                  DataCell(Text('Messaggio di notifica ${index + 1}')),
+                ]),
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildScrollableDataTable({required List<DataColumn> columns, required List<DataRow> rows}) {
+    return Column(
+      children: [
+        SizedBox(height: 8.0), // Margine per distanziare la tabella dalla barra di scorrimento
+        ScrollbarTheme(
+          data: ScrollbarThemeData(
+            thumbColor: WidgetStateProperty.all(Colors.orange), // Colore della barra di scorrimento
+            thickness: WidgetStateProperty.all(6.0), // Spessore della barra di scorrimento
+            radius: Radius.circular(10), // Raggio della curva degli angoli
+          ),
+          child: Scrollbar(
+            thumbVisibility: true, // Mostra sempre la barra di scorrimento
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: DataTable(
+                columns: columns,
+                rows: rows,
+              ),
+            ),
+          ),
+        ),
+        SizedBox(height: 16.0), 
+      ],
     );
   }
 }

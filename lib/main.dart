@@ -34,6 +34,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => const SignInScreen(),
         '/dashboard_trasportatore': (context) => TrasportatoreDashboardScreen(),
         '/dashboard': (context) => DashboardScreen(),
+        
       },
     );
   }

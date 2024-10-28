@@ -19,7 +19,7 @@ class _SignInFormState extends State<SignInForm> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
-    super.dispose();
+    super.dispose(); 
   }
 
   void _signIn() async {
@@ -35,10 +35,6 @@ class _SignInFormState extends State<SignInForm> {
 
   final credentials = SignInDTO(email: email.trim(), password: password.trim());
 
-  print('URL endpoint: ${AppUrl.loginEndPoint}');
-  print('Headers: {"Content-Type": "application/x-www-form-urlencoded"}');
-  print('Corpo inviato: ${credentials.toForm()}');
-
   try {
     final response = await http.post(
       Uri.parse(AppUrl.loginEndPoint),
@@ -46,44 +42,33 @@ class _SignInFormState extends State<SignInForm> {
       body: credentials.toForm(),
     );
 
-    print('Status code: ${response.statusCode}');
-    print('Response body: ${response.body}');
-
     if (response.statusCode == 200) {
-      // Decodifica la risposta direttamente come JSON
       final responseData = jsonDecode(response.body);
+      final tipoRuolo = responseData['user']['tipoRuolo'] ?? 'Tipo Ruolo Sconosciuto';
 
-      // Stampa l'intera risposta per il debug
-      print('Response data: $responseData');
+      print('Tipo Ruolo: $tipoRuolo');
 
-      // Controlla se lo stato è presente
-      if (responseData['token'] != null) {
-        final token = responseData['token'];
-        final user = responseData['user'];
-
-        print('Token ricevuto: $token');
-        print('User: $user');
-
+      if (tipoRuolo == 'Azienda Trasporti') {
+        Navigator.pushReplacementNamed(context, '/dashboard_trasportatore');
+      } else if (tipoRuolo == 'Operatore Remoto' || tipoRuolo == 'Etrucknet') {
         Navigator.pushReplacementNamed(context, '/dashboard');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Login fallito. Stato: ${responseData['status'] ?? "null"}')),
+          SnackBar(content: Text('Tipo ruolo non riconosciuto: $tipoRuolo')),
         );
       }
     } else {
-      // Stampa il codice di stato e il corpo della risposta in caso di errore
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Login fallito. Codice: ${response.statusCode}, Corpo: ${response.body}')),
+        SnackBar(content: Text('Login fallito. Codice: ${response.statusCode}')),
       );
-      print('Errore: Codice: ${response.statusCode}, Corpo: ${response.body}');
     }
   } catch (e) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Errore: ${e.toString()}')),
     );
-    print('Eccezione catturata: $e');
   }
 }
+
 
 
   @override

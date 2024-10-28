@@ -3,11 +3,9 @@ import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/anagrafiche_screen
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/marketing_screen.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/messaggi_clienti_screen.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/procedure_screen.dart';
-
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/stime.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/ordini.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/camion_disponibili.dart';
-
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/nuovo_trasportatore_screen.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/nuovo_committente_screen.dart';
 
@@ -36,12 +34,12 @@ class _SideMenuState extends State<SideMenu> {
             padding: EdgeInsets.zero,
             child: Container(
               alignment: Alignment.center,
-              height: 100,  // Altezza ridotta del DrawerHeader
+              height: 100,
               child: Text(
                 'Menu',
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 22, // Ridotto il font size per adattarlo meglio
+                  fontSize: 22,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -68,7 +66,10 @@ class _SideMenuState extends State<SideMenu> {
           ),
           
           ExpansionTile(
-            leading: Icon(Icons.person_add_outlined, color: Colors.orange),
+            leading: Icon(
+              Icons.person_add_outlined,
+              color: selectedPage.startsWith('registrati') ? Colors.orange : Colors.grey,
+            ),
             title: Text('Registrati'),
             children: <Widget>[
               _buildListTile(
@@ -96,7 +97,10 @@ class _SideMenuState extends State<SideMenu> {
           ),
           
           ExpansionTile(
-            leading: Icon(Icons.campaign_outlined, color: Colors.orange),
+            leading: Icon(
+              Icons.campaign_outlined,
+              color: selectedPage.startsWith('marketing') ? Colors.orange : Colors.grey,
+            ),
             title: Text('Marketing'),
             children: <Widget>[
               _buildListTile(
@@ -127,17 +131,19 @@ class _SideMenuState extends State<SideMenu> {
     );
   }
 
-  // Funzione helper per creare ListTile con gestione della selezione
   Widget _buildListTile({required IconData icon, required String title, required String page, required Widget screen, bool isNested = false}) {
     return Padding(
       padding: isNested ? const EdgeInsets.only(left: 16.0) : EdgeInsets.zero,
       child: ListTile(
-        leading: Icon(icon, color: Colors.orange),
+        leading: Icon(
+          icon,
+          color: selectedPage == page ? Colors.orange : Colors.grey,
+        ),
         title: Text(title),
-        tileColor: selectedPage == page ? Colors.grey[300] : null,  // Sfondo grigio se selezionato
+        tileColor: selectedPage == page ? Colors.grey[300] : null, 
         onTap: () {
           setState(() {
-            selectedPage = page;  // Aggiorniamo la pagina selezionata
+            selectedPage = page;
           });
           Navigator.push(
             context,
