@@ -29,35 +29,26 @@ class TrasportatoreDashboardScreen extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              Row(
+              GridView.count(
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                crossAxisCount: 2,
+                childAspectRatio: 1,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
                 children: [
-                  Expanded(
-                    child: _buildSquareCard(context, 'Aggiungi', Icons.add, () {
-                      Navigator.pushNamed(context, '/aggiungi');
-                    }),
-                  ),
-                  SizedBox(width: 16),
-                  Expanded(
-                    child: _buildSquareCard(context, 'Camion Disponibili', Icons.local_shipping, () {
-                      _showAddTruckDialog(context);
-                    }),
-                  ),
-                ],
-              ),
-              SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildSquareCard(context, 'Trova i Tuoi Carichi', Icons.search, () {
-                      Navigator.pushNamed(context, '/trova_carichi');
-                    }),
-                  ),
-                  SizedBox(width: 16),
-                  Expanded(
-                    child: _buildSquareCard(context, 'Trend Costo Carburante', Icons.trending_up, () {
-                      Navigator.pushNamed(context, '/trend_costo_carburante');
-                    }),
-                  ),
+                  _buildSquareCard(context, 'Aggiungi', Icons.add, () {
+                    Navigator.pushNamed(context, '/aggiungi');
+                  }),
+                  _buildSquareCard(context, 'Camion Disponibili', Icons.local_shipping, () {
+                    _showAddTruckDialog(context);
+                  }),
+                  _buildSquareCard(context, 'Trova i Tuoi Carichi', Icons.search, () {
+                    Navigator.pushNamed(context, '/trova_carichi');
+                  }),
+                  _buildSquareCard(context, 'Trend Costo Carburante', Icons.trending_up, () {
+                    Navigator.pushNamed(context, '/trend_costo_carburante');
+                  }),
                 ],
               ),
               SizedBox(height: 20),
@@ -81,51 +72,54 @@ class TrasportatoreDashboardScreen extends StatelessWidget {
   }
 
   Widget _buildSquareCard(BuildContext context, String title, IconData icon, VoidCallback onTap) {
-    return AspectRatio(
-      aspectRatio: 1,
-      child: Card(
-        elevation: 4,
-        child: Stack(
-          children: [
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(icon, size: 50, color: Colors.orange),
-                    SizedBox(height: 10),
-                    Text(
-                      title,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Positioned(
-              top: 6,
-              right: 6,
-              child: OutlinedButton(
-                onPressed: onTap,
-                style: OutlinedButton.styleFrom(
-                  minimumSize: Size(28, 28),
-                  backgroundColor: Colors.white,
-                  side: BorderSide(color: Colors.orange),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+    return Container(
+      width: 200,
+      child: AspectRatio(
+        aspectRatio: 1,
+        child: Card(
+          elevation: 4,
+          child: Stack(
+            children: [
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(icon, size: 50, color: Colors.orange),
+                      SizedBox(height: 10),
+                      Text(
+                        title,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                    ],
                   ),
-                  padding: EdgeInsets.zero,
-                ),
-                child: Icon(
-                  Icons.arrow_forward,
-                  size: 18,
-                  color: Colors.orange,
                 ),
               ),
-            ),
-          ],
+              Positioned(
+                top: 6,
+                right: 6,
+                child: OutlinedButton(
+                  onPressed: onTap,
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: Size(28, 28),
+                    backgroundColor: Colors.white,
+                    side: BorderSide(color: Colors.orange),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: EdgeInsets.zero,
+                  ),
+                  child: Icon(
+                    Icons.arrow_forward,
+                    size: 18,
+                    color: Colors.orange,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -144,33 +138,36 @@ class TrasportatoreDashboardScreen extends StatelessWidget {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 16),
-            _buildScrollableDataTable(
-              columns: const [
-                DataColumn(label: Text('IdOrdine')),
-                DataColumn(label: Text('Data Carico')),
-                DataColumn(label: Text('Luogo Carico')),
-                DataColumn(label: Text('Luogo Scarico')),
-                DataColumn(label: Text('')),
-              ],
-              rows: List<DataRow>.generate(
-                5,
-                (index) => DataRow(cells: [
-                  DataCell(Text('${index + 1}')),
-                  DataCell(Text('01/01/2024')),
-                  DataCell(Text('Luogo ${index + 1}')),
-                  DataCell(Text('Luogo ${index + 2}')),
-                  DataCell(
-                    TextButton(
-                      onPressed: () {
-                        // Logica per quotare
-                      },
-                      child: Text(
-                        'Da Quotare',
-                        style: TextStyle(color: Colors.orange),
+            Container(
+              width: double.infinity,
+              child: _buildScrollableDataTable(
+                columns: const [
+                  DataColumn(label: Text('IdOrdine')),
+                  DataColumn(label: Text('Data Carico')),
+                  DataColumn(label: Text('Luogo Carico')),
+                  DataColumn(label: Text('Luogo Scarico')),
+                  DataColumn(label: Text('')),
+                ],
+                rows: List<DataRow>.generate(
+                  5,
+                  (index) => DataRow(cells: [
+                    DataCell(Text('${index + 1}')),
+                    DataCell(Text('01/01/2024')),
+                    DataCell(Text('Luogo ${index + 1}')),
+                    DataCell(Text('Luogo ${index + 2}')),
+                    DataCell(
+                      TextButton(
+                        onPressed: () {
+                          // Logica per quotare
+                        },
+                        child: Text(
+                          'Da Quotare',
+                          style: TextStyle(color: Colors.orange),
+                        ),
                       ),
                     ),
-                  ),
-                ]),
+                  ]),
+                ),
               ),
             ),
           ],
@@ -192,17 +189,20 @@ class TrasportatoreDashboardScreen extends StatelessWidget {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 16),
-            _buildScrollableDataTable(
-              columns: const [
-                DataColumn(label: Text('Data')),
-                DataColumn(label: Text('Messaggio')),
-              ],
-              rows: List<DataRow>.generate(
-                5,
-                (index) => DataRow(cells: [
-                  DataCell(Text('01/01/2024')),
-                  DataCell(Text('Messaggio di notifica ${index + 1}')),
-                ]),
+            Container(
+              width: double.infinity,
+              child: _buildScrollableDataTable(
+                columns: const [
+                  DataColumn(label: Text('Data')),
+                  DataColumn(label: Text('Messaggio')),
+                ],
+                rows: List<DataRow>.generate(
+                  5,
+                  (index) => DataRow(cells: [
+                    DataCell(Text('01/01/2024')),
+                    DataCell(Text('Messaggio di notifica ${index + 1}')),
+                  ]),
+                ),
               ),
             ),
           ],
@@ -212,28 +212,22 @@ class TrasportatoreDashboardScreen extends StatelessWidget {
   }
 
   Widget _buildScrollableDataTable({required List<DataColumn> columns, required List<DataRow> rows}) {
-    return Column(
-      children: [
-        SizedBox(height: 8.0), // Margine per distanziare la tabella dalla barra di scorrimento
-        ScrollbarTheme(
-          data: ScrollbarThemeData(
-            thumbColor: WidgetStateProperty.all(Colors.orange), // Colore della barra di scorrimento
-            thickness: WidgetStateProperty.all(6.0), // Spessore della barra di scorrimento
-            radius: Radius.circular(10), // Raggio della curva degli angoli
-          ),
-          child: Scrollbar(
-            thumbVisibility: true, // Mostra sempre la barra di scorrimento
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: DataTable(
-                columns: columns,
-                rows: rows,
-              ),
-            ),
+    ScrollController _scrollController = ScrollController();
+
+    return Container(
+      width: double.infinity,
+      child: Scrollbar(
+        controller: _scrollController,
+        thumbVisibility: true,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          controller: _scrollController,
+          child: DataTable(
+            columns: columns,
+            rows: rows,
           ),
         ),
-        SizedBox(height: 16.0), 
-      ],
+      ),
     );
   }
 }

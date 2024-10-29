@@ -12,6 +12,22 @@ class _SideMenuTState extends State<SideMenuT> {
   bool _isAdministrationExpanded = false;
   String selectedPage = '';
 
+  final Map<String, String> routes = {
+    'Flotta': '/Configurazione/flotta',
+    'Tratte': '/Configurazione/tratte',
+    'Servizi Logistici': '/Configurazione/servizi_logistici',
+    'Camion Disponibili': '/Configurazione/camion_disponibili_t',
+    'Autisti': '/Configurazione/autisti',
+    'Trasporti a te Proposti': '/vendita_trasporti/proposti',
+    'Tutti i Trasporti': '/vendita_trasporti/tutti',
+    'Trasporti Eseguiti': '/vendita_trasporti/eseguiti',
+    'Richieste Sub-vezioni': '/acquisto_trasporti/richieste',
+    'Conferme Sub-vezioni': '/acquisto_trasporti/conferme',
+    'Sub-vezioni Cancellate': '/acquisto_trasporti/cancellate',
+    'Fatture Emesse': '/amministrazione/fatture_emesse',
+    'Fatture Ricevute': '/amministrazione/fatture_ricevute',
+  };
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -28,7 +44,7 @@ class _SideMenuTState extends State<SideMenuT> {
               alignment: Alignment.center,
               height: 100,
               child: Text(
-                'Menu Trasportatore',
+                'Menu',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 22,
@@ -131,47 +147,15 @@ class _SideMenuTState extends State<SideMenuT> {
           setState(() {
             selectedPage = title; // Aggiorna la pagina selezionata
           });
-          Navigator.pop(context);
-          switch (title) {
-            case 'Flotta':
-              Navigator.pushNamed(context, 'Configurazione/flotta');
-              break;
-            case 'Tratte':
-              Navigator.pushNamed(context, 'Configurazione/tratte');
-              break;
-            case 'Servizi Logistici':
-              Navigator.pushNamed(context, 'Configurazione/servizi_logistici');
-              break;
-            case 'Camion Disponibili':
-              Navigator.pushNamed(context, 'Configurazione/camion_disponibili_t');
-              break;
-            case 'Autisti':
-              Navigator.pushNamed(context, 'Configurazione/autisti');
-              break;
-            case 'Trasporti a te Proposti':
-              Navigator.pushNamed(context, 'vendita_trasporti/proposti');
-              break;
-            case 'Tutti i Trasporti':
-              Navigator.pushNamed(context, 'vendita_trasporti/tutti');
-              break;
-            case 'Trasporti Eseguiti':
-              Navigator.pushNamed(context, 'vendita_trasporti/eseguiti');
-              break;
-            case 'Richieste Sub-vezioni':
-              Navigator.pushNamed(context, 'acquisto_trasporti/richieste');
-              break;
-            case 'Conferme Sub-vezioni':
-              Navigator.pushNamed(context, 'acquisto_trasporti/conferme');
-              break;
-            case 'Sub-vezioni Cancellate':
-              Navigator.pushNamed(context, 'acquisto_trasporti/cancellate');
-              break;
-            case 'Fatture Emesse':
-              Navigator.pushNamed(context, 'amministrazione/fatture_emesse');
-              break;
-            case 'Fatture Ricevute':
-              Navigator.pushNamed(context, 'amministrazione/fatture_ricevute');
-              break;
+          print('Navigating to: $title'); // Stampa per debug
+          Navigator.pop(context); // Chiude il Drawer
+          
+          // Navigazione in base alla voce selezionata
+          final route = routes[title]; // Recupera la rotta dalla mappa
+          if (route != null) {
+            Navigator.pushNamed(context, route); // Naviga alla rotta
+          } else {
+            print('Route not found for $title');
           }
         },
       ),
