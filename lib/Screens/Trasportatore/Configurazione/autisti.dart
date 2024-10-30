@@ -6,6 +6,8 @@ class AutistiPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Autisti'),
+        backgroundColor: Colors.orange,
+        foregroundColor: Colors.white,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -55,23 +57,20 @@ class AutistiPage extends StatelessWidget {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 16),
-            Expanded(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: DataTable(
-                  columns: [
-                    DataColumn(label: Text('Cognome')),
-                    DataColumn(label: Text('Nome')),
-                    DataColumn(label: Text('Telefono')),
-                    DataColumn(label: Text('Email')),
-                    DataColumn(label: Text('Azioni')),
-                  ],
-                  rows: [
-                    _buildDataRow('Rossi', 'Mario', '1234567890', 'mario.rossi@example.com'),
-                    _buildDataRow('Bianchi', 'Luigi', '0987654321', 'luigi.bianchi@example.com'),
-                    // Aggiungi altre righe come necessario
-                  ],
-                ),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: DataTable(
+                columns: [
+                  DataColumn(label: Text('Cognome')),
+                  DataColumn(label: Text('Nome')),
+                  DataColumn(label: Text('Telefono')),
+                  DataColumn(label: Text('Email')),
+                  DataColumn(label: Text('Azioni')),
+                ],
+                rows: [
+                  _buildDataRow('Rossi', 'Mario', '1234567890', 'mario.rossi@example.com'),
+                  _buildDataRow('Bianchi', 'Luigi', '0987654321', 'luigi.bianchi@example.com'),
+                ],
               ),
             ),
           ],

@@ -37,7 +37,7 @@ class TrasportatoreDashboardScreen extends StatelessWidget {
                 crossAxisSpacing: 16,
                 mainAxisSpacing: 16,
                 children: [
-                  _buildSquareCard(context, 'Aggiungi', Icons.add, () {
+                  _buildSquareCard(context, 'Aggiungi camion', Icons.add, () {
                     Navigator.pushNamed(context, '/aggiungi');
                   }),
                   _buildSquareCard(context, 'Camion Disponibili', Icons.local_shipping, () {

@@ -6,6 +6,8 @@ class ServiziLogisticiPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Servizi Logistici'),
+        backgroundColor: Colors.orange,
+        foregroundColor: Colors.white,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -129,7 +131,7 @@ class ServiziLogisticiPage extends StatelessWidget {
             },
           ),
           IconButton(
-            icon: Icon(Icons.delete, color: Colors.red),
+            icon: Icon(Icons.delete, color: Colors.grey),
             onPressed: () {
               // Logica per eliminare il servizio
             },
@@ -154,7 +156,7 @@ class ServiziLogisticiPage extends StatelessWidget {
             },
           ),
           IconButton(
-            icon: Icon(Icons.delete, color: Colors.red),
+            icon: Icon(Icons.delete, color: Colors.grey),
             onPressed: () {
               // Logica per eliminare i dettagli del servizio
             },

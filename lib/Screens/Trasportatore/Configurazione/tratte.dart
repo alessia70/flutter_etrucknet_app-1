@@ -6,19 +6,27 @@ class TrattePage extends StatefulWidget {
 }
 
 class _TrattePageState extends State<TrattePage> {
-  List<Map<String, String>> tratte = []; // List to store the routes
+  List<Map<String, String>> tratte = [];
+  List<Map<String, String>> filteredTratte = [];
 
-  // Variables for the dialog
-  String partenza = '';
-  String direzione = 'Andata'; // Initial value
-  String arrivo = '';
-  String automezzo = 'Camion 1'; // Initial value
-  String servizio = 'Servizio A'; // Initial value
-  String mercePericolosa = 'Gas'; // Initial value
-  bool adrMercePericolosa = false;
-  bool isMercePericolosaSelected = false; // Track if Dangerous Goods is selected
+  String filterDirezione = 'Entrambi';
+
+  String defaultPartenza = '';
+  String defaultDirezione = 'Andata';
+  String defaultArrivo = '';
+  String defaultAutomezzo = 'Camion 1';
+  String defaultServizio = 'Servizio A';
+  String defaultMercePericolosa = 'Gas';
+  bool defaultAdrMercePericolosa = false;
+
+  bool isMercePericolosaSelected = false;
 
   @override
+  void initState() {
+    super.initState();
+    filteredTratte = List.from(tratte);
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -32,7 +40,7 @@ class _TrattePageState extends State<TrattePage> {
           children: [
             _buildSearchBar(context),
             SizedBox(height: 16),
-            _buildTratteTable(),
+            Expanded(child: _buildTratteTable()),
           ],
         ),
       ),
@@ -60,7 +68,7 @@ class _TrattePageState extends State<TrattePage> {
         IconButton(
           icon: Icon(Icons.filter_list, color: Colors.grey),
           onPressed: () {
-            // Logic for filtering routes
+             _showFilterDialog(context);
           },
         ),
       ],
@@ -75,27 +83,44 @@ class _TrattePageState extends State<TrattePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Text('Lista delle Tratte', style: TextStyle(fontWeight: FontWeight.bold)),
             SizedBox(height: 16),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: DataTable(
-                columns: [
-                  DataColumn(label: Text('Partenze')),
-                  DataColumn(label: Text('Direzione')),
-                  DataColumn(label: Text('Arrivi')),
-                  DataColumn(label: Text('Automezzi')),
-                  DataColumn(label: Text('Servizi')),
-                  DataColumn(label: Text('Azioni')),
-                ],
-                rows: tratte.map((tratta) {
-                  return _buildDataRow(
-                    tratta['partenza']!,
-                    tratta['direzione']!,
-                    tratta['arrivo']!,
-                    tratta['automezzo']!,
-                    tratta['servizio']!,
-                  );
-                }).toList(),
+            Expanded(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: DataTable(
+                    columns: [
+                      DataColumn(label: Text('Partenze')),
+                      DataColumn(label: Text('Direzione')),
+                      DataColumn(label: Text('Arrivi')),
+                      DataColumn(label: Text('Automezzi')),
+                      DataColumn(label: Text('Servizi')),
+                      DataColumn(label: Text('Azioni')),
+                    ],
+                     rows: filteredTratte.isNotEmpty 
+                    ? filteredTratte.map((tratta) {
+                        return _buildDataRow(
+                          tratta['partenza']!,
+                          tratta['direzione']!,
+                          tratta['arrivo']!,
+                          tratta['automezzo']!,
+                          tratta['servizio']!,
+                        );
+                      }).toList()
+                    : [
+                        DataRow(cells: [
+                          DataCell(Text('Nessuna tratta trovata')),
+                          DataCell(Text('')),
+                          DataCell(Text('')),
+                          DataCell(Text('')),
+                          DataCell(Text('')),
+                          DataCell(Text('')),
+                        ]),
+                      ],
+                  ),
+                ),
               ),
             ),
           ],
@@ -116,15 +141,20 @@ class _TrattePageState extends State<TrattePage> {
           IconButton(
             icon: Icon(Icons.edit, color: Colors.orange),
             onPressed: () {
-              // Logic to edit the route
+               _showEditTrattaDialog(context, {
+                'partenza': partenza,
+                'direzione': direzione,
+                'arrivo': arrivo,
+                'automezzo': automezzo,
+                'servizio': servizio,
+              });
             },
           ),
           IconButton(
             icon: Icon(Icons.delete, color: Colors.grey),
             onPressed: () {
-              // Logic to delete the route
               setState(() {
-                tratte.removeWhere((tratta) => tratta['partenza'] == partenza && tratta['arrivo'] == arrivo);
+                _showDeleteConfirmationDialog(context, partenza, arrivo);
               });
             },
           ),
@@ -134,218 +164,256 @@ class _TrattePageState extends State<TrattePage> {
   }
 
   void _showAddTrattaDialog(BuildContext context) {
-    String dialogPartenza = partenza;
-    String dialogDirezione = direzione; // Copy current state
-    String dialogArrivo = arrivo;
-    String dialogAutomezzo = automezzo; // Copy current state
-    String dialogServizio = servizio; // Copy current state
-    String dialogMercePericolosa = mercePericolosa; // Copy current state
-    bool dialogAdrMercePericolosa = adrMercePericolosa; // Copy current state
+    String dialogPartenza = defaultPartenza;
+    String dialogDirezione = defaultDirezione;
+    String dialogArrivo = defaultArrivo;
+    String dialogAutomezzo = defaultAutomezzo;
+    String dialogServizio = defaultServizio;
+    String dialogMercePericolosa = defaultMercePericolosa;
+    bool dialogAdrMercePericolosa = defaultAdrMercePericolosa;
+    bool dialogIsMercePericolosaSelected = dialogServizio == 'Merce Pericolosa';
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Row(
-            children: [
-              Icon(Icons.add, color: Colors.orange),
-              SizedBox(width: 8),
-              Text('Aggiungi Tratte più Frequenti'),
-            ],
-          ),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Inserisci dati puntuali:\n'
-                  'Scegli alternativamente provincia, regione o la nazione di partenza e di arrivo, '
-                  'i tipi di camion che utilizzi ed i servizi che offri. '
-                  'Puoi inserire quante tratte vuoi in modo da descrivere ognuna dettagliatamente.\n'
-                  'Attenzione: le proposte di carico le riceverai in funzione ai dati da te inseriti.',
-                ),
-                SizedBox(height: 16),
-
-                // Title for Departure
-                Text('Partenza', style: TextStyle(fontWeight: FontWeight.bold)),
-                TextField(
-                  decoration: InputDecoration(border: OutlineInputBorder()),
-                  onChanged: (value) => dialogPartenza = value,
-                ),
-                SizedBox(height: 16),
-
-                // Title for Direction
-                Text('Direzione', style: TextStyle(fontWeight: FontWeight.bold)),
-                DropdownButton<String>(
-                  value: dialogDirezione,
-                  isExpanded: true, // Make dropdown full width
-                  onChanged: (String? newValue) {
-                    if (newValue != null) {
-                      setState(() {
-                        dialogDirezione = newValue;
-                        direzione = newValue; // Update the default variable immediately
-                      });
-                    }
-                  },
-                  items: <String>['Andata', 'Ritorno', 'Andata/Ritorno']
-                      .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
-                SizedBox(height: 16),
-
-                // Title for Arrival
-                Text('Arrivo', style: TextStyle(fontWeight: FontWeight.bold)),
-                TextField(
-                  decoration: InputDecoration(border: OutlineInputBorder()),
-                  onChanged: (value) => dialogArrivo = value,
-                ),
-                SizedBox(height: 16),
-
-                // Title for Vehicle
-                Text('Automezzo', style: TextStyle(fontWeight: FontWeight.bold)),
-                DropdownButton<String>(
-                  value: dialogAutomezzo,
-                  isExpanded: true, // Make dropdown full width
-                  onChanged: (String? newValue) {
-                    if (newValue != null) {
-                      setState(() {
-                        dialogAutomezzo = newValue;
-                        automezzo = newValue; // Update the default variable immediately
-                      });
-                    }
-                  },
-                  items: <String>[
-                    'Camion 1',
-                    'Camion 2',
-                    'Camion 3',
-                    'Furgone',
-                    'Auto',
-                    'Camion frigorifero'
-                  ].map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
-                SizedBox(height: 16),
-
-                // Title for Service
-                Text('Servizi', style: TextStyle(fontWeight: FontWeight.bold)),
-                DropdownButton<String>(
-                  value: dialogServizio,
-                  isExpanded: true, // Make dropdown full width
-                  onChanged: (String? newValue) {
-                    if (newValue != null) {
-                      setState(() {
-                        dialogServizio = newValue;
-                        servizio = newValue; // Update the default variable immediately
-                        isMercePericolosaSelected = newValue == 'Merce Pericolosa'; // Check if selected
-                      });
-                    }
-                  },
-                  items: <String>[
-                    'Servizio A',
-                    'Servizio B',
-                    'Servizio C',
-                    'Merce Pericolosa' // Include option for Dangerous Goods
-                  ].map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
-                SizedBox(height: 16),
-
-                // Dangerous Goods Dropdown
-                if (isMercePericolosaSelected) ...[
-                  Text('Tipologia Merce Pericolosa', style: TextStyle(fontWeight: FontWeight.bold)),
-                  DropdownButton<String>(
-                    value: dialogMercePericolosa,
-                    isExpanded: true, // Make dropdown full width
-                    onChanged: (String? newValue) {
-                      if (newValue != null) {
-                        setState(() {
-                          dialogMercePericolosa = newValue;
-                          mercePericolosa = newValue; // Update the default variable immediately
-                        });
-                      }
-                    },
-                    items: <String>[
-                      'Gas',
-                      'Liquidi infiammabili',
-                      'Polveri',
-                      'Materiali corrosivi',
-                      'Sostanze tossiche',
-                      'Materiali radioattivi',
-                      'Sostanze pericolose per l’ambiente'
-                    ].map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
-                  SizedBox(height: 16),
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              title: Row(
+                children: [
+                  Icon(Icons.add, color: Colors.orange),
+                  SizedBox(width: 8),
+                  Text('Aggiungi Tratte'),
                 ],
-
-                // ADR Dangerous Goods Checkbox
-                Row(
+              ),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Checkbox(
-                      value: dialogAdrMercePericolosa,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          dialogAdrMercePericolosa = value ?? false;
-                          adrMercePericolosa = value ?? false; // Update the default variable immediately
+                    Text('Inserisci dati puntuali:\n'),
+                    SizedBox(height: 9),
+
+                    Text('Partenza', style: TextStyle(fontWeight: FontWeight.bold)),
+                    TextField(
+                      decoration: InputDecoration(border: OutlineInputBorder()),
+                      onChanged: (value) => dialogPartenza = value,
+                    ),
+                    SizedBox(height: 16),
+                    Text('Direzione', style: TextStyle(fontWeight: FontWeight.bold)),
+                    DropdownButton<String>(
+                      value: dialogDirezione,
+                      isExpanded: true,
+                      onChanged: (String? newValue) {
+                        setDialogState(() {
+                          dialogDirezione = newValue ?? defaultDirezione;
                         });
                       },
+                      items: <String>['Andata', 'Ritorno', 'Andata/Ritorno']
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
                     ),
-                    Text('ADR Merce Pericolosa'),
+                    SizedBox(height: 16),
+
+                    Text('Arrivo', style: TextStyle(fontWeight: FontWeight.bold)),
+                    TextField(
+                      decoration: InputDecoration(border: OutlineInputBorder()),
+                      onChanged: (value) => dialogArrivo = value,
+                    ),
+                    SizedBox(height: 16),
+
+                    Text('Automezzo', style: TextStyle(fontWeight: FontWeight.bold)),
+                    DropdownButton<String>(
+                      value: dialogAutomezzo,
+                      isExpanded: true,
+                      onChanged: (String? newValue) {
+                        setDialogState(() {
+                          dialogAutomezzo = newValue ?? defaultAutomezzo;
+                        });
+                      },
+                      items: <String>['Camion 1', 'Camion 2', 'Camion 3', 'Furgone', 'Auto', 'Camion frigorifero']
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                    SizedBox(height: 16),
+                    Text('Servizi', style: TextStyle(fontWeight: FontWeight.bold)),
+                    DropdownButton<String>(
+                      value: dialogServizio,
+                      isExpanded: true,
+                      onChanged: (String? newValue) {
+                        setDialogState(() {
+                          dialogServizio = newValue ?? defaultServizio;
+                          dialogIsMercePericolosaSelected = dialogServizio == 'Merce Pericolosa';
+                        });
+                      },
+                      items: <String>['Servizio A', 'Servizio B', 'Servizio C', 'Merce Pericolosa']
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                    SizedBox(height: 16),
+
+                    if (dialogIsMercePericolosaSelected) ...[
+                      Text('Tipologia Merce Pericolosa', style: TextStyle(fontWeight: FontWeight.bold)),
+                      DropdownButton<String>(
+                        value: dialogMercePericolosa,
+                        isExpanded: true,
+                        onChanged: (String? newValue) {
+                          setDialogState(() {
+                            dialogMercePericolosa = newValue ?? defaultMercePericolosa;
+                          });
+                        },
+                        items: <String>[
+                          'Gas',
+                          'Liquidi infiammabili',
+                          'Polveri',
+                          'Materiali corrosivi',
+                          'Sostanze tossiche',
+                          'Materiali radioattivi'
+                        ].map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
+                      SizedBox(height: 16),
+                    ],
                   ],
                 ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('Annulla'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  tratte.add({
-                    'partenza': dialogPartenza,
-                    'direzione': dialogDirezione,
-                    'arrivo': dialogArrivo,
-                    'automezzo': dialogAutomezzo,
-                    'servizio': dialogServizio,
-                    'mercePericolosa': isMercePericolosaSelected ? dialogMercePericolosa : '',
-                  });
-                });
-                _showConfirmationDialog(context); // Show confirmation dialog
-                Navigator.pop(context);
-              },
-              child: Text('Salva'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange,
-                foregroundColor: Colors.white,
               ),
-            ),
-          ],
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context); 
+                  },
+                  child: Text('Annulla', style: TextStyle(color: Colors.grey)),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      tratte.add({
+                        'partenza': dialogPartenza,
+                        'direzione': dialogDirezione,
+                        'arrivo': dialogArrivo,
+                        'automezzo': dialogAutomezzo,
+                        'servizio': dialogServizio,
+                        'mercePericolosa': dialogIsMercePericolosaSelected ? dialogMercePericolosa : '',
+                      });
+
+                      if (filterDirezione == 'Tutte' || 
+                          (filterDirezione == 'Entrambi') || 
+                            dialogDirezione == filterDirezione) {
+                        filteredTratte.add({
+                          'partenza': dialogPartenza,
+                          'direzione': dialogDirezione,
+                          'arrivo': dialogArrivo,
+                          'automezzo': dialogAutomezzo,
+                          'servizio': dialogServizio,
+                        });
+                      }
+
+                      defaultPartenza = dialogPartenza;
+                      defaultDirezione = dialogDirezione;
+                      defaultArrivo = dialogArrivo;
+                      defaultAutomezzo = dialogAutomezzo;
+                      defaultServizio = dialogServizio;
+                      defaultMercePericolosa = dialogMercePericolosa;
+                      defaultAdrMercePericolosa = dialogAdrMercePericolosa;
+                    });
+                    Navigator.pop(context);
+                    _showConfirmationDialog(context);
+                  },
+                  child: Text('Salva'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange,
+                    foregroundColor: Colors.white,
+                  ),
+                ),
+              ],
+            );
+          },
         );
       },
     );
   }
+  void _showFilterDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              title: Text('Filtra Tratte per Direzione'),
+              content: DropdownButton<String>(
+                value: filterDirezione,
+                isExpanded: true,
+                onChanged: (String? newValue) {
+                  setDialogState(() {
+                    filterDirezione = newValue!;
+                  });
+                },
+                items: <String>['Andata', 'Ritorno', 'Entrambi', 'Tutte']
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('Annulla', style: TextStyle(color: Colors.grey),),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    _applyFilter();
+                    Navigator.pop(context);
+                  },
+                  child: Text('Applica filtro'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange,
+                    foregroundColor: Colors.white,
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+
+  void _applyFilter() {
+  setState(() {
+    if (filterDirezione == 'Tutte') {
+      filteredTratte = List.from(tratte);
+    } else {
+      filteredTratte = tratte.where((tratta) {
+        if (filterDirezione == 'Entrambi') {
+          return true;
+        }
+        return tratta['direzione'] == filterDirezione;
+      }).toList();
+    }
+  });
+}
+
 
   void _showConfirmationDialog(BuildContext context) {
     showDialog(
@@ -362,6 +430,202 @@ class _TrattePageState extends State<TrattePage> {
               child: Text('OK'),
             ),
           ],
+        );
+      },
+    );
+  }
+  void _showDeleteConfirmationDialog(BuildContext context, String partenza, String arrivo) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Conferma eliminazione'),
+          content: Text('Sei sicuro di voler eliminare la tratta da $partenza a $arrivo?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Annulla', style: TextStyle(color: Colors.grey),),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                tratte.removeWhere((tratta) => tratta['partenza'] == partenza && tratta['arrivo'] == arrivo);
+
+                filteredTratte.removeWhere((tratta) => tratta['partenza'] == partenza && tratta['arrivo'] == arrivo);
+              });
+              Navigator.pop(context);
+              _showDeletionConfirmationDialog(context);
+            },
+              child: Text('Elimina'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.orange,
+                foregroundColor: Colors.white,
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showDeletionConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Tratta Eliminata'),
+          content: Text('La tratta è stata eliminata con successo!'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('OK', style: TextStyle(color: Colors.orange),),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showEditTrattaDialog(BuildContext context, Map<String, String> tratta) {
+    String dialogPartenza = tratta['partenza']!;
+    String dialogDirezione = tratta['direzione']!;
+    String dialogArrivo = tratta['arrivo']!;
+    String dialogAutomezzo = tratta['automezzo']!;
+    String dialogServizio = tratta['servizio']!;
+    
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              title: Row(
+                children: [
+                  Icon(Icons.edit, color: Colors.orange),
+                  SizedBox(width: 8),
+                  Text('Modifica Tratta'),
+                ],
+              ),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Modifica dati:\n'),
+                    SizedBox(height: 16),
+
+                    Text('Partenza', style: TextStyle(fontWeight: FontWeight.bold)),
+                    TextField(
+                      decoration: InputDecoration(border: OutlineInputBorder()),
+                      onChanged: (value) => dialogPartenza = value,
+                      controller: TextEditingController(text: dialogPartenza),
+                    ),
+                    SizedBox(height: 16),
+
+                    Text('Direzione', style: TextStyle(fontWeight: FontWeight.bold)),
+                    DropdownButton<String>(
+                      value: dialogDirezione,
+                      isExpanded: true,
+                      onChanged: (String? newValue) {
+                        setDialogState(() {
+                          dialogDirezione = newValue!;
+                        });
+                      },
+                      items: <String>['Andata', 'Ritorno', 'Andata/Ritorno']
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                    SizedBox(height: 16),
+
+                    Text('Arrivo', style: TextStyle(fontWeight: FontWeight.bold)),
+                    TextField(
+                      decoration: InputDecoration(border: OutlineInputBorder()),
+                      onChanged: (value) => dialogArrivo = value,
+                      controller: TextEditingController(text: dialogArrivo),
+                    ),
+                    SizedBox(height: 16),
+
+                    Text('Automezzo', style: TextStyle(fontWeight: FontWeight.bold)),
+                    DropdownButton<String>(
+                      value: dialogAutomezzo,
+                      isExpanded: true,
+                      onChanged: (String? newValue) {
+                        setDialogState(() {
+                          dialogAutomezzo = newValue!;
+                        });
+                      },
+                      items: <String>['Camion 1', 'Camion 2', 'Camion 3', 'Furgone', 'Auto', 'Camion frigorifero']
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                    SizedBox(height: 16),
+                    Text('Servizi', style: TextStyle(fontWeight: FontWeight.bold)),
+                    DropdownButton<String>(
+                      value: dialogServizio,
+                      isExpanded: true,
+                      onChanged: (String? newValue) {
+                        setDialogState(() {
+                          dialogServizio = newValue!;
+                        });
+                      },
+                      items: <String>['Servizio A', 'Servizio B', 'Servizio C', 'Merce Pericolosa']
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('Annulla', style: TextStyle(color: Colors.grey),),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      int index = tratte.indexWhere((item) => item['partenza'] == tratta['partenza'] && item['arrivo'] == tratta['arrivo']);
+
+                      if (index != -1) {
+                        tratte[index] = {
+                          'partenza': dialogPartenza,
+                          'direzione': dialogDirezione,
+                          'arrivo': dialogArrivo,
+                          'automezzo': dialogAutomezzo,
+                          'servizio': dialogServizio,
+                        };
+                      }
+                      _applyFilter();
+                    });
+
+                    Navigator.pop(context);
+                  },
+                  child: Text('Salva'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange,
+                    foregroundColor: Colors.white,
+                  ),
+                ),
+              ],
+            );
+          },
         );
       },
     );
