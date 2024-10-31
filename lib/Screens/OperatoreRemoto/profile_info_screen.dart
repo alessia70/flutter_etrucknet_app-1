@@ -8,9 +8,12 @@ class ProfilePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profilo'),
+        backgroundColor: Colors.orange,
+        foregroundColor: Colors.white,
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
+            color: Colors.orange,
             onPressed: () {
               // Funzionalità per modificare il profilo
               // Puoi implementare una pagina per modificare i dati utente qui

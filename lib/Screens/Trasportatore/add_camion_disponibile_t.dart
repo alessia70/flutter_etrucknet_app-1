@@ -1,133 +1,158 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Models/camion_model.dart';
 
-// ignore: must_be_immutable
-class AddTruckTDialog extends StatelessWidget {
-  final TextEditingController _typeController = TextEditingController();
-  final TextEditingController _linearSpaceController = TextEditingController();
-  final TextEditingController _availabilityLocationController = TextEditingController();
-  final TextEditingController _availableDateController = TextEditingController();
-  final TextEditingController _destinationController = TextEditingController();
-  
-  bool _isRecurringAvailability = false; // Per lo switch
+class AddCamionDialog extends StatefulWidget {
+  final Camion? existingCamion;
+
+  const AddCamionDialog({Key? key, this.existingCamion}) : super(key: key);
+
+  @override
+  _AddCamionDialogState createState() => _AddCamionDialogState();
+}
+
+class _AddCamionDialogState extends State<AddCamionDialog> {
+  final tipoMezzoController = TextEditingController();
+  final spazioDisponibileController = TextEditingController();
+  final localitaCaricoController = TextEditingController();
+  final localitaScaricoController = TextEditingController();
+  DateTime? dataRitiro;
+  bool isRecurring = false;
+  Map<String, bool> selectedDays = {
+    "Lunedì": false,
+    "Martedì": false,
+    "Mercoledì": false,
+    "Giovedì": false,
+    "Venerdì": false,
+    "Sabato": false,
+    "Domenica": false,
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.existingCamion != null) {
+      tipoMezzoController.text = widget.existingCamion!.tipoMezzo;
+      spazioDisponibileController.text = widget.existingCamion!.spazioDisponibile.toString();
+      localitaCaricoController.text = widget.existingCamion!.localitaCarico;
+      localitaScaricoController.text = widget.existingCamion!.localitaScarico;
+      dataRitiro = widget.existingCamion!.dataRitiro;
+      isRecurring = widget.existingCamion!.isRecurring;
+      selectedDays = widget.existingCamion!.giorniDisponibili ?? selectedDays;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Dati Mezzo'),
+      title: Text(widget.existingCamion == null ? 'Aggiungi Camion Disponibile' : 'Modifica Camion Disponibile'),
       content: SingleChildScrollView(
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            _buildTypeField(),
-            _buildLinearSpaceField(),
-            _buildPickupInfoSection(),
-            _buildDeliveryInfoSection(),
+            TextField(
+              controller: tipoMezzoController,
+              decoration: const InputDecoration(labelText: 'Tipo Automezzo*'),
+            ),
+            TextField(
+              controller: spazioDisponibileController,
+              decoration: const InputDecoration(labelText: 'Spazio Lineare disponibile (in cm)*'),
+              keyboardType: TextInputType.number,
+            ),
+            TextField(
+              controller: localitaCaricoController,
+              decoration: const InputDecoration(labelText: 'Luogo in cui è disponibile*'),
+            ),
+            const SizedBox(height: 16),
+            _buildDateField(context, 'Data Ritiro', dataRitiro, (picked) => setState(() => dataRitiro = picked)),
+            TextField(
+              controller: localitaScaricoController,
+              decoration: const InputDecoration(labelText: 'Località di destinazione desiderata*'),
+            ),
+            const SizedBox(height: 16),
+            SwitchListTile(
+              title: const Text('Disponibilità Settimanale Ricorrente'),
+              value: isRecurring,
+              onChanged: (value) {
+                setState(() {
+                  isRecurring = value;
+                });
+              },
+            ),
+            if (isRecurring) _buildDaysOfWeekSelector(),
           ],
         ),
       ),
       actions: [
         TextButton(
           onPressed: () {
-            Navigator.of(context).pop(); // Chiude il popup
+            if (tipoMezzoController.text.isNotEmpty &&
+                spazioDisponibileController.text.isNotEmpty &&
+                localitaCaricoController.text.isNotEmpty &&
+                dataRitiro != null &&
+                localitaScaricoController.text.isNotEmpty) {
+              final newCamion = Camion(
+                tipoMezzo: tipoMezzoController.text,
+                spazioDisponibile: int.parse(spazioDisponibileController.text),
+                localitaCarico: localitaCaricoController.text,
+                dataRitiro: dataRitiro!,
+                localitaScarico: localitaScaricoController.text,
+                isRecurring: isRecurring,
+                giorniDisponibili: isRecurring ? selectedDays : null,
+              );
+              Navigator.of(context).pop(newCamion);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Compila tutti i campi obbligatori')),
+              );
+            }
           },
-          child: Text('Annulla', style: TextStyle(color: Colors.grey)),
+          child: Text(widget.existingCamion == null ? 'Aggiungi' : 'Salva', style: const TextStyle(color: Colors.orange)),
         ),
-        ElevatedButton(
-          onPressed: () {
-            // Aggiungi logica per salvare il camion
-            // Puoi usare i valori di _typeController.text, _linearSpaceController.text, etc.
-            Navigator.of(context).pop(); // Chiude il popup
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Annulla', style: TextStyle(color: Colors.grey)),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDateField(BuildContext context, String label, DateTime? date, ValueChanged<DateTime?> onDatePicked) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(label),
+        TextButton(
+          onPressed: () async {
+            final pickedDate = await showDatePicker(
+              context: context,
+              initialDate: date ?? DateTime.now(),
+              firstDate: DateTime(2000),
+              lastDate: DateTime(2101),
+            );
+            onDatePicked(pickedDate);
           },
-          child: Text('Salva'),
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
+          child: Text(date != null ? '${date.day}/${date.month}/${date.year}' : 'Seleziona Data'),
         ),
       ],
     );
   }
 
-  Widget _buildTypeField() {
+  Widget _buildDaysOfWeekSelector() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Tipo Mezzo'),
-        Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: _typeController,
-                decoration: InputDecoration(
-                  hintText: 'Seleziona tipo mezzo',
-                  suffixIcon: IconButton(
-                    icon: Icon(Icons.add),
-                    onPressed: () {
-                      // Logica per aggiungere un altro mezzo
-                    },
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: 16),
-      ],
-    );
-  }
-
-  Widget _buildLinearSpaceField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Spazio Lineare disponibile sul pianale (in cm)*:'),
-        TextField(
-          controller: _linearSpaceController,
-          keyboardType: TextInputType.number,
-          decoration: InputDecoration(hintText: 'Inserisci spazio lineare'),
-        ),
-        SizedBox(height: 16),
-      ],
-    );
-  }
-
-  Widget _buildPickupInfoSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Informazioni Ritiro', style: TextStyle(fontWeight: FontWeight.bold)),
-        TextField(
-          controller: _availabilityLocationController,
-          decoration: InputDecoration(hintText: 'Luogo in cui è disponibile'),
-        ),
-        SizedBox(height: 8),
-        Row(
-          children: [
-            Text('Disponibilità Ricorrente'),
-            Switch(
-              value: _isRecurringAvailability,
-              onChanged: (value) {
-                _isRecurringAvailability = value;
-              },
-              activeColor: Colors.orange,
-            ),
-          ],
-        ),
-        TextField(
-          controller: _availableDateController,
-          decoration: InputDecoration(hintText: 'Data in cui è disponibile'),
-        ),
-        SizedBox(height: 16),
-      ],
-    );
-  }
-
-  Widget _buildDeliveryInfoSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Informazioni Consegna', style: TextStyle(fontWeight: FontWeight.bold)),
-        TextField(
-          controller: _destinationController,
-          decoration: InputDecoration(hintText: 'Località di destinazione desiderata'),
-        ),
-        SizedBox(height: 16),
+        const Text('Giorni di Disponibilità:'),
+        ...selectedDays.keys.map((day) {
+          return CheckboxListTile(
+            title: Text(day),
+            value: selectedDays[day],
+            onChanged: (value) {
+              setState(() {
+                selectedDays[day] = value ?? false;
+              });
+            },
+          );
+        }).toList(),
       ],
     );
   }

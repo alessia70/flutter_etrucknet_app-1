@@ -4,6 +4,8 @@ class Camion {
   final String localitaCarico;
   final DateTime dataRitiro;
   final String localitaScarico;
+  final bool isRecurring;
+  final Map<String, bool>? giorniDisponibili;
 
   Camion({
     required this.tipoMezzo,
@@ -11,6 +13,8 @@ class Camion {
     required this.localitaCarico,
     required this.dataRitiro,
     required this.localitaScarico,
+    this.isRecurring = false,
+    this.giorniDisponibili,
   });
 
   Map<String, dynamic> toJson() {

@@ -68,30 +68,18 @@ class _FlottaScreenState extends State<FlottaScreen> {
                   ),
                 ),
                 SizedBox(width: 6),
-                Flexible(
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      _mostraPopupAggiungi();
-                    },
-                    icon: Icon(Icons.add),
-                    label: Text('Automezzo'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange,
-                      foregroundColor: Colors.white,
-                    ),
-                  ),
+                 IconButton(
+                  icon: Icon(Icons.add, color: Colors.orange),
+                  onPressed: () {
+                    _mostraPopupAggiungi();
+                  },
+                  tooltip: 'Aggiungi Automezzo', // Tooltip per la accessibilità
                 ),
                 SizedBox(width: 6),
-                Flexible(
-                  child: ElevatedButton.icon(
-                    onPressed: _mostraMenuFiltri,
-                    icon: Icon(Icons.filter_list),
-                    label: Text('Filtra'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey,
-                      foregroundColor: Colors.white,
-                    ),
-                  ),
+                IconButton(
+                  icon: Icon(Icons.filter_list, color: Colors.grey),
+                  onPressed: _mostraMenuFiltri,
+                  tooltip: 'Filtra', // Tooltip per la accessibilità
                 ),
               ],
             ),
@@ -161,8 +149,8 @@ class _FlottaScreenState extends State<FlottaScreen> {
         return AlertDialog(
           title: Row(
             children: [
+              Icon(Icons.add, color: Colors.grey),
               Expanded(child: Text('Aggiungi Automezzo')),
-              Icon(Icons.add, color: Colors.orange),
             ],
           ),
           content: Column(

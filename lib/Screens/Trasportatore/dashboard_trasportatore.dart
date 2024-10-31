@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/profile_info_screen.dart';
+import 'package:flutter_etrucknet_new/Screens/Trasportatore/Configurazione/camion_disponibili_t.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/add_camion_disponibile_t.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/side_menu_t.dart';
 
@@ -38,10 +39,13 @@ class TrasportatoreDashboardScreen extends StatelessWidget {
                 mainAxisSpacing: 16,
                 children: [
                   _buildSquareCard(context, 'Aggiungi camion', Icons.add, () {
-                    Navigator.pushNamed(context, '/aggiungi');
+                    _showAddTruckDialog(context);
                   }),
                   _buildSquareCard(context, 'Camion Disponibili', Icons.local_shipping, () {
-                    _showAddTruckDialog(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => CamionDisponibiliTPage()),
+                    );
                   }),
                   _buildSquareCard(context, 'Trova i Tuoi Carichi', Icons.search, () {
                     Navigator.pushNamed(context, '/trova_carichi');
@@ -66,7 +70,7 @@ class TrasportatoreDashboardScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AddTruckTDialog();
+        return AddCamionDialog();
       },
     );
   }
