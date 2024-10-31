@@ -1,6 +1,16 @@
 import 'package:flutter/material.dart';
 
-class AutistiPage extends StatelessWidget {
+class AutistiPage extends StatefulWidget {
+  @override
+  _AutistiPageState createState() => _AutistiPageState();
+}
+
+class _AutistiPageState extends State<AutistiPage> {
+  final List<Map<String, String>> autistiList = [
+    {'cognome': 'Rossi', 'nome': 'Mario', 'telefono': '1234567890', 'email': 'mario.rossi@example.com'},
+    {'cognome': 'Bianchi', 'nome': 'Luigi', 'telefono': '0987654321', 'email': 'luigi.bianchi@example.com'},
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +47,7 @@ class AutistiPage extends StatelessWidget {
         IconButton(
           icon: Icon(Icons.add, color: Colors.orange),
           onPressed: () {
-            // Logica per aggiungere un nuovo autista
+            _showAddOrEditAutistaDialog();
           },
         ),
       ],
@@ -67,10 +77,14 @@ class AutistiPage extends StatelessWidget {
                   DataColumn(label: Text('Email')),
                   DataColumn(label: Text('Azioni')),
                 ],
-                rows: [
-                  _buildDataRow('Rossi', 'Mario', '1234567890', 'mario.rossi@example.com'),
-                  _buildDataRow('Bianchi', 'Luigi', '0987654321', 'luigi.bianchi@example.com'),
-                ],
+                rows: autistiList.map((autista) {
+                  return _buildDataRow(
+                    autista['cognome']!,
+                    autista['nome']!,
+                    autista['telefono']!,
+                    autista['email']!,
+                  );
+                }).toList(),
               ),
             ),
           ],
@@ -88,19 +102,120 @@ class AutistiPage extends StatelessWidget {
       DataCell(Row(
         children: [
           IconButton(
-            icon: Icon(Icons.edit, color: Colors.blue),
+            icon: Icon(Icons.edit, color: Colors.orange),
             onPressed: () {
-              // Logica per modificare i dettagli dell'autista
+              _showAddOrEditAutistaDialog(
+                cognome: cognome,
+                nome: nome,
+                telefono: telefono,
+                email: email,
+              );
             },
           ),
           IconButton(
-            icon: Icon(Icons.delete, color: Colors.red),
+            icon: Icon(Icons.delete, color: Colors.grey),
             onPressed: () {
-              // Logica per eliminare i dettagli dell'autista
+              setState(() {
+                autistiList.removeWhere((autista) => autista['telefono'] == telefono);
+              });
             },
           ),
         ],
       )),
     ]);
+  }
+
+  void _showAddOrEditAutistaDialog({String? cognome, String? nome, String? telefono, String? email}) {
+    final TextEditingController cognomeController = TextEditingController(text: cognome);
+    final TextEditingController nomeController = TextEditingController(text: nome);
+    final TextEditingController telefonoController = TextEditingController(text: telefono);
+    final TextEditingController emailController = TextEditingController(text: email);
+
+    bool isEditing = cognome != null && nome != null && telefono != null && email != null;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Row(
+            children: [
+              Icon(Icons.person, color: Colors.orange),
+              SizedBox(width: 8),
+              Text(isEditing ? 'Modifica Autista' : 'Aggiungi Autista', style: TextStyle(color: Colors.orange)),
+            ],
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: cognomeController,
+                  decoration: InputDecoration(labelText: 'Cognome*'),
+                ),
+                TextField(
+                  controller: nomeController,
+                  decoration: InputDecoration(labelText: 'Nome*'),
+                ),
+                TextField(
+                  controller: telefonoController,
+                  decoration: InputDecoration(labelText: 'Telefono*'),
+                  keyboardType: TextInputType.phone,
+                ),
+                TextField(
+                  controller: emailController,
+                  decoration: InputDecoration(labelText: 'Email*'),
+                  keyboardType: TextInputType.emailAddress,
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Annulla', style: TextStyle(color: Colors.grey)),
+            ),
+            TextButton(
+              onPressed: () {
+                if (cognomeController.text.isNotEmpty &&
+                    nomeController.text.isNotEmpty &&
+                    telefonoController.text.isNotEmpty &&
+                    emailController.text.isNotEmpty) {
+                  setState(() {
+                    if (isEditing) {
+                      // Update existing driver
+                      final index = autistiList.indexWhere((autista) => autista['telefono'] == telefono);
+                      if (index != -1) {
+                        autistiList[index] = {
+                          'cognome': cognomeController.text,
+                          'nome': nomeController.text,
+                          'telefono': telefonoController.text,
+                          'email': emailController.text,
+                        };
+                      }
+                    } else {
+                      // Add new driver
+                      autistiList.add({
+                        'cognome': cognomeController.text,
+                        'nome': nomeController.text,
+                        'telefono': telefonoController.text,
+                        'email': emailController.text,
+                      });
+                    }
+                  });
+                  Navigator.of(context).pop();
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Per favore, compila tutti i campi obbligatori.')),
+                  );
+                }
+              },
+              child: Text('Salva', style: TextStyle(color: Colors.orange)),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

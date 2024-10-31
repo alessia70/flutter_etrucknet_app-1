@@ -126,7 +126,7 @@ class _CamionDisponibiliTPageState extends State<CamionDisponibiliTPage> {
           IconButton(
             icon: Icon(Icons.edit, color: Colors.orange),
             onPressed: () {
-              _showAddCamionDialog(camion: camion);
+              _showEditCamionDialog(camion);
             },
           ),
           IconButton(
@@ -142,7 +142,15 @@ class _CamionDisponibiliTPageState extends State<CamionDisponibiliTPage> {
     ]);
   }
 
-  void _showAddCamionDialog({Camion? camion}) {
+   void _showEditCamionDialog(Camion camion) {
+    _showCamionDialog(camion);
+  }
+
+  void _showAddCamionDialog() {
+    _showCamionDialog(null);
+  }
+
+  void _showCamionDialog({Camion? camion}) {
     final TextEditingController tipoMezzoController = TextEditingController();
     final TextEditingController spazioDisponibileController = TextEditingController();
     final TextEditingController localitaCaricoController = TextEditingController();
@@ -215,9 +223,7 @@ class _CamionDisponibiliTPageState extends State<CamionDisponibiliTPage> {
                         border: OutlineInputBorder(),
                       ),
                       controller: TextEditingController(
-                        text: dataRitiro != null
-                            ? "${dataRitiro!.toLocal()}".split(' ')[0]
-                            : "",
+                        text: dataRitiro != null ? "${dataRitiro!.toLocal()}".split(' ')[0] : "",
                       ),
                     ),
                     TextField(
@@ -274,14 +280,15 @@ class _CamionDisponibiliTPageState extends State<CamionDisponibiliTPage> {
                           dataRitiro: dataRitiro!,
                           localitaScarico: localitaScaricoController.text,
                         );
-
                         setState(() {
                           if (camion == null) {
-                            camionList.add(newCamion); // Aggiungi il nuovo camion alla lista
+                            camionList.add(newCamion);
+                            print("Camion aggiunto: $newCamion");
                           } else {
                             int index = camionList.indexOf(camion);
                             if (index != -1) {
-                              camionList[index] = newCamion; // Aggiorna il camion esistente
+                              camionList[index] = newCamion;
+                              print("Camion aggiornato: $newCamion");
                             }
                           }
                         });
@@ -312,6 +319,7 @@ class _CamionDisponibiliTPageState extends State<CamionDisponibiliTPage> {
       },
     );
   }
+
 
   Widget _buildDateRangePicker(
     String label,
