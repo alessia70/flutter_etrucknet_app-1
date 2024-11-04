@@ -8,6 +8,7 @@ import 'package:flutter_etrucknet_new/Screens/Trasportatore/Configurazione/tratt
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/dashboard_trasportatore.dart';
 import 'package:flutter_etrucknet_new/Services/estimates_provider.dart';
 import 'package:flutter_etrucknet_new/Services/message_provider.dart';
+import 'package:flutter_etrucknet_new/Screens/Trasportatore/VenditaTrasporti/proposte_trasporti.dart';
 import 'Widgets/sign_in_form.dart'; 
 import 'Screens/OperatoreRemoto/dashboard.dart';
 import 'package:provider/provider.dart';
@@ -46,6 +47,7 @@ class MyApp extends StatelessWidget {
         '/Configurazione/camion_disponibili_t': (context) => CamionDisponibiliTPage(),
         '/Configurazione/servizi_logistici': (context) => ServiziLogisticiPage(),
         '/Configurazione/autisti': (context) => AutistiPage(),
+        '/VenditaTrasporti/proposte_trasporti': (context) => TrasportiPropostiScreen(),
       },
     );
   }

@@ -18,7 +18,7 @@ class _SideMenuTState extends State<SideMenuT> {
     'Servizi Logistici': '/Configurazione/servizi_logistici',
     'Camion Disponibili': '/Configurazione/camion_disponibili_t',
     'Autisti': '/Configurazione/autisti',
-    'Trasporti a te Proposti': '/vendita_trasporti/proposti',
+    'Trasporti a te Proposti': '/VenditaTrasporti/proposte_trasporti',
     'Tutti i Trasporti': '/vendita_trasporti/tutti',
     'Trasporti Eseguiti': '/vendita_trasporti/eseguiti',
     'Richieste Sub-vezioni': '/acquisto_trasporti/richieste',
