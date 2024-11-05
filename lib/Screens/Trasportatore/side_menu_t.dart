@@ -19,11 +19,11 @@ class _SideMenuTState extends State<SideMenuT> {
     'Camion Disponibili': '/Configurazione/camion_disponibili_t',
     'Autisti': '/Configurazione/autisti',
     'Trasporti a te Proposti': '/VenditaTrasporti/proposte_trasporti',
-    'Tutti i Trasporti': '/vendita_trasporti/tutti',
-    'Trasporti Eseguiti': '/vendita_trasporti/eseguiti',
-    'Richieste Sub-vezioni': '/acquisto_trasporti/richieste',
-    'Conferme Sub-vezioni': '/acquisto_trasporti/conferme',
-    'Sub-vezioni Cancellate': '/acquisto_trasporti/cancellate',
+    'Tutti i Trasporti': '/VenditaTrasporti/totale_trasporti',
+    'Trasporti Eseguiti': '/VenditaTrasporti/trasporti_eseguiti',
+    'Richieste Sub-vezioni': '/AcquistoTrasporti/richieste_subvezioni_page',
+    'Conferme Sub-vezioni': '/AcquistoTrasporti/conferme_subvezioni_page',
+    'Sub-vezioni Cancellate': '/AcquistoTrasporti/subvezioni_cancellate_page',
     'Fatture Emesse': '/amministrazione/fatture_emesse',
     'Fatture Ricevute': '/amministrazione/fatture_ricevute',
   };
@@ -136,24 +136,23 @@ class _SideMenuTState extends State<SideMenuT> {
   }
 
   Widget _buildIndentedListTile(String title, IconData icon) {
-    bool isSelected = selectedPage == title; // Controlla se è selezionato
+    bool isSelected = selectedPage == title; 
     return Padding(
       padding: const EdgeInsets.only(left: 16.0),
       child: ListTile(
-        leading: Icon(icon, color: isSelected ? Colors.orange : Colors.grey), // Cambia colore
+        leading: Icon(icon, color: isSelected ? Colors.orange : Colors.grey),
         title: Text(title),
-        tileColor: isSelected ? Colors.grey[300] : null, // Cambia colore dello sfondo
+        tileColor: isSelected ? Colors.grey[300] : null, 
         onTap: () {
           setState(() {
-            selectedPage = title; // Aggiorna la pagina selezionata
+            selectedPage = title;
           });
-          print('Navigating to: $title'); // Stampa per debug
-          Navigator.pop(context); // Chiude il Drawer
+          print('Navigating to: $title');
+          Navigator.pop(context);
           
-          // Navigazione in base alla voce selezionata
-          final route = routes[title]; // Recupera la rotta dalla mappa
+          final route = routes[title];
           if (route != null) {
-            Navigator.pushNamed(context, route); // Naviga alla rotta
+            Navigator.pushNamed(context, route);
           } else {
             print('Route not found for $title');
           }

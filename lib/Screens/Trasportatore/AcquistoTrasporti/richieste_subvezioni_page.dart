@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/nuova_richieste_subvezioni_page.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/VenditaTrasporti/grid_trasporti_eseguiti.dart';
 
-class CompletedTransportPage extends StatelessWidget {
+class RichiesteSubvezioniPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    List<Map<String, String>> completedTransports = [
+    List<Map<String, String>> richiesteSubvezioni = [
       {
         'id': '1',
         'localitaRitiro': 'Milano',
@@ -25,7 +26,7 @@ class CompletedTransportPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Trasporti Eseguiti'),
+        title: Text('Richieste Sub-vezioni'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
       ),
@@ -35,8 +36,14 @@ class CompletedTransportPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildSearchBox(context),
+            SizedBox(height: 8),
+            _buildActionButtons(context),
             SizedBox(height: 16),
-            Expanded(child: TransportiEseguitiGrid(completedTransports: completedTransports)),
+            Expanded(
+              child: TransportiEseguitiGrid(
+                completedTransports: richiesteSubvezioni,
+              ),
+            ),
           ],
         ),
       ),
@@ -78,11 +85,52 @@ class CompletedTransportPage extends StatelessWidget {
     );
   }
 
+  Widget _buildActionButtons(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        ElevatedButton(
+          onPressed: () {
+            _richiediOfferte(context);
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.orange,
+            foregroundColor: Colors.white,
+          ),
+          child: Text("Richiedi Offerte"),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            _vaiARichiesteCancellate(context);
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.orange,
+            foregroundColor: Colors.white,
+          ),
+          child: Text("Richieste Cancellate"),
+        ),
+      ],
+    );
+  }
+
   void _mostraFiltroDate(BuildContext context) {
     showDateRangePicker(
       context: context,
       firstDate: DateTime(2020),
       lastDate: DateTime(2025),
     );
+  }
+
+  void _richiediOfferte(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => NuovaRichiestaSubvezioneScreen(),
+      ),
+    );
+  }
+
+  void _vaiARichiesteCancellate(BuildContext context) {
+    // Logica per navigare alla pagina delle richieste cancellate
   }
 }

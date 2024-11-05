@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class TransportDetailPage extends StatelessWidget {
+class TransportoEseguitioDetailPage extends StatelessWidget {
   final String id;
   final String tipoTrasporto;
   final String distanza;
@@ -13,7 +13,7 @@ class TransportDetailPage extends StatelessWidget {
   final String ulterioriSpecifiche;
   final List<Map<String, String>> dettagliMerce;
 
-  TransportDetailPage({
+  TransportoEseguitioDetailPage({
     required this.id,
     required this.tipoTrasporto,
     required this.distanza,

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Provider/user_provider.dart';
+import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/richieste_subvezioni_page.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/Configurazione/autisti.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/Configurazione/camion_disponibili_t.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/Configurazione/flotta.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/Configurazione/servizi_logistici.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/Configurazione/tratte.dart';
+import 'package:flutter_etrucknet_new/Screens/Trasportatore/VenditaTrasporti/totale_trasporti.dart';
+import 'package:flutter_etrucknet_new/Screens/Trasportatore/VenditaTrasporti/trasporti_eseguiti.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/dashboard_trasportatore.dart';
 import 'package:flutter_etrucknet_new/Services/estimates_provider.dart';
 import 'package:flutter_etrucknet_new/Services/message_provider.dart';
@@ -48,6 +51,9 @@ class MyApp extends StatelessWidget {
         '/Configurazione/servizi_logistici': (context) => ServiziLogisticiPage(),
         '/Configurazione/autisti': (context) => AutistiPage(),
         '/VenditaTrasporti/proposte_trasporti': (context) => TrasportiPropostiScreen(),
+        '/VenditaTrasporti/totale_trasporti': (context) => TotaleTrasportiScreen(),
+        '/VenditaTrasporti/trasporti_eseguiti': (context) => CompletedTransportPage(),
+        '/AcquistoTrasporti/richieste_subvezioni_page': (context) => RichiesteSubvezioniPage(),
       },
     );
   }
