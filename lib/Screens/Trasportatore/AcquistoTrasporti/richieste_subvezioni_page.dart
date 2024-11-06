@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/grid_richieste_subvezioni.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/nuova_richieste_subvezioni_page.dart';
-import 'package:flutter_etrucknet_new/Screens/Trasportatore/VenditaTrasporti/grid_trasporti_eseguiti.dart';
+import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/subvezioni_cancellate_page.dart';
 
 class RichiesteSubvezioniPage extends StatelessWidget {
   @override
@@ -40,7 +41,7 @@ class RichiesteSubvezioniPage extends StatelessWidget {
             _buildActionButtons(context),
             SizedBox(height: 16),
             Expanded(
-              child: TransportiEseguitiGrid(
+              child: GridRichiesteSubvezioni(
                 completedTransports: richiesteSubvezioni,
               ),
             ),
@@ -131,6 +132,11 @@ class RichiesteSubvezioniPage extends StatelessWidget {
   }
 
   void _vaiARichiesteCancellate(BuildContext context) {
-    // Logica per navigare alla pagina delle richieste cancellate
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SubvezioniCancellatePage(),
+      ),
+    );
   }
 }
