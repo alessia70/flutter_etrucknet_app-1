@@ -3,6 +3,8 @@ import 'package:flutter_etrucknet_new/Provider/user_provider.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/conferme_subvezioni_page.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/richieste_subvezioni_page.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/subvezioni_cancellate_page.dart';
+import 'package:flutter_etrucknet_new/Screens/Trasportatore/Amministrazione/fatture_emesse_page.dart';
+import 'package:flutter_etrucknet_new/Screens/Trasportatore/Amministrazione/fatture_ricevute_page.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/Configurazione/autisti.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/Configurazione/camion_disponibili_t.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/Configurazione/flotta.dart';
@@ -58,6 +60,8 @@ class MyApp extends StatelessWidget {
         '/AcquistoTrasporti/richieste_subvezioni_page': (context) => RichiesteSubvezioniPage(),
         '/AcquistoTrasporti/conferme_subvezioni_page': (context) => ConfermeSubvezioniPage(),
         '/AcquistoTrasporti/subvezioni_cancellate_page': (context) => SubvezioniCancellatePage(),
+        '/Amministrazione/fatture_emesse_page': (context) => FattureEmessePage(),
+        '/Amministrazione/fatture_ricevute_page': (context) => FattureRicevutePage(),
       },
     );
   }

@@ -24,8 +24,8 @@ class _SideMenuTState extends State<SideMenuT> {
     'Richieste Sub-vezioni': '/AcquistoTrasporti/richieste_subvezioni_page',
     'Conferme Sub-vezioni': '/AcquistoTrasporti/conferme_subvezioni_page',
     'Sub-vezioni Cancellate': '/AcquistoTrasporti/subvezioni_cancellate_page',
-    'Fatture Emesse': '/amministrazione/fatture_emesse',
-    'Fatture Ricevute': '/amministrazione/fatture_ricevute',
+    'Fatture Emesse': '/Amministrazione/fatture_emesse_page',
+    'Fatture Ricevute': '/Amministrazione/fatture_ricevute_page',
   };
 
   @override
