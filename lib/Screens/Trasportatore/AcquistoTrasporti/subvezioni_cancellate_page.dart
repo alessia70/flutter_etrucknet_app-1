@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/grid_subvezioni_cancellate.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/nuova_richieste_subvezioni_page.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/richieste_subvezioni_page.dart';
+import 'package:flutter_etrucknet_new/Screens/Trasportatore/side_menu_t.dart';
 
 class SubvezioniCancellatePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+     final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
     List<Map<String, String>> subvezioniCancellate = [
       {
         'id': '1',
@@ -26,10 +28,17 @@ class SubvezioniCancellatePage extends StatelessWidget {
     ];
 
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text('Sub-vezioni Cancellate'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
+        leading: IconButton(
+          onPressed: () {
+            _scaffoldKey.currentState?.openDrawer();
+          }, 
+          icon: Icon(Icons.menu)
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -48,6 +57,7 @@ class SubvezioniCancellatePage extends StatelessWidget {
           ],
         ),
       ),
+      drawer: SideMenuT(),
     );
   }
 
@@ -97,6 +107,9 @@ class SubvezioniCancellatePage extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.orange,
             foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
           ),
           child: Text("Richiedi Offerte"),
         ),
@@ -107,6 +120,9 @@ class SubvezioniCancellatePage extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.orange,
             foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
           ),
           child: Text("Richieste in corso"),
         ),

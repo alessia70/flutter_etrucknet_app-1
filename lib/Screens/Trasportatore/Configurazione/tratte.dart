@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/Trasportatore/side_menu_t.dart';
 
 class TrattePage extends StatefulWidget {
   @override
@@ -6,6 +7,7 @@ class TrattePage extends StatefulWidget {
 }
 
 class _TrattePageState extends State<TrattePage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   List<Map<String, String>> tratte = [];
   List<Map<String, String>> filteredTratte = [];
 
@@ -29,10 +31,17 @@ class _TrattePageState extends State<TrattePage> {
 
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text('Tratte'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
+        leading: IconButton(
+          icon: Icon(Icons.menu),
+          onPressed: () {
+            _scaffoldKey.currentState?.openDrawer();
+          },
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -44,6 +53,7 @@ class _TrattePageState extends State<TrattePage> {
           ],
         ),
       ),
+      drawer: SideMenuT(),
     );
   }
 

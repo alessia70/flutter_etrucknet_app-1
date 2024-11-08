@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/Trasportatore/side_menu_t.dart';
 
 class FlottaScreen extends StatefulWidget {
   @override
@@ -6,6 +7,7 @@ class FlottaScreen extends StatefulWidget {
 }
 
 class _FlottaScreenState extends State<FlottaScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   String selectedTipoMezzo = 'Tutti'; 
   String selectedAllestimento = 'Tutti';
 
@@ -46,11 +48,19 @@ class _FlottaScreenState extends State<FlottaScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text('Flotta'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
+        leading: IconButton(
+          icon: Icon(Icons.menu),
+          onPressed: () {
+            _scaffoldKey.currentState?.openDrawer();
+          },
+        ),
       ),
+      drawer: SideMenuT(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -69,17 +79,17 @@ class _FlottaScreenState extends State<FlottaScreen> {
                 ),
                 SizedBox(width: 6),
                  IconButton(
-                  icon: Icon(Icons.add, color: Colors.orange),
+                  icon: Icon(Icons.add_box_outlined, color: Colors.orange),
                   onPressed: () {
                     _mostraPopupAggiungi();
                   },
-                  tooltip: 'Aggiungi Automezzo', // Tooltip per la accessibilità
+                  tooltip: 'Aggiungi Automezzo',
                 ),
                 SizedBox(width: 6),
                 IconButton(
                   icon: Icon(Icons.filter_list, color: Colors.grey),
                   onPressed: _mostraMenuFiltri,
-                  tooltip: 'Filtra', // Tooltip per la accessibilità
+                  tooltip: 'Filtra',
                 ),
               ],
             ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/Trasportatore/side_menu_t.dart';
 
 class FattureEmessePage extends StatefulWidget {
   @override
@@ -6,24 +7,31 @@ class FattureEmessePage extends StatefulWidget {
 }
 
 class _FattureEmessePageState extends State<FattureEmessePage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   String dropdownValue = 'Tutte';
   final List<String> statoEmesseOptions = ['Tutte', 'Scadute', 'Non Scadute', 'Acconto', 'Saldate'];
 
-  // Esempio di dati per le fatture emesse
   final List<Map<String, String>> fattureEmesse = [
     {'id': '1', 'cliente': 'Cliente A', 'data': '01/11/2024', 'importo': '1000 €', 'stato': 'Saldata'},
     {'id': '2', 'cliente': 'Cliente B', 'data': '02/11/2024', 'importo': '1500 €', 'stato': 'Scaduta'},
-    // Aggiungi altre fatture emesse qui
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text('Fatture Emesse'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
+        leading: IconButton(
+          icon: Icon(Icons.menu),
+          onPressed: () {
+            _scaffoldKey.currentState?.openDrawer();
+          },
+        ),
       ),
+      drawer: SideMenuT(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -31,7 +39,6 @@ class _FattureEmessePageState extends State<FattureEmessePage> {
           children: [
             _buildSearchAndFilterBox(context),
             SizedBox(height: 16),
-            // Card con le fatture
             Expanded(
               child: Card(
                 elevation: 4,
@@ -48,7 +55,6 @@ class _FattureEmessePageState extends State<FattureEmessePage> {
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                       ),
                       SizedBox(height: 16),
-                      // DataTable per le fatture
                       SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: DataTable(
@@ -104,12 +110,6 @@ class _FattureEmessePageState extends State<FattureEmessePage> {
                 ),
                 style: TextStyle(fontSize: 14),
               ),
-            ),
-            SizedBox(width: 8),
-            IconButton(
-              icon: Icon(Icons.calendar_today_outlined, color: Colors.orange),
-              onPressed: () => _mostraFiltroDate(context),
-              tooltip: 'Filtra Date',
             ),
           ],
         ),

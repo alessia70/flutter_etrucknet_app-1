@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/VenditaTrasporti/grid_proposte_trasporti.dart';
+import 'package:flutter_etrucknet_new/Screens/Trasportatore/side_menu_t.dart';
 
 class TrasportiPropostiScreen extends StatefulWidget {
   @override
@@ -7,6 +8,7 @@ class TrasportiPropostiScreen extends StatefulWidget {
 }
 
 class _TrasportiPropostiScreenState extends State<TrasportiPropostiScreen> {
+    final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   String selectedStatoTrasporto = 'Tutti';
   String selectedAllestimento = 'Tutti';
   TextEditingController luogoCaricoController = TextEditingController();
@@ -64,11 +66,19 @@ class _TrasportiPropostiScreenState extends State<TrasportiPropostiScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text('Trasporti Proposti'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
+        leading: IconButton(
+          icon: Icon(Icons.menu),
+          onPressed: () {
+            _scaffoldKey.currentState?.openDrawer();
+          },
+        ),
       ),
+      drawer: SideMenuT(),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(

@@ -7,6 +7,7 @@ class TotaleTrasportiScreen extends StatefulWidget {
 }
 
 class _TotaleTrasportiScreenState extends State<TotaleTrasportiScreen> {
+    final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   String selectedStatoTrasporto = 'Tutti';
   String selectedAllestimento = 'Tutti';
   TextEditingController luogoCaricoController = TextEditingController();
@@ -64,10 +65,17 @@ class _TotaleTrasportiScreenState extends State<TotaleTrasportiScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text('Trasporti Proposti'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
+        leading: IconButton(
+          icon: Icon(Icons.menu),
+          onPressed: () {
+            _scaffoldKey.currentState?.openDrawer();
+          },
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),

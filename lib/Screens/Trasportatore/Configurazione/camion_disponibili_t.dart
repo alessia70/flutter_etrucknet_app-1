@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/add_camion_disponibile_t.dart';
 import 'package:flutter_etrucknet_new/Models/camion_model.dart';
+import 'package:flutter_etrucknet_new/Screens/Trasportatore/side_menu_t.dart';
 
 class CamionDisponibiliTPage extends StatefulWidget {
   @override
@@ -8,6 +9,7 @@ class CamionDisponibiliTPage extends StatefulWidget {
 }
 
 class _CamionDisponibiliTPageState extends State<CamionDisponibiliTPage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final List<Camion> camionList = [
     Camion(
       tipoMezzo: 'Camion A',
@@ -25,57 +27,63 @@ class _CamionDisponibiliTPageState extends State<CamionDisponibiliTPage> {
     ),
   ];
 
-  List<Camion> filteredCamionList = []; // Lista filtrata per i camion
-  final TextEditingController _searchController = TextEditingController(); // Controller per la ricerca
-  DateTime? selectedDate; // Data selezionata
+  List<Camion> filteredCamionList = [];
+  final TextEditingController _searchController = TextEditingController();
+  DateTime? selectedDate;
 
   @override
   void initState() {
     super.initState();
-    filteredCamionList = camionList; // Inizializza con tutti i camion
+    filteredCamionList = camionList;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: const Text('Camion Disponibili'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
+        leading: IconButton(
+          icon: Icon(Icons.menu),
+          onPressed: () {
+            _scaffoldKey.currentState?.openDrawer();
+          },
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            _buildSearchBar(), // Barra di ricerca
+            _buildSearchBar(),
             const SizedBox(height: 16),
-            _buildCamionTable(), // Tabella dei camion
+            _buildCamionTable(),
           ],
         ),
       ),
+      drawer: SideMenuT(),
     );
   }
 
   Widget _buildSearchBar() {
-    return Column( // Usa una colonna per le due righe
+    return Column(
       children: [
-        // Riga per la ricerca dei camion
         TextField(
           controller: _searchController,
           decoration: InputDecoration(
             labelText: 'Cerca camion',
             border: OutlineInputBorder(),
           ),
-          onChanged: (value) => _filterCamion(value), // Filtra mentre si digita
+          onChanged: (value) => _filterCamion(value),
         ),
-        const SizedBox(height: 8), // Spazio tra le righe
-        // Riga per la selezione della data
+        const SizedBox(height: 8),
         Row(
           children: [
             Expanded(
-              flex: 2, // Permette più spazio per la selezione della data
+              flex: 2,
               child: GestureDetector(
-                onTap: () => _selectDate(context), // Apre il selettore di date al tocco
+                onTap: () => _selectDate(context),
                 child: Container(
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey),
@@ -93,14 +101,14 @@ class _CamionDisponibiliTPageState extends State<CamionDisponibiliTPage> {
                           color: selectedDate != null ? Colors.black : Colors.grey,
                         ),
                       ),
-                      if (selectedDate != null) // Mostra il pulsante solo se una data è selezionata
+                      if (selectedDate != null)
                         IconButton(
                           icon: const Icon(Icons.clear, color: Colors.red),
                           onPressed: () {
                             setState(() {
-                              selectedDate = null; // Resetta la data selezionata
-                              _searchController.clear(); // Svuota la barra di ricerca
-                              filteredCamionList = camionList; // Mostra di nuovo tutti i camion
+                              selectedDate = null;
+                              _searchController.clear();
+                              filteredCamionList = camionList;
                             });
                           },
                         ),
@@ -110,10 +118,9 @@ class _CamionDisponibiliTPageState extends State<CamionDisponibiliTPage> {
               ),
             ),
             const SizedBox(width: 8),
-            // Pulsante per aggiungere un camion
             IconButton(
               icon: const Icon(Icons.add, color: Colors.orange),
-              onPressed: () => _openAddCamionDialog(), // Apre il dialog per aggiungere un camion
+              onPressed: () => _openAddCamionDialog(),
             ),
           ],
         ),
@@ -131,9 +138,9 @@ class _CamionDisponibiliTPageState extends State<CamionDisponibiliTPage> {
 
     if (pickedDate != null && pickedDate != selectedDate) {
       setState(() {
-        selectedDate = pickedDate; // Aggiorna la data selezionata
-        _searchController.clear(); // Svuota la barra di ricerca
-        _filterCamion(selectedDate!.toString()); // Filtra i camion in base alla data selezionata
+        selectedDate = pickedDate;
+        _searchController.clear();
+        _filterCamion(selectedDate!.toString());
       });
     }
   }
@@ -141,12 +148,11 @@ class _CamionDisponibiliTPageState extends State<CamionDisponibiliTPage> {
   void _filterCamion(String query) {
     setState(() {
       filteredCamionList = camionList.where((camion) {
-        // Filtra per data se selezionata, altrimenti filtra per testo
         final matchesDate = selectedDate == null || camion.dataRitiro == selectedDate;
         final matchesQuery = camion.localitaCarico.toLowerCase().contains(query.toLowerCase()) ||
                               camion.localitaScarico.toLowerCase().contains(query.toLowerCase()) ||
                               camion.tipoMezzo.toLowerCase().contains(query.toLowerCase());
-        return matchesDate && matchesQuery; // Restituisci camion che corrispondono a entrambe le condizioni
+        return matchesDate && matchesQuery;
       }).toList();
     });
   }

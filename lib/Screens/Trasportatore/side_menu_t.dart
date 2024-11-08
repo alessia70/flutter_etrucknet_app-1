@@ -13,6 +13,7 @@ class _SideMenuTState extends State<SideMenuT> {
   String selectedPage = '';
 
   final Map<String, String> routes = {
+    'Bacheca': '/dashboard_trasportatore',
     'Flotta': '/Configurazione/flotta',
     'Tratte': '/Configurazione/tratte',
     'Servizi Logistici': '/Configurazione/servizi_logistici',
@@ -52,6 +53,18 @@ class _SideMenuTState extends State<SideMenuT> {
                 ),
               ),
             ),
+          ),
+          ListTile(
+            leading: Icon(Icons.dashboard, color: Colors.orange),
+            title: Text('Bacheca'),
+            tileColor: selectedPage == 'Bacheca' ? Colors.grey[300] : null,
+            onTap: () {
+              setState(() {
+                selectedPage = 'Bacheca';
+              });
+              Navigator.pop(context);
+              Navigator.pushNamed(context, routes['Bacheca']!);
+            },
           ),
           _buildExpandableTile(
             title: 'Configurazione',

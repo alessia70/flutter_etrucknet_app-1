@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/Trasportatore/side_menu_t.dart';
 
 class AutistiPage extends StatefulWidget {
   @override
@@ -6,6 +7,7 @@ class AutistiPage extends StatefulWidget {
 }
 
 class _AutistiPageState extends State<AutistiPage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final List<Map<String, String>> autistiList = [
     {'cognome': 'Rossi', 'nome': 'Mario', 'telefono': '1234567890', 'email': 'mario.rossi@example.com'},
     {'cognome': 'Bianchi', 'nome': 'Luigi', 'telefono': '0987654321', 'email': 'luigi.bianchi@example.com'},
@@ -14,10 +16,17 @@ class _AutistiPageState extends State<AutistiPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text('Autisti'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
+        leading: IconButton(
+          icon: Icon(Icons.menu),
+          onPressed: () {
+            _scaffoldKey.currentState?.openDrawer();
+          },
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -29,6 +38,7 @@ class _AutistiPageState extends State<AutistiPage> {
           ],
         ),
       ),
+      drawer: SideMenuT(),
     );
   }
 

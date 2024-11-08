@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/nuova_richieste_subvezioni_page.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/richieste_subvezioni_page.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/VenditaTrasporti/grid_trasporti_eseguiti.dart';
+import 'package:flutter_etrucknet_new/Screens/Trasportatore/side_menu_t.dart';
 
 class ConfermeSubvezioniPage extends StatelessWidget {
   @override
@@ -30,6 +31,16 @@ class ConfermeSubvezioniPage extends StatelessWidget {
         title: Text('Conferme Sub-vezioni'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              icon: Icon(Icons.menu),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+            );
+          },
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -48,6 +59,7 @@ class ConfermeSubvezioniPage extends StatelessWidget {
           ],
         ),
       ),
+      drawer: SideMenuT(),
     );
   }
 
@@ -97,6 +109,9 @@ class ConfermeSubvezioniPage extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.orange,
             foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
           ),
           child: Text("Richiedi Offerte"),
         ),
@@ -107,6 +122,9 @@ class ConfermeSubvezioniPage extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.orange,
             foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
           ),
           child: Text("Richieste in corso"),
         ),

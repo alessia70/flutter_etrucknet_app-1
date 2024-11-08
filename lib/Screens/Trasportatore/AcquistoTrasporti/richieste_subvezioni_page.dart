@@ -2,8 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/grid_richieste_subvezioni.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/nuova_richieste_subvezioni_page.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/subvezioni_cancellate_page.dart';
+import 'package:flutter_etrucknet_new/Screens/Trasportatore/side_menu_t.dart'; // Assicurati di importare il SideMenu
 
-class RichiesteSubvezioniPage extends StatelessWidget {
+class RichiesteSubvezioniPage extends StatefulWidget {
+  @override
+  _RichiesteSubvezioniPageState createState() => _RichiesteSubvezioniPageState();
+}
+
+class _RichiesteSubvezioniPageState extends State<RichiesteSubvezioniPage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     List<Map<String, String>> richiesteSubvezioni = [
@@ -26,10 +34,17 @@ class RichiesteSubvezioniPage extends StatelessWidget {
     ];
 
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text('Richieste Sub-vezioni'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
+        leading: IconButton(
+          icon: Icon(Icons.menu),
+          onPressed: () {
+            _scaffoldKey.currentState?.openDrawer();
+          },
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -48,6 +63,7 @@ class RichiesteSubvezioniPage extends StatelessWidget {
           ],
         ),
       ),
+      drawer: SideMenuT(),
     );
   }
 
@@ -97,6 +113,9 @@ class RichiesteSubvezioniPage extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.orange,
             foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
           ),
           child: Text("Richiedi Offerte"),
         ),
@@ -107,6 +126,9 @@ class RichiesteSubvezioniPage extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.orange,
             foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
           ),
           child: Text("Richieste Cancellate"),
         ),

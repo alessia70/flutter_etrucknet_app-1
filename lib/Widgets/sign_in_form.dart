@@ -69,76 +69,92 @@ class _SignInFormState extends State<SignInForm> {
   }
 }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Container(
-        padding: EdgeInsets.all(20),
-        margin: EdgeInsets.symmetric(horizontal: 20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Colors.grey.shade300, width: 1),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 10,
-              offset: Offset(0, 5),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Accedi',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.orange,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(
+            'lib/images/logoEtrucknet.png',
+            height: 80,
+          ),
+          SizedBox(height: 20),
+        Container(
+          padding: EdgeInsets.all(20),
+          margin: EdgeInsets.symmetric(horizontal: 20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: Colors.grey.shade300, width: 1),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 10,
+                offset: Offset(0, 5),
               ),
-            ),
-            SizedBox(height: 20),
-            Text('Email', style: TextStyle(fontSize: 16)),
-            SizedBox(height: 8),
-            TextFormField(
-              controller: _emailController,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: 'Inserisci la tua email',
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Bentornato!',
+                style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromARGB(255, 250, 113, 1),
+                ),
               ),
-            ),
-            SizedBox(height: 20),
-            Text('Password', style: TextStyle(fontSize: 16)),
-            SizedBox(height: 8),
-            TextFormField(
-              controller: _passwordController,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: 'Inserisci la tua password',
+              SizedBox(height: 20),
+              Text('Email', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              SizedBox(height: 3),
+              TextFormField(
+                controller: _emailController,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Inserisci l\' email',
+                ),
               ),
-              obscureText: true,
-            ),
-            SizedBox(height: 30),
+              SizedBox(height: 20),
+              Text('Password', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              SizedBox(height: 3),
+              TextFormField(
+                controller: _passwordController,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Inserisci la password',
+                ),
+                obscureText: true,
+              ),
+              SizedBox(height: 40),
             SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _signIn,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
-                  padding: EdgeInsets.symmetric(vertical: 15),
+                width: double.infinity,
+                child: OutlinedButton(
+                  onPressed: _signIn,
+                  style: OutlinedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    backgroundColor: const Color.fromARGB(255, 250, 113, 1),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    side: BorderSide(color: Color.fromARGB(255, 250, 113, 1), width: 1),
+                  ),
+                  child: Text(
+                    'Accedi',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                     ),
+                    ),
+                  ),
                 ),
-                child: Text(
-                  'Accedi',
-                  style: TextStyle(color: Colors.white, fontSize: 18),
-                ),
-              ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

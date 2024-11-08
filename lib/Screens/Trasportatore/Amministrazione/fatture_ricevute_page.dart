@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/Trasportatore/side_menu_t.dart';
 
 class FattureRicevutePage extends StatefulWidget {
   @override
@@ -6,24 +7,31 @@ class FattureRicevutePage extends StatefulWidget {
 }
 
 class _FattureRicevutePageState extends State<FattureRicevutePage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   String dropdownValue = 'Tutte';
   final List<String> statoRicevuteOptions = ['Tutte', 'Scadute', 'Non Scadute', 'Acconto', 'Saldate'];
 
-  // Esempio di dati per le fatture ricevute
   final List<Map<String, String>> fattureRicevute = [
     {'id': '1', 'fornitore': 'Fornitore A', 'data': '01/11/2024', 'importo': '1200 €', 'stato': 'Saldata'},
     {'id': '2', 'fornitore': 'Fornitore B', 'data': '03/11/2024', 'importo': '800 €', 'stato': 'Scaduta'},
-    // Aggiungi altre fatture ricevute qui
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text('Fatture Ricevute'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
+        leading: IconButton(
+          icon: Icon(Icons.menu),
+          onPressed: () {
+            _scaffoldKey.currentState?.openDrawer();
+          },
+        ),
       ),
+      drawer: SideMenuT(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -31,7 +39,6 @@ class _FattureRicevutePageState extends State<FattureRicevutePage> {
           children: [
             _buildSearchAndFilterBox(context),
             SizedBox(height: 16),
-            // Card con le fatture ricevute
             Expanded(
               child: Card(
                 elevation: 4,

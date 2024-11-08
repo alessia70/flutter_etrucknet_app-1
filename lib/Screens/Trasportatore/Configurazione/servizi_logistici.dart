@@ -1,13 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/Trasportatore/side_menu_t.dart';
 
-class ServiziLogisticiPage extends StatelessWidget {
+class ServiziLogisticiPage extends StatefulWidget {
+  @override
+  _ServiziLogisticiPageState createState() => _ServiziLogisticiPageState();
+}
+
+class _ServiziLogisticiPageState extends State<ServiziLogisticiPage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  String? selectedServizio;
+  TextEditingController localitaController = TextEditingController();
+
+  final List<String> serviziOptions = ['Noleggio', 'Sollevamenti', 'Operatore Doganale'];
+
+  List<Map<String, String>> servizi = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text('Servizi Logistici'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
+        leading: IconButton(
+          icon: Icon(Icons.menu),
+          onPressed: () {
+            _scaffoldKey.currentState?.openDrawer();
+          },
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -17,10 +38,10 @@ class ServiziLogisticiPage extends StatelessWidget {
             SizedBox(height: 16),
             _buildServiziTable(),
             SizedBox(height: 16),
-            _buildDettagliServiziTable(),
           ],
         ),
       ),
+      drawer: SideMenuT(),
     );
   }
 
@@ -39,7 +60,7 @@ class ServiziLogisticiPage extends StatelessWidget {
         IconButton(
           icon: Icon(Icons.add, color: Colors.orange),
           onPressed: () {
-            // Logica per aggiungere un nuovo servizio
+            _showAddServiceDialog();
           },
         ),
       ],
@@ -63,16 +84,32 @@ class ServiziLogisticiPage extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               child: DataTable(
                 columns: [
-                  DataColumn(label: Text('Nome Servizio')),
-                  DataColumn(label: Text('Descrizione')),
-                  DataColumn(label: Text('Costo')),
-                  DataColumn(label: Text('Azioni')),
+                  DataColumn(label: Text('Servizio')),
+                  DataColumn(label: Text('Località')),
+                  DataColumn(label: Text('Azione')),
                 ],
-                rows: [
-                  _buildDataRow('Servizio A', 'Descrizione A', '€100'),
-                  _buildDataRow('Servizio B', 'Descrizione B', '€200'),
-                  // Aggiungi altre righe come necessario
-                ],
+                rows: servizi
+                    .map((servizio) => DataRow(cells: [
+                          DataCell(Text(servizio['servizio']!)),
+                          DataCell(Text(servizio['localita']!)),
+                          DataCell(Row(
+                            children: [
+                              IconButton(
+                                icon: Icon(Icons.edit, color: Colors.orange),
+                                onPressed: () {
+                                
+                                },
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.delete, color: Colors.grey),
+                                onPressed: () {
+                                
+                                },
+                              ),
+                            ],
+                          )),
+                        ]))
+                    .toList(),
               ),
             ),
           ],
@@ -81,88 +118,72 @@ class ServiziLogisticiPage extends StatelessWidget {
     );
   }
 
-  Widget _buildDettagliServiziTable() {
-    return Card(
-      elevation: 4,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Dettagli dei Servizi Logistici',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 16),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: DataTable(
-                columns: [
-                  DataColumn(label: Text('ID Servizio')),
-                  DataColumn(label: Text('Tipo Servizio')),
-                  DataColumn(label: Text('Status')),
-                  DataColumn(label: Text('Dettagli')),
-                  DataColumn(label: Text('Azioni')),
-                ],
-                rows: [
-                  _buildDettagliDataRow('1', 'Tipo A', 'Attivo', 'Dettagli A'),
-                  _buildDettagliDataRow('2', 'Tipo B', 'Inattivo', 'Dettagli B'),
-                  // Aggiungi altre righe come necessario
-                ],
+  void _showAddServiceDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Aggiungi Servizio'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Seleziona Tipo di Servizio', style: TextStyle(fontWeight: FontWeight.bold)),
+              DropdownButton<String>(
+                value: selectedServizio,
+                hint: Text('Seleziona servizio'),
+                onChanged: (value) {
+                  setState(() {
+                    selectedServizio = value;
+                  });
+                },
+                items: serviziOptions.map((servizio) {
+                  return DropdownMenuItem<String>(
+                    value: servizio,
+                    child: Text(servizio),
+                  );
+                }).toList(),
               ),
+              SizedBox(height: 16),
+
+              Text('Inserisci Località', style: TextStyle(fontWeight: FontWeight.bold)),
+              TextField(
+                controller: localitaController,
+                decoration: InputDecoration(
+                  hintText: 'Inserisci località',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('ANNULLA', style: TextStyle(color: Colors.grey)),
+            ),
+            TextButton(
+              onPressed: () {
+                if (selectedServizio != null && localitaController.text.isNotEmpty) {
+                  setState(() {
+                    servizi.add({
+                      'servizio': selectedServizio!,
+                      'localita': localitaController.text,
+                    });
+                  });
+                  Navigator.pop(context);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Seleziona il servizio e inserisci la località')),
+                  );
+                }
+              },
+              child: Text('SALVA', style: TextStyle(color: Colors.orange)),
             ),
           ],
-        ),
-      ),
+        );
+      },
     );
-  }
-
-  DataRow _buildDataRow(String nomeServizio, String descrizione, String costo) {
-    return DataRow(cells: [
-      DataCell(Text(nomeServizio)),
-      DataCell(Text(descrizione)),
-      DataCell(Text(costo)),
-      DataCell(Row(
-        children: [
-          IconButton(
-            icon: Icon(Icons.edit, color: Colors.orange),
-            onPressed: () {
-              // Logica per modificare il servizio
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.delete, color: Colors.grey),
-            onPressed: () {
-              // Logica per eliminare il servizio
-            },
-          ),
-        ],
-      )),
-    ]);
-  }
-
-  DataRow _buildDettagliDataRow(String idServizio, String tipoServizio, String status, String dettagli) {
-    return DataRow(cells: [
-      DataCell(Text(idServizio)),
-      DataCell(Text(tipoServizio)),
-      DataCell(Text(status)),
-      DataCell(Text(dettagli)),
-      DataCell(Row(
-        children: [
-          IconButton(
-            icon: Icon(Icons.edit, color: Colors.orange),
-            onPressed: () {
-              // Logica per modificare i dettagli del servizio
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.delete, color: Colors.grey),
-            onPressed: () {
-              // Logica per eliminare i dettagli del servizio
-            },
-          ),
-        ],
-      )),
-    ]);
   }
 }
