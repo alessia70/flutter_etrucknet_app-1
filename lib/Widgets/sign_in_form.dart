@@ -52,6 +52,8 @@ class _SignInFormState extends State<SignInForm> {
         Navigator.pushReplacementNamed(context, '/dashboard_trasportatore');
       } else if (tipoRuolo == 'Operatore Remoto' || tipoRuolo == 'Etrucknet') {
         Navigator.pushReplacementNamed(context, '/dashboard');
+      } else if (tipoRuolo == 'Committente') {
+        Navigator.pushReplacementNamed(context, '/dashboard_committente');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Tipo ruolo non riconosciuto: $tipoRuolo')),

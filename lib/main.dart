@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Provider/user_provider.dart';
+import 'package:flutter_etrucknet_new/Screens/Committente/dashboard_committente.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/conferme_subvezioni_page.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/richieste_subvezioni_page.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/subvezioni_cancellate_page.dart';
@@ -48,6 +49,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const SignInScreen(),
         '/dashboard_trasportatore': (context) => TrasportatoreDashboardScreen(),
+        '/dashboard_committente': (context) => CommittenteDashboardScreen(),
         '/dashboard': (context) => DashboardScreen(),
         '/Configurazione/flotta': (context) => FlottaScreen(),
         '/Configurazione/tratte': (context) => TrattePage(),
