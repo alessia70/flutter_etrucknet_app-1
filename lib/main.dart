@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Provider/user_provider.dart';
+import 'package:flutter_etrucknet_new/Screens/Committente/Amminiztrazione/fatture_ricevute_committente_page.dart';
+import 'package:flutter_etrucknet_new/Screens/Committente/Simulatore/mie_simulazioni_page.dart';
+import 'package:flutter_etrucknet_new/Screens/Committente/Simulatore/simula_costo_page.dart';
+import 'package:flutter_etrucknet_new/Screens/Committente/Trasporti/preventivi_assegnati_page.dart';
+import 'package:flutter_etrucknet_new/Screens/Committente/Trasporti/preventivi_cancellati_page.dart';
+import 'package:flutter_etrucknet_new/Screens/Committente/Trasporti/preventivi_richiesti_page.dart';
+import 'package:flutter_etrucknet_new/Screens/Committente/Trasporti/richiedi_preventivo_page.dart';
 import 'package:flutter_etrucknet_new/Screens/Committente/dashboard_committente.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/conferme_subvezioni_page.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/richieste_subvezioni_page.dart';
@@ -64,6 +71,13 @@ class MyApp extends StatelessWidget {
         '/AcquistoTrasporti/subvezioni_cancellate_page': (context) => SubvezioniCancellatePage(),
         '/Amministrazione/fatture_emesse_page': (context) => FattureEmessePage(),
         '/Amministrazione/fatture_ricevute_page': (context) => FattureRicevutePage(),
+        '/Simulatore/simula_costo_page': (context) => StimaCostoScreen(),
+        '/Simulatore/mie_simulazioni_page': (context) => MieSimulazioniPage(),
+        '/Trasporti/richiedi_preventivo_page': (context) => RichiediPreventivoPage(),
+        '/Trasporti/preventivi_richiesti_page': (context) => PreventiviRichiestiPage(),
+        '/Trasporti/preventivi_assegnati_page': (context) => PreventiviAssegnatiPage(),
+        '/Trasporti/preventivi_cancellati_page': (context) => PreventiviCancellatiPage(),
+        '/Amministrazione/fatture_ricevute_committente_page': (context) => FattureRicevuteCommittentePage(),
       },
     );
   }
