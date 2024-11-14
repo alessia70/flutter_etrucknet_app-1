@@ -93,10 +93,8 @@ class _DataGridStimeState extends State<DataGridStime> {
           icon: Icon(Icons.picture_as_pdf_rounded, color: Colors.orange),
           onPressed: () async {
             try {
-              // Genera il PDF utilizzando i dati specifici della stima
               Uint8List pdfData = await PDFGenerator.generatePDF(estimate);
 
-              // Passa i dati specifici per il visualizzatore PDF
               Navigator.push(
                 context,
                 MaterialPageRoute(

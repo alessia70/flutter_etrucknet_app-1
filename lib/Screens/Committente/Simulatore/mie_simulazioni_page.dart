@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Screens/Committente/Simulatore/confronta_simulazioni_page.dart';
 import 'package:flutter_etrucknet_new/Screens/Committente/Simulatore/nuova_simulazione_page.dart';
+import 'package:flutter_etrucknet_new/Screens/Committente/side_menu_committente.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/data_grid_stime.dart';
-import 'package:flutter_etrucknet_new/Widgets/side_menu.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_etrucknet_new/Services/estimates_provider.dart';
 
@@ -53,27 +53,16 @@ class _MieSimulazioniPageState extends State<MieSimulazioniPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Stime'),
+        title: Text('Mie Simulazioni'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
       ),
-      drawer: SideMenu(),
+      drawer: SideMenuCommittente(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Le mie simulazioni',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-            SizedBox(height: 20),
-
-            // Barra di ricerca
             TextField(
               controller: _searchController,
               decoration: InputDecoration(

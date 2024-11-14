@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/anagrafiche_screen.dart';
-import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/marketing_screen.dart';
-import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/messaggi_clienti_screen.dart';
-import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/procedure_screen.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/Registrati/anagrafiche_screen.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/Marketing/marketing_screen.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/Marketing/messaggi_clienti_screen.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/Marketing/procedure_screen.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/stime.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/ordini.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/camion_disponibili.dart';
-import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/nuovo_trasportatore_screen.dart';
-import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/nuovo_committente_screen.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/Registrati/nuovo_trasportatore_screen.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/Registrati/nuovo_committente_screen.dart';
 
 class SideMenu extends StatefulWidget {
   const SideMenu({super.key});

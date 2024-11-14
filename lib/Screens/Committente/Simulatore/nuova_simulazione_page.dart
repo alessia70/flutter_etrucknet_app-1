@@ -65,14 +65,12 @@ class _NuovaSimulazioneScreenState extends State<NuovaSimulazioneScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Title
               Text(
                 'Modifica Stima',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 20),
 
-              // Fields
               _buildTextField(_tipologiaTrasportoController, 'Tipologia Trasporto'),
               SizedBox(height: 16),
               _buildTextField(_locationController, 'Location'),
@@ -88,7 +86,6 @@ class _NuovaSimulazioneScreenState extends State<NuovaSimulazioneScreen> {
               _buildTextField(_altreInformazioniController, 'Altre Informazioni'),
 
               SizedBox(height: 20),
-              // Update button
               ElevatedButton(
                 onPressed: () {
                   updateEstimate(context, widget.estimate['id']);
@@ -107,7 +104,6 @@ class _NuovaSimulazioneScreenState extends State<NuovaSimulazioneScreen> {
     );
   }
 
-  // Utility function to build a TextField with decoration
   Widget _buildTextField(TextEditingController controller, String label) {
     return TextField(
       controller: controller,
@@ -121,7 +117,6 @@ class _NuovaSimulazioneScreenState extends State<NuovaSimulazioneScreen> {
     );
   }
 
-  // Function to handle the update of the estimate
   void updateEstimate(BuildContext context, int estimateId) {
     final provider = Provider.of<EstimatesProvider>(context, listen: false);
 

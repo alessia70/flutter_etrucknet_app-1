@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/Committente/side_menu_committente.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_etrucknet_new/Services/estimates_provider.dart';
 
@@ -10,6 +11,8 @@ class RichiediPreventivoPage extends StatefulWidget {
 }
 
 class _RichiediPreventivoPageState extends State<RichiediPreventivoPage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   String? _selectedTipologia;
   String? _ritiro;
   String? _consegna;
@@ -32,10 +35,17 @@ class _RichiediPreventivoPageState extends State<RichiediPreventivoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
-        title: Text('Nuova Stima'),
+        title: Text('Richiesta Preventivo'),
         backgroundColor: Colors.orange,
-        foregroundColor: Colors.white,),
+        foregroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.menu),
+          onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+        ),
+      ),
+      drawer: SideMenuCommittente(),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(

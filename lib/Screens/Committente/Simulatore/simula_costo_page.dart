@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/Committente/side_menu_committente.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_etrucknet_new/Services/estimates_provider.dart';
 
@@ -10,6 +11,8 @@ class StimaCostoScreen extends StatefulWidget {
 }
 
 class _StimaCostoScreenState extends State<StimaCostoScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   String? _selectedTipologia;
   String? _ritiro;
   String? _consegna;
@@ -32,10 +35,19 @@ class _StimaCostoScreenState extends State<StimaCostoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
-        title: Text('Nuova Stima'),
+        title: Text('Simula costo'),
         backgroundColor: Colors.orange,
-        foregroundColor: Colors.white,),
+        foregroundColor: Colors.white,
+        leading: IconButton(
+          icon: Icon(Icons.menu),
+          onPressed: () {
+            _scaffoldKey.currentState?.openDrawer();
+          },
+        ),
+      ),
+      drawer: SideMenuCommittente(),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -70,7 +82,7 @@ class _StimaCostoScreenState extends State<StimaCostoScreen> {
                 SizedBox(height: 20),
                 _buildDettagliMerce(),
                 SizedBox(height: 20),
-              _buildAltreInformazioni(),
+                _buildAltreInformazioni(),
                 SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _salvaStima,
@@ -311,7 +323,7 @@ class _StimaCostoScreenState extends State<StimaCostoScreen> {
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: Colors.orange, // Cambiato il colore attivo a arancione
+            activeColor: Colors.orange,
           ),
         ],
       ),

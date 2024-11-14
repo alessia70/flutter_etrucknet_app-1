@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/nuovo_committente_screen.dart';
-import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/nuovo_trasportatore_screen.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/Registrati/nuovo_committente_screen.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/Registrati/nuovo_trasportatore_screen.dart';
 import 'anagrafiche_data_grid.dart';
 
 class AnagraficheGridScreen extends StatefulWidget {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/Committente/side_menu_committente.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/grid_subvezioni_cancellate.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/nuova_richieste_subvezioni_page.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/richieste_subvezioni_page.dart';
-import 'package:flutter_etrucknet_new/Screens/Trasportatore/side_menu_t.dart';
 
 class PreventiviCancellatiPage extends StatelessWidget {
   @override
@@ -30,7 +30,7 @@ class PreventiviCancellatiPage extends StatelessWidget {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Text('Sub-vezioni Cancellate'),
+        title: Text('Preventivi Cancellati'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
         leading: IconButton(
@@ -57,7 +57,7 @@ class PreventiviCancellatiPage extends StatelessWidget {
           ],
         ),
       ),
-      drawer: SideMenuT(),
+      drawer: SideMenuCommittente(),
     );
   }
 

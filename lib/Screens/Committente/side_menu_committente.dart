@@ -19,7 +19,7 @@ class _SideMenuCommittenteState extends State<SideMenuCommittente> {
     'Preventivi richiesti': '/Trasporti/preventivi_richiesti_page',
     'Preventivi assegnati': '/Trasporti/preventivi_assegnati_page',
     'Preventivi cancellati': '/Trasporti/preventivi_cancellati_page',
-    'fatture ricevute': '/Amministrazione/fatture_ricevute_committente_page',
+    'Fatture ricevute': '/Amministrazione/fatture_ricevute_committente_page',
   };
 
   @override
@@ -93,7 +93,7 @@ class _SideMenuCommittenteState extends State<SideMenuCommittente> {
             title: 'Amministrazione',
             icon: Icons.admin_panel_settings,
             children: [
-              _buildIndentedListTile('Fatture Ricevute', Icons.download),
+              _buildIndentedListTile('Fatture ricevute', Icons.download),
             ],
             isExpanded: _isAdministrationExpanded,
             onExpansionChanged: (bool expanded) {
@@ -119,6 +119,7 @@ class _SideMenuCommittenteState extends State<SideMenuCommittente> {
       title: Text(title),
       onExpansionChanged: onExpansionChanged,
       initiallyExpanded: isExpanded,
+      children: children,
     );
   }
 

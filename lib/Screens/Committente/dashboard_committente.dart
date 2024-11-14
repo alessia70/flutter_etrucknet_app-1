@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/Committente/side_menu_committente.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/profile_info_screen.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/Configurazione/camion_disponibili_t.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/add_camion_disponibile_t.dart';
-import 'package:flutter_etrucknet_new/Screens/Trasportatore/side_menu_t.dart';
 
 class CommittenteDashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Bacheca Trasportatore'),
+        title: Text('Bacheca Committente'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
         actions: [
@@ -24,7 +24,7 @@ class CommittenteDashboardScreen extends StatelessWidget {
           ),
         ],
       ),
-      drawer: SideMenuT(),
+      drawer: SideMenuCommittente(),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),

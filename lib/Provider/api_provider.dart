@@ -24,7 +24,7 @@ class ApiProvider extends ChangeNotifier {
 
   Future<http.Response> post(String endpoint, Map<String, String> data) async {
     final uri = Uri.parse('$baseUrl/$endpoint');
-    final headers = _builderHeaders(isJsonFormat: false); // Imposta isJsonFormat a false
+    final headers = _builderHeaders(isJsonFormat: false);
 
     // Usa FormData per il body
     return http.post(uri, headers: headers, body: data);

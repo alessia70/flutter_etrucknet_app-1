@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Models/order_model.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/dettagli_ordine.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/modifica_ordine_page.dart';
-import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/quota_trasportatore_page.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/Registrati/quota_trasportatore_page.dart';
 
 class OrdersGrid extends StatefulWidget {
   final List<Order> orders;

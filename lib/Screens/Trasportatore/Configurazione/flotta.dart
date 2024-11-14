@@ -1,4 +1,7 @@
+import 'dart:convert';  // Import per convertire la risposta JSON
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/res/app_urls.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/side_menu_t.dart';
 
 class FlottaScreen extends StatefulWidget {
@@ -8,33 +11,46 @@ class FlottaScreen extends StatefulWidget {
 
 class _FlottaScreenState extends State<FlottaScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  String selectedTipoMezzo = 'Tutti'; 
+  String selectedTipoMezzo = 'Tutti';
   String selectedAllestimento = 'Tutti';
+  List<Map<String, String>> veicoli = [];
+  List<Map<String, String>> veicoliFiltrati = [];  // Inizializzato
 
-  List<Map<String, String>> veicoli = [
-    {
-      'tipo': 'Camion',
-      'allestimento': 'Standard',
-      'specifiche': 'Specifiche 1',
-    },
-    {
-      'tipo': 'Furgone',
-      'allestimento': 'Furgone isotermico',
-      'specifiche': 'Specifiche 2',
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _caricaVeicoli();
+  }
 
-  List<Map<String, String>> get veicoliFiltrati {
-    return veicoli.where((veicolo) {
-      if (selectedTipoMezzo != 'Tutti' && veicolo['tipo'] != selectedTipoMezzo) {
-        return false;
+  Future<void> _caricaVeicoli() async {
+    try {
+      // Usa l'endpoint della flotta definito nella classe AppUrl
+      final response = await http.get(Uri.parse(AppUrl.fleetEndPoint));
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        setState(() {
+          veicoli = data.map((veicolo) {
+            return {
+              'tipo': veicolo['tipo'] as String,
+              'allestimento': veicolo['allestimento'] as String,
+              'specifiche': veicolo['specifiche'] as String,
+            };
+          }).toList();
+          veicoliFiltrati = List.from(veicoli);  // Copia la lista per iniziare
+        });
+      } else {
+        // In caso di errore nel server, mostra un messaggio
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Errore nel recupero dei dati')),
+        );
       }
-      if (selectedAllestimento != 'Tutti' &&
-          veicolo['allestimento'] != selectedAllestimento) {
-        return false;
-      }
-      return true;
-    }).toList();
+    } catch (e) {
+      // Gestione errori di rete
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Errore di connessione: $e')),
+      );
+    }
   }
 
   final ScrollController _scrollController = ScrollController();
@@ -43,6 +59,16 @@ class _FlottaScreenState extends State<FlottaScreen> {
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+  }
+
+  void _applicaFiltri() {
+    setState(() {
+      veicoliFiltrati = veicoli.where((veicolo) {
+        bool tipoMatch = selectedTipoMezzo == 'Tutti' || veicolo['tipo'] == selectedTipoMezzo;
+        bool allestimentoMatch = selectedAllestimento == 'Tutti' || veicolo['allestimento'] == selectedAllestimento;
+        return tipoMatch && allestimentoMatch;
+      }).toList();
+    });
   }
 
   @override
@@ -78,7 +104,7 @@ class _FlottaScreenState extends State<FlottaScreen> {
                   ),
                 ),
                 SizedBox(width: 6),
-                 IconButton(
+                IconButton(
                   icon: Icon(Icons.add_box_outlined, color: Colors.orange),
                   onPressed: () {
                     _mostraPopupAggiungi();
@@ -196,10 +222,10 @@ class _FlottaScreenState extends State<FlottaScreen> {
                       'allestimento': nuovoAllestimento,
                       'specifiche': nuoveSpecifiche,
                     });
+                    veicoliFiltrati = List.from(veicoli);  // Ricalcola la lista filtrata
                   });
                   Navigator.of(context).pop();
                 } else {
-                  // Mostra un messaggio di errore se i campi sono vuoti
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Tutti i campi devono essere compilati!')),
                   );
@@ -285,7 +311,7 @@ class _FlottaScreenState extends State<FlottaScreen> {
               SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
-                  setState(() {});
+                  _applicaFiltri();
                   Navigator.pop(context);
                 },
                 child: Text('Applica Filtri'),
@@ -300,6 +326,7 @@ class _FlottaScreenState extends State<FlottaScreen> {
       },
     );
   }
+
   void _showEditTruckDialog(BuildContext context, Map<String, String> veicolo) {
     String tipoMezzo = veicolo['tipo']!;
     String allestimento = veicolo['allestimento']!;
@@ -347,10 +374,10 @@ class _FlottaScreenState extends State<FlottaScreen> {
             ElevatedButton(
               onPressed: () {
                 setState(() {
-                  // Aggiorna il veicolo esistente
                   veicolo['tipo'] = tipoMezzo;
                   veicolo['allestimento'] = allestimento;
                   veicolo['specifiche'] = specifiche;
+                  veicoliFiltrati = List.from(veicoli);
                 });
                 Navigator.pop(context);
               },
@@ -371,6 +398,7 @@ class _FlottaScreenState extends State<FlottaScreen> {
       },
     );
   }
+
   void _showDeleteConfirmationDialog(BuildContext context, Map<String, String> veicolo) {
     showDialog(
       context: context,
@@ -388,7 +416,8 @@ class _FlottaScreenState extends State<FlottaScreen> {
             ElevatedButton(
               onPressed: () {
                 setState(() {
-                  veicoli.remove(veicolo); // Rimuovi l'automezzo dalla lista
+                  veicoli.remove(veicolo); 
+                  veicoliFiltrati = List.from(veicoli);
                 });
                 Navigator.pop(context);
               },

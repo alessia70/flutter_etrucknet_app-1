@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/Committente/side_menu_committente.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/grid_richieste_subvezioni.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/nuova_richieste_subvezioni_page.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/subvezioni_cancellate_page.dart';
-import 'package:flutter_etrucknet_new/Screens/Trasportatore/side_menu_t.dart'; // Assicurati di importare il SideMenu
 
 class PreventiviRichiestiPage extends StatefulWidget {
   @override
@@ -36,7 +36,7 @@ class _PreventiviRichiestiPageState extends State<PreventiviRichiestiPage> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Text('Richieste Sub-vezioni'),
+        title: Text('Preventivi Richiesti'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
         leading: IconButton(
@@ -63,7 +63,7 @@ class _PreventiviRichiestiPageState extends State<PreventiviRichiestiPage> {
           ],
         ),
       ),
-      drawer: SideMenuT(),
+      drawer: SideMenuCommittente(),
     );
   }
 

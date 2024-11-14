@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/modifca_anagrafiche_screen.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/Registrati/modifca_anagrafiche_screen.dart';
 
 class AnagraficheDataGrid extends StatelessWidget {
   final List<Map<String, dynamic>> anagrafiche = [
