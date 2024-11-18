@@ -33,10 +33,10 @@ class TrasportatoreDashboardScreen extends StatelessWidget {
               GridView.count(
                 physics: NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
-                crossAxisCount: 2,
+                crossAxisCount: 4, //2
                 childAspectRatio: 1,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
                 children: [
                   _buildSquareCard(context, 'Aggiungi camion', Icons.add, () {
                     _showAddTruckDialog(context);
@@ -162,7 +162,7 @@ class TrasportatoreDashboardScreen extends StatelessWidget {
                     DataCell(
                       TextButton(
                         onPressed: () {
-                          // Logica per quotare
+                          
                         },
                         child: Text(
                           'Da Quotare',

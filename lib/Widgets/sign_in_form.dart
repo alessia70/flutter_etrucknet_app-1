@@ -3,6 +3,7 @@ import 'package:flutter_etrucknet_new/res/app_urls.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignInForm extends StatefulWidget {
   const SignInForm({super.key});
@@ -21,6 +22,14 @@ class _SignInFormState extends State<SignInForm> {
     _passwordController.dispose();
     super.dispose(); 
   }
+
+  Future<void> saveToken(String token, int trasportatoreId) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('access_token', token);
+    await prefs.setInt('trasportatore_id', trasportatoreId); 
+    print("Token salvato: $token");
+  }
+
 
   void _signIn() async {
   final email = _emailController.text;
@@ -45,8 +54,16 @@ class _SignInFormState extends State<SignInForm> {
     if (response.statusCode == 200) {
       final responseData = jsonDecode(response.body);
       final tipoRuolo = responseData['user']['tipoRuolo'] ?? 'Tipo Ruolo Sconosciuto';
+      final token = responseData['token'];
+      final trasportatoreId = responseData['user']['id'] ?? 0;
 
-      print('Tipo Ruolo: $tipoRuolo');
+      if (token != null) {
+        await saveToken(token, trasportatoreId);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Token non trovato nella risposta.')),
+        );
+      }
 
       if (tipoRuolo == 'Azienda Trasporti') {
         Navigator.pushReplacementNamed(context, '/dashboard_trasportatore');

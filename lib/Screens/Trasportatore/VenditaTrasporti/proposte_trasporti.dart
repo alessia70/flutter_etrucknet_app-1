@@ -232,6 +232,12 @@ class _TrasportiPropostiScreenState extends State<TrasportiPropostiScreen> {
                     ),
                   ),
                 ),
+                IconButton(
+                  icon: const Icon(Icons.add, color: Colors.orange),
+                  onPressed: () => {
+
+                  }   
+                ),
               ],
             ),
             SizedBox(height: 8),

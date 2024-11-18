@@ -206,7 +206,7 @@ class _CamionDisponibiliTPageState extends State<CamionDisponibiliTPage> {
           ),
           IconButton(
             icon: const Icon(Icons.delete, color: Colors.grey),
-            onPressed: () => _deleteCamion(camion), // Elimina il camion
+            onPressed: () => _deleteCamion(camion),
           ),
         ],
       )),
@@ -217,27 +217,27 @@ class _CamionDisponibiliTPageState extends State<CamionDisponibiliTPage> {
     final result = await showDialog<Camion>(
       context: context,
       builder: (BuildContext context) {
-        return AddCamionDialog(existingCamion: camion); // Apre il dialog per aggiungere o modificare
+        return AddCamionDialog(existingCamion: camion);
       },
     );
 
     if (result != null) {
       setState(() {
         if (camion == null) {
-          camionList.add(result); // Aggiungi un nuovo camion
+          camionList.add(result);
         } else {
           final index = camionList.indexOf(camion);
-          if (index != -1) camionList[index] = result; // Aggiorna un camion esistente
+          if (index != -1) camionList[index] = result;
         }
-        filteredCamionList = camionList; // Aggiorna la lista filtrata
+        filteredCamionList = camionList;
       });
     }
   }
 
   void _deleteCamion(Camion camion) {
     setState(() {
-      camionList.remove(camion); // Rimuovi il camion dalla lista
-      filteredCamionList = camionList; // Aggiorna la lista filtrata
+      camionList.remove(camion);
+      filteredCamionList = camionList;
     });
   }
 }

@@ -1,7 +1,6 @@
 import 'package:flutter_etrucknet_new/DTOs/stima_dto.dart';
 
 class ApiService {
-  // Dati fittizi per le stime
   final List<Stima> _stime = [];
 
   // Simula il recupero delle stime

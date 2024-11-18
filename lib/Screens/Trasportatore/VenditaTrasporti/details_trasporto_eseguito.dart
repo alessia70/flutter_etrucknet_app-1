@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class TransportoEseguitioDetailPage extends StatelessWidget {
   final String id;
   final String tipoTrasporto;
@@ -9,8 +10,8 @@ class TransportoEseguitioDetailPage extends StatelessWidget {
   final String dataRitiro;
   final String localitaConsegna;
   final String dataConsegna;
-  final String mezziAllestimenti;
-  final String ulterioriSpecifiche;
+  String mezziAllestimenti;
+  String ulterioriSpecifiche;
   final List<Map<String, String>> dettagliMerce;
 
   TransportoEseguitioDetailPage({

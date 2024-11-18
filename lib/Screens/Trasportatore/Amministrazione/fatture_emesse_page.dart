@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/Trasportatore/Amministrazione/grid_fatture_emesse.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/side_menu_t.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FattureEmessePage extends StatefulWidget {
   @override
@@ -8,13 +10,44 @@ class FattureEmessePage extends StatefulWidget {
 
 class _FattureEmessePageState extends State<FattureEmessePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  String dropdownValue = 'Tutte';
-  final List<String> statoEmesseOptions = ['Tutte', 'Scadute', 'Non Scadute', 'Acconto', 'Saldate'];
 
-  final List<Map<String, String>> fattureEmesse = [
-    {'id': '1', 'cliente': 'Cliente A', 'data': '01/11/2024', 'importo': '1000 €', 'stato': 'Saldata'},
-    {'id': '2', 'cliente': 'Cliente B', 'data': '02/11/2024', 'importo': '1500 €', 'stato': 'Scaduta'},
-  ];
+  DateTime? startDate;
+  DateTime? endDate;
+  int stato = 0;
+  int trasportatoreId = 0;
+
+  final List<String> statoEmesseOptions = ['Tutte', 'Scadute', 'Non Scadute', 'Acconto', 'Saldate'];
+  String dropdownValue = 'Tutte';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+    startDate = DateTime.now().subtract(Duration(days: 365));
+    endDate = DateTime.now();
+  }
+
+  Future<void> _loadUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      trasportatoreId = prefs.getInt('trasportatoreId') ?? 0;
+    });
+  }
+  void _mostraFiltroDate(BuildContext context) async {
+    final DateTimeRange? picked = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2025),
+      initialDateRange: DateTimeRange(start: startDate!, end: endDate!),
+    );
+
+    if (picked != null) {
+      setState(() {
+        startDate = picked.start;
+        endDate = picked.end;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,48 +70,14 @@ class _FattureEmessePageState extends State<FattureEmessePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSearchAndFilterBox(context),
+            _buildSearchAndFilterBox(),
             SizedBox(height: 16),
             Expanded(
-              child: Card(
-                elevation: 4,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Fatture Emesse',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                      ),
-                      SizedBox(height: 16),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: DataTable(
-                          columns: [
-                            DataColumn(label: Text('Fattura')),
-                            DataColumn(label: Text('Cliente')),
-                            DataColumn(label: Text('Data')),
-                            DataColumn(label: Text('Importo')),
-                            DataColumn(label: Text('Stato')),
-                          ],
-                          rows: fattureEmesse.map((fattura) {
-                            return DataRow(cells: [
-                              DataCell(Text(fattura['id'] ?? '')),
-                              DataCell(Text(fattura['cliente'] ?? '')),
-                              DataCell(Text(fattura['data'] ?? '')),
-                              DataCell(Text(fattura['importo'] ?? '')),
-                              DataCell(Text(fattura['stato'] ?? '')),
-                            ]);
-                          }).toList(),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+              child: GridFattureEmesse(
+                trasportatoreId: trasportatoreId,
+                startDate: startDate ?? DateTime.now().subtract(Duration(days: 365)),
+                endDate: endDate ?? DateTime.now(),
+                stato: stato,
               ),
             ),
           ],
@@ -87,7 +86,7 @@ class _FattureEmessePageState extends State<FattureEmessePage> {
     );
   }
 
-  Widget _buildSearchAndFilterBox(BuildContext context) {
+  Widget _buildSearchAndFilterBox() {
     return Column(
       children: [
         Row(
@@ -136,6 +135,22 @@ class _FattureEmessePageState extends State<FattureEmessePage> {
                 onChanged: (String? newValue) {
                   setState(() {
                     dropdownValue = newValue!;
+                    switch (dropdownValue) {
+                      case 'Scadute':
+                        stato = 1;
+                        break;
+                      case 'Non Scadute':
+                        stato = 2;
+                        break;
+                      case 'Acconto':
+                        stato = 3;
+                        break;
+                      case 'Saldate':
+                        stato = 4;
+                        break;
+                      default:
+                        stato = 0;
+                    }
                   });
                 },
               ),
@@ -149,14 +164,6 @@ class _FattureEmessePageState extends State<FattureEmessePage> {
           ],
         ),
       ],
-    );
-  }
-
-  void _mostraFiltroDate(BuildContext context) {
-    showDateRangePicker(
-      context: context,
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2025),
     );
   }
 }
