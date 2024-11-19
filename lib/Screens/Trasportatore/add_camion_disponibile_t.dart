@@ -33,8 +33,8 @@ class _AddCamionDialogState extends State<AddCamionDialog> {
     if (widget.existingCamion != null) {
       tipoMezzoController.text = widget.existingCamion!.tipoMezzo;
       spazioDisponibileController.text = widget.existingCamion!.spazioDisponibile.toString();
-      localitaCaricoController.text = widget.existingCamion!.localitaCarico;
-      localitaScaricoController.text = widget.existingCamion!.localitaScarico;
+      localitaCaricoController.text = widget.existingCamion!.localitaCarico!;
+      localitaScaricoController.text = widget.existingCamion!.localitaScarico!;
       dataRitiro = widget.existingCamion!.dataRitiro;
       isRecurring = widget.existingCamion!.isRecurring;
       selectedDays = widget.existingCamion!.giorniDisponibili ?? selectedDays;
@@ -91,9 +91,10 @@ class _AddCamionDialogState extends State<AddCamionDialog> {
                 dataRitiro != null &&
                 localitaScaricoController.text.isNotEmpty) {
               final newCamion = Camion(
+                id: null,
                 tipoMezzo: tipoMezzoController.text,
-                spazioDisponibile: int.parse(spazioDisponibileController.text),
-                localitaCarico: localitaCaricoController.text,
+                spazioDisponibile: spazioDisponibileController.text,
+                 localitaCarico: localitaCaricoController.text.isEmpty ? null : localitaCaricoController.text,
                 dataRitiro: dataRitiro!,
                 localitaScarico: localitaScaricoController.text,
                 isRecurring: isRecurring,

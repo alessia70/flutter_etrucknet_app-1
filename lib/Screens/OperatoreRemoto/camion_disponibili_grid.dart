@@ -1,48 +1,69 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http; 
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'modifica_camion.dart';
 
 class CamionDisponibiliGrid extends StatefulWidget {
   const CamionDisponibiliGrid({super.key});
 
   @override
-
   _CamionDisponibiliGridState createState() => _CamionDisponibiliGridState();
 }
 
 class _CamionDisponibiliGridState extends State<CamionDisponibiliGrid> {
-  final List<Map<String, String>> trucks = [
-    {
-      'id': '1',
-      'transportCompany': 'Trasporti A',
-      'contact': '123-456-7890',
-      'vehicleData': 'Camion A - 10 ton',
-      'availableSpace': '5 ton',
-      'location': 'Milano',
-      'destination': 'Firenze',
-      'loadingDate': '2024-10-15',
-    },
-    {
-      'id': '2',
-      'transportCompany': 'Trasporti B',
-      'contact': '098-765-4321',
-      'vehicleData': 'Camion B - 15 ton',
-      'availableSpace': '10 ton',
-      'location': 'Roma',
-      'destination': 'Napoli',
-      'loadingDate': '2024-10-16',
-    },
-    {
-      'id': '3',
-      'transportCompany': 'Trasporti C',
-      'contact': '111-222-3333',
-      'vehicleData': 'Camion C - 8 ton',
-      'availableSpace': '3 ton',
-      'location': 'Torino',
-      'destination': 'Bologna',
-      'loadingDate': '2024-10-17',
-    },
-  ];
+  List<Map<String, String>> trucks = [];
 
+  Future<String?> getSavedToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('access_token');
+  }
+  Future<int?> getSavedUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt('trasportatore_id');
+  }
+  Future<void> fetchCamionDisponibili() async {
+    final token = await getSavedToken();
+    final trasportatoreId = await getSavedUserId();
+
+    if (token == null || trasportatoreId == null) {
+      print('Token or TrasportatoreId not found.');
+      return;
+    }
+
+    final url = Uri.parse(
+      'https://etrucknetapi.azurewebsites.net/v1/CamionDisponibili?TrasportatoreId=$trasportatoreId',
+    );
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = json.decode(response.body);
+
+      setState(() {
+        trucks = List<Map<String, String>>.from(
+          data.map((item) => {
+            'id': item['id'].toString(),
+            'transportCompany': item['transportCompany'] ?? '',
+            'contact': item['contact'] ?? '',
+            'vehicleData': item['vehicleData'] ?? '',
+            'availableSpace': item['availableSpace'] ?? '',
+            'location': item['location'] ?? '',
+            'destination': item['destination'] ?? '',
+            'loadingDate': item['loadingDate'] ?? '',
+          }),
+        );
+      });
+    } else {
+      print('Error fetching camion data: ${response.statusCode}');
+      throw Exception('Failed to load camion data');
+    }
+  }
   void showEditDialog(BuildContext context, Map<String, String> truck) {
     showDialog(
       context: context,
@@ -94,6 +115,12 @@ class _CamionDisponibiliGridState extends State<CamionDisponibiliGrid> {
     setState(() {
       trucks.removeWhere((truck) => truck['id'] == id);
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchCamionDisponibili();
   }
 
   @override

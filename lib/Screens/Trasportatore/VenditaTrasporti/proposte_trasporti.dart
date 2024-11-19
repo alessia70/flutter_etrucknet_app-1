@@ -8,44 +8,12 @@ class TrasportiPropostiScreen extends StatefulWidget {
 }
 
 class _TrasportiPropostiScreenState extends State<TrasportiPropostiScreen> {
-    final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   String selectedStatoTrasporto = 'Tutti';
   String selectedAllestimento = 'Tutti';
   TextEditingController luogoCaricoController = TextEditingController();
   TextEditingController luogoScaricoController = TextEditingController();
   TextEditingController numeroPrezzoController = TextEditingController();
-
-   List<Transport> transports = [
-    Transport(
-      id: '1',
-      contattoTrasportatore: 'John Doe',
-      dataCarico: DateTime.now(),
-      luogoCarico: 'Rome',
-      dataScarico: DateTime.now().add(Duration(days: 2)),
-      luogoScarico: 'Milan',
-      status: 'In Quotazione', tipoTrasporto: '',
-    ),
-
-    Transport(
-      id: '2',
-      contattoTrasportatore: 'John Smith',
-      dataCarico: DateTime.now(),
-      luogoCarico: 'Parigi',
-      dataScarico: DateTime.now().add(Duration(days: 2)),
-      luogoScarico: 'Firenze',
-      status: 'In Quotazione', tipoTrasporto: '',
-    ),
-    
-    Transport(
-      id: '3',
-      contattoTrasportatore: 'Mark Doe',
-      dataCarico: DateTime.now(),
-      luogoCarico: 'Montecarlo',
-      dataScarico: DateTime.now().add(Duration(days: 2)),
-      luogoScarico: 'Verona',
-      status: 'In Quotazione', tipoTrasporto: '',
-    ),
-  ];
 
   @override
   void dispose() {
@@ -232,19 +200,11 @@ class _TrasportiPropostiScreenState extends State<TrasportiPropostiScreen> {
                     ),
                   ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.add, color: Colors.orange),
-                  onPressed: () => {
-
-                  }   
-                ),
               ],
             ),
             SizedBox(height: 8),
             Expanded(
-              child: TrasportiGrid(
-                transports: transports,
-              ),
+              child: TrasportiGrid(),
             ),
           ],
         ),

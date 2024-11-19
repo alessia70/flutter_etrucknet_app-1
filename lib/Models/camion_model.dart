@@ -1,18 +1,20 @@
 class Camion {
+  final int? id;
   final String tipoMezzo;
-  final int spazioDisponibile;
-  final String localitaCarico;
+  final String spazioDisponibile;
+  final String? localitaCarico;
   final DateTime dataRitiro;
-  final String localitaScarico;
+  final String? localitaScarico;
   final bool isRecurring;
   final Map<String, bool>? giorniDisponibili;
 
   Camion({
+    this.id,
     required this.tipoMezzo,
     required this.spazioDisponibile,
-    required this.localitaCarico,
+    this.localitaCarico,
     required this.dataRitiro,
-    required this.localitaScarico,
+    this.localitaScarico,
     this.isRecurring = false,
     this.giorniDisponibili,
   });
@@ -28,6 +30,7 @@ class Camion {
   }
   factory Camion.fromJson(Map<String, dynamic> json) {
     return Camion(
+      id: json['id'],
       tipoMezzo: json['tipoMezzo'],
       spazioDisponibile: json['spazioDisponibile'],
       localitaCarico: json['localitaCarico'],

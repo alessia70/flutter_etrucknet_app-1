@@ -1,44 +1,80 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Models/transport_model.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/VenditaTrasporti/details_trasporto_proposto.dart';
 import 'package:intl/intl.dart';
-
-class Transport {
-  final String id;
-  final String tipoTrasporto;
-  final String contattoTrasportatore;
-  final DateTime dataCarico;
-  final String luogoCarico;
-  final DateTime dataScarico;
-  final String luogoScarico;
-  final String status;
-
-  Transport({
-    required this.id,
-    required this.tipoTrasporto,
-    required this.contattoTrasportatore,
-    required this.dataCarico,
-    required this.luogoCarico,
-    required this.dataScarico,
-    required this.luogoScarico,
-    required this.status,
-  });
-}
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TrasportiGrid extends StatefulWidget {
-  final List<Transport> transports;
-  const TrasportiGrid({Key? key, required this.transports}) : super(key: key);
+  const TrasportiGrid({Key? key}) : super(key: key);
 
   @override
   _TrasportiGridState createState() => _TrasportiGridState();
 }
 
 class _TrasportiGridState extends State<TrasportiGrid> {
-  late List<Transport> transports;
+  late List<Transport> transports = [];
+  int trasportatoreId = 0;
 
   @override
   void initState() {
     super.initState();
-    transports = widget.transports;
+    _loadUserData();
+  }
+
+  Future<int?> getSavedUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt('trasportatore_id');
+  }
+
+  Future<String?> getSavedToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('access_token');
+  }
+
+  Future<void> _loadUserData() async {
+    try {
+      final trasportatoreId = await getSavedUserId(); // Recupera l'ID
+      final token = await getSavedToken();
+
+      if (trasportatoreId == null || token == null) {
+        print('Errore: userId o token non trovato');
+        return;
+      }
+
+      setState(() {
+        this.trasportatoreId = trasportatoreId;
+      });
+      _fetchTransports(token);
+    } catch (e) {
+      print('Errore durante il caricamento dei dati utente: $e');
+    }
+  }
+
+
+  Future<void> _fetchTransports(String token) async {
+    try {
+      final response = await http.get(
+        Uri.parse('https://etrucknetapi.azurewebsites.net/v1/Proposte/$trasportatoreId?inviato=true'),
+        headers: {'Authorization': 'Bearer $token'},
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        final List<dynamic> transportsData = data['data'];
+
+        print('Dati ricevuti: $transportsData');
+
+        setState(() {
+          transports = transportsData.map((item) => Transport.fromJson(item)).toList();
+        });
+      } else {
+        print('Errore nell\'API: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Errore durante la chiamata API: $e');
+    }
   }
 
   void _deleteTransport(Transport transport) {
@@ -81,22 +117,24 @@ class _TrasportiGridState extends State<TrasportiGrid> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: DataTable(
-                  columns: [
-                    DataColumn(label: Text('Ordine')),
-                    DataColumn(label: Text('Contatto Trasportatore')),
-                    DataColumn(label: Text('Luogo Carico')),
-                    DataColumn(label: Text('Data Carico')),
-                    DataColumn(label: Text('Luogo Scarico')),
-                    DataColumn(label: Text('Data Scarico')),
-                    DataColumn(label: Text('Status')),
-                    DataColumn(label: Text('Azioni')),
-                  ],
-                  rows: transports.map((transport) {
-                    return _buildDataRow(transport);
-                  }).toList(),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: DataTable(
+                      columns: [
+                        DataColumn(label: Text('Ordine')),
+                        DataColumn(label: Text('Contatto Trasportatore')),
+                        DataColumn(label: Text('Luogo Carico')),
+                        DataColumn(label: Text('Data Carico')),
+                        DataColumn(label: Text('Luogo Scarico')),
+                        DataColumn(label: Text('Data Scarico')),
+                        DataColumn(label: Text('Status')),
+                        DataColumn(label: Text('Azioni')),
+                      ],
+                      rows: transports.map((transport) => _buildDataRow(transport)).toList(),
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -105,14 +143,14 @@ class _TrasportiGridState extends State<TrasportiGrid> {
       ),
     );
   }
-
   DataRow _buildDataRow(Transport transport) {
+    print('Costruzione riga per: ${transport.id}');
     return DataRow(cells: [
-      DataCell(Text(transport.id)),
+      DataCell(Text(transport.id.toString())),
       DataCell(Text(transport.contattoTrasportatore)),
-      DataCell(Text(transport.luogoCarico)),
+      DataCell(Text(transport.carico)),
       DataCell(Text(DateFormat.yMd().format(transport.dataCarico))),
-      DataCell(Text(transport.luogoScarico)),
+      DataCell(Text(transport.scarico)),
       DataCell(Text(DateFormat.yMd().format(transport.dataScarico))),
       DataCell(Text(transport.status)),
       DataCell(Row(
@@ -120,27 +158,30 @@ class _TrasportiGridState extends State<TrasportiGrid> {
           IconButton(
             icon: const Icon(Icons.info, color: Colors.orange),
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(
-                builder: (context) => TransportDetailPage(
-                  id: transport.id,
-                  tipoTrasporto: transport.tipoTrasporto,
-                  distanza: "581 Km",
-                  tempo: "6 ore 53 minuti",
-                  localitaRitiro: transport.luogoCarico,
-                  dataRitiro: DateFormat.yMd().format(transport.dataCarico),
-                  localitaConsegna: transport.luogoScarico,
-                  dataConsegna: DateFormat.yMd().format(transport.dataScarico),
-                  mezziAllestimenti: "Centinato telonato - Gran volume centinato",
-                  ulterioriSpecifiche: "Richiesta solo offerta. Grazie",
-                  dettagliMerce: [
-                    {
-                      'qta': '1',
-                      'tipo': 'cassa',
-                      'dimensioni': '65 X 400',
-                      'altezza': '45',
-                      'peso': '245',
-                    }
-                  ]),
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => TransportDetailPage(
+                    id: transport.id.toString(),
+                    tipoTrasporto: transport.tipoTrasporto,
+                    distanza: "581 Km",
+                    tempo: "6 ore 53 minuti",
+                    localitaRitiro: transport.luogoCarico,
+                    dataRitiro: DateFormat.yMd().format(transport.dataCarico),
+                    localitaConsegna: transport.luogoScarico,
+                    dataConsegna: DateFormat.yMd().format(transport.dataScarico),
+                    mezziAllestimenti: "Centinato telonato - Gran volume centinato",
+                    ulterioriSpecifiche: "Richiesta solo offerta. Grazie",
+                    dettagliMerce: [
+                      {
+                        'qta': '1',
+                        'tipo': 'cassa',
+                        'dimensioni': '65 X 400',
+                        'altezza': '45',
+                        'peso': '245',
+                      }
+                    ],
+                  ),
                 ),
               );
             },

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Models/transport_model.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/VenditaTrasporti/grid_proposte_trasporti.dart';
 
 class TotaleTrasportiScreen extends StatefulWidget {
@@ -14,37 +15,7 @@ class _TotaleTrasportiScreenState extends State<TotaleTrasportiScreen> {
   TextEditingController luogoScaricoController = TextEditingController();
   TextEditingController numeroPrezzoController = TextEditingController();
 
-   List<Transport> transports = [
-    Transport(
-      id: '1',
-      contattoTrasportatore: 'John Doe',
-      dataCarico: DateTime.now(),
-      luogoCarico: 'Rome',
-      dataScarico: DateTime.now().add(Duration(days: 2)),
-      luogoScarico: 'Milan',
-      status: 'In Quotazione', tipoTrasporto: '',
-    ),
-
-    Transport(
-      id: '2',
-      contattoTrasportatore: 'John Smith',
-      dataCarico: DateTime.now(),
-      luogoCarico: 'Parigi',
-      dataScarico: DateTime.now().add(Duration(days: 2)),
-      luogoScarico: 'Firenze',
-      status: 'In Quotazione', tipoTrasporto: '',
-    ),
-    
-    Transport(
-      id: '3',
-      contattoTrasportatore: 'Mark Doe',
-      dataCarico: DateTime.now(),
-      luogoCarico: 'Montecarlo',
-      dataScarico: DateTime.now().add(Duration(days: 2)),
-      luogoScarico: 'Verona',
-      status: 'In Quotazione', tipoTrasporto: '',
-    ),
-  ];
+   List<Transport> transports = [];
 
   @override
   void dispose() {
@@ -235,7 +206,6 @@ class _TotaleTrasportiScreenState extends State<TotaleTrasportiScreen> {
             SizedBox(height: 8),
             Expanded(
               child: TrasportiGrid(
-                transports: transports,
               ),
             ),
           ],
