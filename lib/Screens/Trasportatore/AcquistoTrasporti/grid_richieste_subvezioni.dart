@@ -76,7 +76,7 @@ class _GridRichiesteSubvezioniState extends State<GridRichiesteSubvezioni> {
                                     ulterioriSpecifiche: transport['ulterioriSpecifiche'] ?? '',
                                     dettagliMerce: transport['dettagliMerce'] != null
                                         ? List<Map<String, String>>.from(transport['dettagliMerce'] as Iterable)
-                                        : [],
+                                        : [], dettagliTrasporto: [],
                                   ),
                                 ),
                               );

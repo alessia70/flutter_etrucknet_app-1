@@ -156,7 +156,7 @@ class _GridFattureEmesseState extends State<GridFattureEmesse> {
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) => TransportoEseguitioDetailPage(
-                                              id: fattura.id.toString(), tipoTrasporto: '', distanza: '', tempo: '', localitaRitiro: '', dataRitiro: '', localitaConsegna: '', dataConsegna: '', mezziAllestimenti: '', ulterioriSpecifiche: '', dettagliMerce: [],
+                                              id: fattura.id, tipoTrasporto: '', distanza: '', tempo: '', localitaRitiro: '', dataRitiro: '', localitaConsegna: '', dataConsegna: '', mezziAllestimenti: '', ulterioriSpecifiche: '', dettagliMerce: [], dettagliTrasporto: [],
                                             ),
                                           ),
                                         );

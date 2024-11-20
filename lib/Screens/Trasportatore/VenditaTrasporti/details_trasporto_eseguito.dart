@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
-// ignore: must_be_immutable
 class TransportoEseguitioDetailPage extends StatelessWidget {
-  final String id;
+  final int id;
   final String tipoTrasporto;
   final String distanza;
   final String tempo;
@@ -10,9 +9,11 @@ class TransportoEseguitioDetailPage extends StatelessWidget {
   final String dataRitiro;
   final String localitaConsegna;
   final String dataConsegna;
-  String mezziAllestimenti;
-  String ulterioriSpecifiche;
+  final List<Map<String, String>> dettagliTrasporto;
+  final String mezziAllestimenti;
+  final String ulterioriSpecifiche;
   final List<Map<String, String>> dettagliMerce;
+
 
   TransportoEseguitioDetailPage({
     required this.id,
@@ -23,9 +24,10 @@ class TransportoEseguitioDetailPage extends StatelessWidget {
     required this.dataRitiro,
     required this.localitaConsegna,
     required this.dataConsegna,
+    required this.dettagliTrasporto,
     required this.mezziAllestimenti,
     required this.ulterioriSpecifiche,
-    required this.dettagliMerce,
+    required this.dettagliMerce, 
   });
 
   @override
@@ -98,9 +100,8 @@ class TransportoEseguitioDetailPage extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 16),
-
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Distribuzione uniforme
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Flexible(
                     child: _buildFixedHeightLocationCard('Ritiro', localitaRitiro, dataRitiro),
@@ -112,8 +113,6 @@ class TransportoEseguitioDetailPage extends StatelessWidget {
                 ],
               ),
               SizedBox(height: 16),
-
-             SizedBox(height: 16),
               Column(
                 children: [
                   _buildFixedHeightDetailCard('Dati Mezzo', mezziAllestimenti, 150.0),
@@ -195,17 +194,27 @@ class TransportoEseguitioDetailPage extends StatelessWidget {
     return baseHeight;
   }
 
-  Widget _buildDetailCard(String title, String content) {
+  Widget _buildFixedHeightDetailCard(String title, String content, double height) {
     return Card(
       elevation: 4,
-      child: Padding(
+      child: Container(
         padding: const EdgeInsets.all(16.0),
+        height: height,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildSectionTitle(title, Icons.info_outline),
             SizedBox(height: 10),
-            Text(content, style: TextStyle(fontSize: 16)),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Text(
+                  content,
+                  style: TextStyle(fontSize: 16),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 10, 
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -312,55 +321,6 @@ class TransportoEseguitioDetailPage extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  Widget _buildDynamicCardPair(String title1, String content1, String title2, String content2) {
-    final double maxHeight = _calculateMaxHeight(content1, content2);
-
-    return Row(
-      children: [
-        Expanded(
-          child: _buildFixedHeightDetailCard(title1, content1, maxHeight),
-        ),
-        SizedBox(width: 16),
-        Expanded(
-          child: _buildFixedHeightDetailCard(title2, content2, maxHeight),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildFixedHeightDetailCard(String title, String content, double height) {
-    return Card(
-      elevation: 4,
-      child: Container(
-        padding: const EdgeInsets.all(16.0),
-        height: height,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildSectionTitle(title, Icons.info_outline),
-            SizedBox(height: 10),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Text(
-                  content,
-                  style: TextStyle(fontSize: 16),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 10, 
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  double _calculateMaxHeight(String content1, String content2) {
-    final height1 = content1.length > 100 ? 200.0 : 150.0;
-    final height2 = content2.length > 100 ? 200.0 : 150.0;
-    return height1 > height2 ? height1 : height2;
   }
 
   String _calculateTotalWeight() {

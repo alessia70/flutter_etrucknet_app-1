@@ -2,29 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/VenditaTrasporti/grid_trasporti_eseguiti.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/side_menu_t.dart';
 
-class CompletedTransportPage extends StatelessWidget {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+class CompletedTransportPage extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    List<Map<String, String>> completedTransports = [
-      {
-        'id': '1',
-        'localitaRitiro': 'Milano',
-        'localitaConsegna': 'Roma',
-        'dataRitiro': '01/11/2024',
-        'dataConsegna': '02/11/2024',
-        'tipo': 'Espresso',
-      },
-      {
-        'id': '2',
-        'localitaRitiro': 'Torino',
-        'localitaConsegna': 'Napoli',
-        'dataRitiro': '03/11/2024',
-        'dataConsegna': '04/11/2024',
-        'tipo': 'Standard',
-      },
-    ];
+  _CompletedTransportPageState createState() => _CompletedTransportPageState();
+}
 
+class _CompletedTransportPageState extends State<CompletedTransportPage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  
+  Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -46,7 +32,9 @@ class CompletedTransportPage extends StatelessWidget {
           children: [
             _buildSearchBox(context),
             SizedBox(height: 16),
-            Expanded(child: TransportiEseguitiGrid(completedTransports: completedTransports)),
+            Expanded(
+              child: TransportiEseguitiGrid(),
+            ),
           ],
         ),
       ),
@@ -93,6 +81,10 @@ class CompletedTransportPage extends StatelessWidget {
       context: context,
       firstDate: DateTime(2020),
       lastDate: DateTime(2025),
-    );
+    ).then((range) {
+      if (range != null) {
+        print('Filtra dal ${range.start} al ${range.end}');
+      }
+    });
   }
 }

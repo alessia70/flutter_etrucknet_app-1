@@ -35,14 +35,13 @@ class _TrasportiGridState extends State<TrasportiGrid> {
 
   Future<void> _loadUserData() async {
     try {
-      final trasportatoreId = await getSavedUserId(); // Recupera l'ID
+      final trasportatoreId = await getSavedUserId();
       final token = await getSavedToken();
 
       if (trasportatoreId == null || token == null) {
         print('Errore: userId o token non trovato');
         return;
       }
-
       setState(() {
         this.trasportatoreId = trasportatoreId;
       });
@@ -51,7 +50,6 @@ class _TrasportiGridState extends State<TrasportiGrid> {
       print('Errore durante il caricamento dei dati utente: $e');
     }
   }
-
 
   Future<void> _fetchTransports(String token) async {
     try {
@@ -63,8 +61,6 @@ class _TrasportiGridState extends State<TrasportiGrid> {
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
         final List<dynamic> transportsData = data['data'];
-
-        print('Dati ricevuti: $transportsData');
 
         setState(() {
           transports = transportsData.map((item) => Transport.fromJson(item)).toList();
@@ -119,8 +115,9 @@ class _TrasportiGridState extends State<TrasportiGrid> {
             children: [
               Expanded(
                 child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
                   child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
+                    scrollDirection: Axis.vertical,
                     child: DataTable(
                       columns: [
                         DataColumn(label: Text('Ordine')),
@@ -143,8 +140,8 @@ class _TrasportiGridState extends State<TrasportiGrid> {
       ),
     );
   }
+
   DataRow _buildDataRow(Transport transport) {
-    print('Costruzione riga per: ${transport.id}');
     return DataRow(cells: [
       DataCell(Text(transport.id.toString())),
       DataCell(Text(transport.contattoTrasportatore)),
@@ -154,6 +151,7 @@ class _TrasportiGridState extends State<TrasportiGrid> {
       DataCell(Text(DateFormat.yMd().format(transport.dataScarico))),
       DataCell(Text(transport.status)),
       DataCell(Row(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           IconButton(
             icon: const Icon(Icons.info, color: Colors.orange),

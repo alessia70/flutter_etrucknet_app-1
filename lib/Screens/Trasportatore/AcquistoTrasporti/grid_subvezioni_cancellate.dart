@@ -76,7 +76,7 @@ class _GridSubvezioniCancellateState extends State<GridSubvezioniCancellate> {
                                     ulterioriSpecifiche: transport['ulterioriSpecifiche'] ?? '',
                                     dettagliMerce: transport['dettagliMerce'] != null
                                         ? List<Map<String, String>>.from(transport['dettagliMerce'] as Iterable)
-                                        : [],
+                                        : [], dettagliTrasporto: [],
                                   ),
                                 ),
                               );

@@ -1,8 +1,9 @@
-import 'dart:convert';  // Import per convertire la risposta JSON
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/res/app_urls.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/side_menu_t.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FlottaScreen extends StatefulWidget {
   @override
@@ -14,44 +15,72 @@ class _FlottaScreenState extends State<FlottaScreen> {
   String selectedTipoMezzo = 'Tutti';
   String selectedAllestimento = 'Tutti';
   List<Map<String, String>> veicoli = [];
-  List<Map<String, String>> veicoliFiltrati = [];  // Inizializzato
+  List<Map<String, String>> veicoliFiltrati = [];
+  int trasportatoreId = 0;
 
   @override
   void initState() {
     super.initState();
-    _caricaVeicoli();
+    _loadUserData(); // Carica i dati utente e i veicoli
   }
 
-  Future<void> _caricaVeicoli() async {
-    try {
-      // Usa l'endpoint della flotta definito nella classe AppUrl
-      final response = await http.get(Uri.parse(AppUrl.fleetEndPoint));
+  Future<int?> getSavedUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt('trasportatore_id');
+  }
 
-      if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
-        setState(() {
-          veicoli = data.map((veicolo) {
-            return {
-              'tipo': veicolo['tipo'] as String,
-              'allestimento': veicolo['allestimento'] as String,
-              'specifiche': veicolo['specifiche'] as String,
-            };
-          }).toList();
-          veicoliFiltrati = List.from(veicoli);  // Copia la lista per iniziare
-        });
-      } else {
-        // In caso di errore nel server, mostra un messaggio
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Errore nel recupero dei dati')),
-        );
-      }
-    } catch (e) {
-      // Gestione errori di rete
+  Future<String?> getSavedToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('access_token');
+  }
+
+  Future<void> _loadUserData() async {
+    final trasportatoreId = await getSavedUserId();
+    final token = await getSavedToken();
+    if (trasportatoreId == null || token == null) {
+      print('Errore: userId o token non trovato');
+      return;
+    }
+    setState(() {
+      this.trasportatoreId = trasportatoreId;
+    });
+    _caricaVeicoli(token, trasportatoreId);
+  }
+
+  Future<void> _caricaVeicoli(String token, int trasportatoreId) async {
+  try {
+    final url = Uri.parse('${AppUrl.fleetEndPoint}/flotta/$trasportatoreId');
+
+    final response = await http.get(url, headers: {
+      'Authorization': 'Bearer $token',
+    });
+    print('Response Body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body);
+      setState(() {
+        veicoli = data.map((veicolo) {
+          return {
+            'tipo': veicolo['tipoAutomezzoString'] as String ?? '',
+            'allestimento': veicolo['tipoAllestimentoString'] as String ?? '',
+            'specifiche': veicolo['specificheString'] as String ?? '',
+            'descrizione': veicolo['descrizioneCompletaString'] as String ?? '',
+          };
+        }).toList();
+        veicoliFiltrati = List.from(veicoli); 
+      });
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Errore di connessione: $e')),
+        SnackBar(content: Text('Errore nel recupero dei dati: ${response.statusCode}')),
       );
     }
+  } catch (e) {
+    print('Errore di connessione: $e');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Errore di connessione: $e')),
+    );
   }
+}
 
   final ScrollController _scrollController = ScrollController();
 
@@ -106,9 +135,7 @@ class _FlottaScreenState extends State<FlottaScreen> {
                 SizedBox(width: 6),
                 IconButton(
                   icon: Icon(Icons.add_box_outlined, color: Colors.orange),
-                  onPressed: () {
-                    _mostraPopupAggiungi();
-                  },
+                  onPressed: _mostraPopupAggiungi,
                   tooltip: 'Aggiungi Automezzo',
                 ),
                 SizedBox(width: 6),
@@ -147,15 +174,11 @@ class _FlottaScreenState extends State<FlottaScreen> {
                                 children: [
                                   IconButton(
                                     icon: Icon(Icons.edit, color: Colors.orange),
-                                    onPressed: () {
-                                       _showEditTruckDialog(context, veicolo); 
-                                    },
+                                    onPressed: () => _showEditTruckDialog(context, veicolo),
                                   ),
                                   IconButton(
                                     icon: Icon(Icons.delete, color: Colors.grey),
-                                    onPressed: () {
-                                      _showDeleteConfirmationDialog(context, veicolo);
-                                    },
+                                    onPressed: () => _showDeleteConfirmationDialog(context, veicolo),
                                   ),
                                 ],
                               ),
@@ -258,67 +281,45 @@ class _FlottaScreenState extends State<FlottaScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                'Filtri',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              DropdownButton<String>(
+                value: selectedTipoMezzo,
+                items: ['Tutti', 'Tipo 1', 'Tipo 2', 'Tipo 3'].map((tipo) {
+                  return DropdownMenuItem<String>(
+                    value: tipo,
+                    child: Text(tipo),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    selectedTipoMezzo = value!;
+                  });
+                  _applicaFiltri();
+                },
               ),
-              SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Tipo Mezzo:'),
-                  DropdownButton<String>(
-                    value: selectedTipoMezzo,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        selectedTipoMezzo = newValue!;
-                      });
-                    },
-                    items: <String>['Tutti', 'Camion', 'Furgone']
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
-                ],
+              SizedBox(height: 12),
+              DropdownButton<String>(
+                value: selectedAllestimento,
+                items: ['Tutti', 'Allestimento 1', 'Allestimento 2'].map((tipo) {
+                  return DropdownMenuItem<String>(
+                    value: tipo,
+                    child: Text(tipo),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    selectedAllestimento = value!;
+                  });
+                  _applicaFiltri();
+                },
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Tipo Allestimento:'),
-                  DropdownButton<String>(
-                    value: selectedAllestimento,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        selectedAllestimento = newValue!;
-                      });
-                    },
-                    items: <String>[
-                      'Tutti',
-                      'Standard',
-                      'Furgone isotermico'
-                    ].map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
-                ],
-              ),
-              SizedBox(height: 16),
+              SizedBox(height: 12),
               ElevatedButton(
                 onPressed: () {
-                  _applicaFiltri();
                   Navigator.pop(context);
+                  _applicaFiltri();
                 },
                 child: Text('Applica Filtri'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
-                  foregroundColor: Colors.white,
-                ),
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
               ),
             ],
           ),
@@ -328,7 +329,7 @@ class _FlottaScreenState extends State<FlottaScreen> {
   }
 
   void _showEditTruckDialog(BuildContext context, Map<String, String> veicolo) {
-    String tipoMezzo = veicolo['tipo']!;
+    String tipo = veicolo['tipo']!;
     String allestimento = veicolo['allestimento']!;
     String specifiche = veicolo['specifiche']!;
 
@@ -337,49 +338,47 @@ class _FlottaScreenState extends State<FlottaScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Modifica Automezzo'),
-              Icon(Icons.edit),
+              Icon(Icons.edit, color: Colors.grey),
+              Expanded(child: Text('Modifica Automezzo')),
             ],
           ),
-          content: SingleChildScrollView(
-            child: Column(
-              children: [
-                TextField(
-                  decoration: InputDecoration(labelText: 'Tipo Automezzo'),
-                  controller: TextEditingController(text: tipoMezzo),
-                  onChanged: (value) {
-                    tipoMezzo = value;
-                  },
-                ),
-                TextField(
-                  decoration: InputDecoration(labelText: 'Tipo Allestimento'),
-                  controller: TextEditingController(text: allestimento),
-                  onChanged: (value) {
-                    allestimento = value;
-                  },
-                ),
-                TextField(
-                  decoration: InputDecoration(labelText: 'Specifiche'),
-                  controller: TextEditingController(text: specifiche),
-                  onChanged: (value) {
-                    specifiche = value;
-                  },
-                ),
-              ],
-            ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: TextEditingController(text: tipo),
+                decoration: InputDecoration(labelText: 'Tipo Automezzo'),
+                onChanged: (value) {
+                  tipo = value;
+                },
+              ),
+              TextField(
+                controller: TextEditingController(text: allestimento),
+                decoration: InputDecoration(labelText: 'Tipo Allestimento'),
+                onChanged: (value) {
+                  allestimento = value;
+                },
+              ),
+              TextField(
+                controller: TextEditingController(text: specifiche),
+                decoration: InputDecoration(labelText: 'Specifiche'),
+                onChanged: (value) {
+                  specifiche = value;
+                },
+              ),
+            ],
           ),
           actions: [
             ElevatedButton(
               onPressed: () {
+                // Modifica il veicolo
                 setState(() {
-                  veicolo['tipo'] = tipoMezzo;
+                  veicolo['tipo'] = tipo;
                   veicolo['allestimento'] = allestimento;
                   veicolo['specifiche'] = specifiche;
-                  veicoliFiltrati = List.from(veicoli);
                 });
-                Navigator.pop(context);
+                Navigator.of(context).pop();
               },
               child: Text('Salva'),
               style: ElevatedButton.styleFrom(
@@ -389,7 +388,7 @@ class _FlottaScreenState extends State<FlottaScreen> {
             ),
             TextButton(
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.of(context).pop();
               },
               child: Text('Annulla', style: TextStyle(color: Colors.grey)),
             ),
@@ -404,28 +403,25 @@ class _FlottaScreenState extends State<FlottaScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Conferma Eliminazione'),
-          content: Text('Sei sicuro di voler eliminare questo automezzo?'),
+          title: Text('Conferma'),
+          content: Text('Sei sicuro di voler eliminare questo veicolo?'),
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('Annulla', style: TextStyle(color: Colors.grey)),
-            ),
-            ElevatedButton(
-              onPressed: () {
+                // Elimina il veicolo dalla lista
                 setState(() {
-                  veicoli.remove(veicolo); 
-                  veicoliFiltrati = List.from(veicoli);
+                  veicoli.remove(veicolo);
+                  veicoliFiltrati = List.from(veicoli); // Ricalcola i veicoli filtrati
                 });
-                Navigator.pop(context);
+                Navigator.of(context).pop();
               },
-              child: Text('Elimina'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange, 
-                foregroundColor: Colors.white,
-              ),
+              child: Text('Sì'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Annulla'),
             ),
           ],
         );

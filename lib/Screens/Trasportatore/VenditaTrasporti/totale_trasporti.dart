@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Models/transport_model.dart';
-import 'package:flutter_etrucknet_new/Screens/Trasportatore/VenditaTrasporti/grid_proposte_trasporti.dart';
+import 'package:flutter_etrucknet_new/Screens/Trasportatore/VenditaTrasporti/grid_totale_trasporti.dart';
 
 class TotaleTrasportiScreen extends StatefulWidget {
   @override
@@ -38,7 +38,7 @@ class _TotaleTrasportiScreenState extends State<TotaleTrasportiScreen> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Text('Trasporti Proposti'),
+        title: Text('Tutti i Trasporti'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
         leading: IconButton(
@@ -205,7 +205,7 @@ class _TotaleTrasportiScreenState extends State<TotaleTrasportiScreen> {
             ),
             SizedBox(height: 8),
             Expanded(
-              child: TrasportiGrid(
+              child: TotaleTrasportiGrid(totTrasporti: [],
               ),
             ),
           ],

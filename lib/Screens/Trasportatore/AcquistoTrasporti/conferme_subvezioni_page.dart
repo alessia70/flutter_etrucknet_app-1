@@ -7,7 +7,7 @@ import 'package:flutter_etrucknet_new/Screens/Trasportatore/side_menu_t.dart';
 class ConfermeSubvezioniPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    List<Map<String, String>> confermeSubvezioni = [
+    /*List<Map<String, String>> confermeSubvezioni = [
       {
         'id': '1',
         'localitaRitiro': 'Milano',
@@ -24,7 +24,7 @@ class ConfermeSubvezioniPage extends StatelessWidget {
         'dataConsegna': '04/11/2024',
         'tipo': 'Standard',
       },
-    ];
+    ];*/
 
     return Scaffold(
       appBar: AppBar(
@@ -53,7 +53,6 @@ class ConfermeSubvezioniPage extends StatelessWidget {
             SizedBox(height: 16),
             Expanded(
               child: TransportiEseguitiGrid(
-                completedTransports: confermeSubvezioni,
               ),
             ),
           ],
