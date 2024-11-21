@@ -72,7 +72,6 @@ class _EditCamionDialogState extends State<EditCamionDialog> {
       actions: [
         ElevatedButton(
           onPressed: () {
-            // Passa i dati aggiornati
             widget.onSave({
               'id': widget.truck['id']!,
               'transportCompany': transportCompanyController.text,
@@ -83,7 +82,7 @@ class _EditCamionDialogState extends State<EditCamionDialog> {
               'destination': destinationController.text,
               'loadingDate': loadingDateController.text,
             });
-            Navigator.of(context).pop(); // Chiudi solo il dialogo
+            Navigator.of(context).pop();
           },
           child: const Text("Salva"),
           style: ElevatedButton.styleFrom(

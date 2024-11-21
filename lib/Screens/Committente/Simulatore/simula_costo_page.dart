@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/Committente/profile_menu_committente.dart';
 import 'package:flutter_etrucknet_new/Screens/Committente/side_menu_committente.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_etrucknet_new/Services/estimates_provider.dart';
@@ -46,6 +47,18 @@ class _StimaCostoScreenState extends State<StimaCostoScreen> {
             _scaffoldKey.currentState?.openDrawer();
           },
         ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context, 
+                MaterialPageRoute(builder: (context) => const ProfileCommittentePage()
+                )
+              );
+            },
+          ),
+        ],
       ),
       drawer: SideMenuCommittente(),
       body: SafeArea(

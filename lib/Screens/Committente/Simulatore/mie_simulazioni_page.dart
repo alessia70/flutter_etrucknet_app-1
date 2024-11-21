@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Screens/Committente/Simulatore/confronta_simulazioni_page.dart';
 import 'package:flutter_etrucknet_new/Screens/Committente/Simulatore/nuova_simulazione_page.dart';
+import 'package:flutter_etrucknet_new/Screens/Committente/profile_menu_committente.dart';
 import 'package:flutter_etrucknet_new/Screens/Committente/side_menu_committente.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/data_grid_stime.dart';
 import 'package:provider/provider.dart';
@@ -56,6 +57,18 @@ class _MieSimulazioniPageState extends State<MieSimulazioniPage> {
         title: Text('Mie Simulazioni'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context, 
+                MaterialPageRoute(builder: (context) => const ProfileCommittentePage()
+                )
+              );
+            },
+          ),
+        ],
       ),
       drawer: SideMenuCommittente(),
       body: Padding(

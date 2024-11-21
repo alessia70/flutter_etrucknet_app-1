@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/grid_subvezioni_cancellate.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/nuova_richieste_subvezioni_page.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/richieste_subvezioni_page.dart';
+import 'package:flutter_etrucknet_new/Screens/Trasportatore/profile_menu_t_screen.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/side_menu_t.dart';
 
 class SubvezioniCancellatePage extends StatelessWidget {
@@ -33,6 +34,17 @@ class SubvezioniCancellatePage extends StatelessWidget {
         title: Text('Sub-vezioni Cancellate'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
+        actions: [
+        IconButton(
+          icon: Icon(Icons.person),
+          onPressed: () {
+            Navigator.push(
+              context, 
+              MaterialPageRoute(builder: (context) => const ProfileTrasportatorePage())
+            );
+          },
+        ),
+      ],
         leading: IconButton(
           onPressed: () {
             _scaffoldKey.currentState?.openDrawer();

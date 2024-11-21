@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/confronta_stime_screen.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/data_grid_stime.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/nuova_stima_screen.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/profile_info_operatore_screen.dart';
 import 'package:flutter_etrucknet_new/Widgets/side_menu.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_etrucknet_new/Services/estimates_provider.dart';
@@ -56,6 +57,18 @@ class _EstimatesScreenState extends State<StimeScreen> {
         title: Text('Stime'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context, 
+                MaterialPageRoute(builder: (context) => const ProfilePage()
+                )
+              );
+            },
+          ),
+        ]
       ),
       drawer: SideMenu(),
       body: Padding(

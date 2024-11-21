@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/nuova_richieste_subvezioni_page.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/richieste_subvezioni_page.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/VenditaTrasporti/grid_trasporti_eseguiti.dart';
+import 'package:flutter_etrucknet_new/Screens/Trasportatore/profile_menu_t_screen.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/side_menu_t.dart';
 
 class ConfermeSubvezioniPage extends StatelessWidget {
@@ -31,6 +32,17 @@ class ConfermeSubvezioniPage extends StatelessWidget {
         title: Text('Conferme Sub-vezioni'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context, 
+                MaterialPageRoute(builder: (context) => const ProfileTrasportatorePage())
+              );
+            },
+          ),
+        ],
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(

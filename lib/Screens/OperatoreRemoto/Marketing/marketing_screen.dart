@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/profile_info_operatore_screen.dart';
+import 'package:flutter_etrucknet_new/Widgets/side_menu.dart';
 import 'dart:io';
 import 'package:open_file/open_file.dart';
 //import 'package:flutter_full_pdf_viewer/flutter_full_pdf_viewer.dart';   flutter_pdfview: ^1.2.5
@@ -22,35 +24,32 @@ class _MarketingFilesScreenState extends State<MarketingFilesScreen> {
   }
 
   Future<void> _loadFiles() async {
-  //final directory = await getApplicationDocumentsDirectory();
-  final marketingDir = Directory('lib/Documents/Marketing');
+    final marketingDir = Directory('lib/Documents/Marketing');
 
-  print('Percorso directory Marketing: ${marketingDir.path}');
+    print('Percorso directory Marketing: ${marketingDir.path}');
 
-  if (await marketingDir.exists()) {
-    print('La directory esiste, caricamento dei file...');
-    final fileList = marketingDir.listSync();
-    setState(() {
-      files = fileList.map((file) {
-        final fileStat = file.statSync();
-        return {
-          'date': fileStat.modified.toLocal().toString().split(' ')[0],
-          'name': file.uri.pathSegments.last,
-          'type': file.uri.pathSegments.last.split('.').last.toUpperCase(),
-          'size': '${(fileStat.size / 1024).toStringAsFixed(2)} KB',
-          'path': file.path
-        };
-      }).toList();
-    });
-    if (files.isEmpty) {
-      print('Nessun file trovato nella directory Marketing.');
+    if (await marketingDir.exists()) {
+      print('La directory esiste, caricamento dei file...');
+      final fileList = marketingDir.listSync();
+      setState(() {
+        files = fileList.map((file) {
+          final fileStat = file.statSync();
+          return {
+            'date': fileStat.modified.toLocal().toString().split(' ')[0],
+            'name': file.uri.pathSegments.last,
+            'type': file.uri.pathSegments.last.split('.').last.toUpperCase(),
+            'size': '${(fileStat.size / 1024).toStringAsFixed(2)} KB',
+            'path': file.path
+          };
+        }).toList();
+      });
+      if (files.isEmpty) {
+        print('Nessun file trovato nella directory Marketing.');
+      }
+    } else {
+      print('La directory Marketing non esiste. Assicurati che i file siano nella directory corretta.');
     }
-  } else {
-    print('La directory Marketing non esiste. Assicurati che i file siano nella directory corretta.');
   }
-}
-
-
   void _openFile(String path) async {
     final result = await OpenFile.open(path);
     print('Result: ${result.message}');
@@ -63,7 +62,20 @@ class _MarketingFilesScreenState extends State<MarketingFilesScreen> {
         title: const Text('File Marketing'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context, 
+                MaterialPageRoute(builder: (context) => const ProfilePage()
+                )
+              );
+            },
+          ),
+        ],
       ),
+      drawer: SideMenu(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: files.isNotEmpty

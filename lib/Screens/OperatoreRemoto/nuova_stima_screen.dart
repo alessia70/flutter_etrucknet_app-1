@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/profile_info_operatore_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_etrucknet_new/Services/estimates_provider.dart';
 
@@ -35,7 +36,19 @@ class _NuovaStimaScreenState extends State<NuovaStimaScreen> {
       appBar: AppBar(
         title: Text('Nuova Stima'),
         backgroundColor: Colors.orange,
-        foregroundColor: Colors.white,),
+        foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context, 
+                MaterialPageRoute(builder: (context) => const ProfilePage())
+              );
+            },
+          ),
+        ],
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -70,7 +83,7 @@ class _NuovaStimaScreenState extends State<NuovaStimaScreen> {
                 SizedBox(height: 20),
                 _buildDettagliMerce(),
                 SizedBox(height: 20),
-              _buildAltreInformazioni(),
+                _buildAltreInformazioni(),
                 SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _salvaStima,
@@ -87,7 +100,6 @@ class _NuovaStimaScreenState extends State<NuovaStimaScreen> {
       ),
     );
   }
-
   Widget _buildTipologiaTrasportoField() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

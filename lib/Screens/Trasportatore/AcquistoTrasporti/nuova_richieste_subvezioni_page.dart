@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/Trasportatore/profile_menu_t_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_etrucknet_new/Services/estimates_provider.dart';
 
@@ -35,7 +36,19 @@ class _NuovaRichiestaSubvezioneScreenState extends State<NuovaRichiestaSubvezion
       appBar: AppBar(
         title: Text('Nuova Stima'),
         backgroundColor: Colors.orange,
-        foregroundColor: Colors.white,),
+        foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context, 
+                MaterialPageRoute(builder: (context) => const ProfileTrasportatorePage())
+              );
+            },
+          ),
+        ],
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(

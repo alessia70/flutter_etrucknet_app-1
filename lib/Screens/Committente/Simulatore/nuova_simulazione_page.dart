@@ -70,7 +70,6 @@ class _NuovaSimulazioneScreenState extends State<NuovaSimulazioneScreen> {
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 20),
-
               _buildTextField(_tipologiaTrasportoController, 'Tipologia Trasporto'),
               SizedBox(height: 16),
               _buildTextField(_locationController, 'Location'),

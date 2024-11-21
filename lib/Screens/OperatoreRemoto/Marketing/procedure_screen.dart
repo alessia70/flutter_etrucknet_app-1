@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/profile_info_operatore_screen.dart';
+import 'package:flutter_etrucknet_new/Widgets/side_menu.dart';
 import 'package:open_file/open_file.dart';
 //import 'package:flutter_full_pdf_viewer/flutter_full_pdf_viewer.dart';
 
@@ -57,7 +59,30 @@ class _ProcedureScreenState extends State<ProcedureScreen> {
         title: const Text('Procedure'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context, 
+                MaterialPageRoute(builder: (context) => const ProfilePage()
+                )
+              );
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context, 
+                MaterialPageRoute(builder: (context) => const ProfilePage()
+                )
+              );
+            },
+          ),
+        ],
       ),
+      drawer: SideMenu(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: files.isEmpty

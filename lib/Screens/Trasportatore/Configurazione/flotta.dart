@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/Trasportatore/profile_menu_t_screen.dart';
 import 'package:flutter_etrucknet_new/res/app_urls.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/side_menu_t.dart';
@@ -21,7 +22,7 @@ class _FlottaScreenState extends State<FlottaScreen> {
   @override
   void initState() {
     super.initState();
-    _loadUserData(); // Carica i dati utente e i veicoli
+    _loadUserData();
   }
 
   Future<int?> getSavedUserId() async {
@@ -48,39 +49,38 @@ class _FlottaScreenState extends State<FlottaScreen> {
   }
 
   Future<void> _caricaVeicoli(String token, int trasportatoreId) async {
-  try {
-    final url = Uri.parse('${AppUrl.fleetEndPoint}/flotta/$trasportatoreId');
+    try {
+      final url = Uri.parse('${AppUrl.fleetEndPoint}/flotta/$trasportatoreId');
 
-    final response = await http.get(url, headers: {
-      'Authorization': 'Bearer $token',
-    });
-    print('Response Body: ${response.body}');
-
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      setState(() {
-        veicoli = data.map((veicolo) {
-          return {
-            'tipo': veicolo['tipoAutomezzoString'] as String ?? '',
-            'allestimento': veicolo['tipoAllestimentoString'] as String ?? '',
-            'specifiche': veicolo['specificheString'] as String ?? '',
-            'descrizione': veicolo['descrizioneCompletaString'] as String ?? '',
-          };
-        }).toList();
-        veicoliFiltrati = List.from(veicoli); 
+      final response = await http.get(url, headers: {
+        'Authorization': 'Bearer $token',
       });
-    } else {
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        setState(() {
+          veicoli = data.map((veicolo) {
+            return {
+              'tipo': veicolo['tipoAutomezzoString'] as String ?? '',
+              'allestimento': veicolo['tipoAllestimentoString'] as String ?? '',
+              'specifiche': veicolo['specificheString'] as String ?? '',
+              'descrizione': veicolo['descrizioneCompletaString'] as String ?? '',
+            };
+          }).toList();
+          veicoliFiltrati = List.from(veicoli); 
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Errore nel recupero dei dati: ${response.statusCode}')),
+        );
+      }
+    } catch (e) {
+      print('Errore di connessione: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Errore nel recupero dei dati: ${response.statusCode}')),
+        SnackBar(content: Text('Errore di connessione: $e')),
       );
     }
-  } catch (e) {
-    print('Errore di connessione: $e');
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Errore di connessione: $e')),
-    );
   }
-}
 
   final ScrollController _scrollController = ScrollController();
 
@@ -108,6 +108,17 @@ class _FlottaScreenState extends State<FlottaScreen> {
         title: Text('Flotta'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context, 
+                MaterialPageRoute(builder: (context) => const ProfileTrasportatorePage())
+              );
+            },
+          ),
+        ],
         leading: IconButton(
           icon: Icon(Icons.menu),
           onPressed: () {

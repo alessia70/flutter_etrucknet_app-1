@@ -88,7 +88,6 @@ class _AggiungiAutomezzoDialogState extends State<AggiungiAutomezzoDialog> {
               ),
             ],
             const SizedBox(height: 20),
-
             if (selectedTipoAllestimento != null) ...[
               const Text(
                 'Seleziona Specifiche:',

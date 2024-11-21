@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/profile_info_operatore_screen.dart';
+import 'package:flutter_etrucknet_new/Widgets/side_menu.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_etrucknet_new/Services/estimates_provider.dart';
 
@@ -53,6 +55,16 @@ class _ModificaStimaScreenState extends State<ModificaStimaScreen> {
         foregroundColor: Colors.white,
         actions: [
           IconButton(
+            icon: Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context, 
+                MaterialPageRoute(builder: (context) => const ProfilePage()
+                )
+              );
+            },
+          ),
+          IconButton(
             icon: Icon(Icons.save),
             onPressed: () {
               updateEstimate(context, widget.estimate['id']);
@@ -60,6 +72,7 @@ class _ModificaStimaScreenState extends State<ModificaStimaScreen> {
           ),
         ],
       ),
+      drawer: SideMenu(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
@@ -72,8 +85,6 @@ class _ModificaStimaScreenState extends State<ModificaStimaScreen> {
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 20),
-
-              // Fields
               _buildTextField(_tipologiaTrasportoController, 'Tipologia Trasporto'),
               SizedBox(height: 16),
               _buildTextField(_locationController, 'Location'),
@@ -87,9 +98,7 @@ class _ModificaStimaScreenState extends State<ModificaStimaScreen> {
               _buildTextField(_dettagliMerceController, 'Dettagli Merce'),
               SizedBox(height: 16),
               _buildTextField(_altreInformazioniController, 'Altre Informazioni'),
-
               SizedBox(height: 20),
-              // Update button
               ElevatedButton(
                 onPressed: () {
                   updateEstimate(context, widget.estimate['id']);
@@ -107,8 +116,6 @@ class _ModificaStimaScreenState extends State<ModificaStimaScreen> {
       ),
     );
   }
-
-  // Utility function to build a TextField with decoration
   Widget _buildTextField(TextEditingController controller, String label) {
     return TextField(
       controller: controller,
@@ -121,8 +128,6 @@ class _ModificaStimaScreenState extends State<ModificaStimaScreen> {
       ),
     );
   }
-
-  // Function to handle the update of the estimate
   void updateEstimate(BuildContext context, int estimateId) {
     final provider = Provider.of<EstimatesProvider>(context, listen: false);
 
@@ -151,15 +156,15 @@ class _ModificaStimaScreenState extends State<ModificaStimaScreen> {
       'altreInformazioni': _altreInformazioniController.text.isNotEmpty
           ? _altreInformazioniController.text
           : widget.estimate['altreInformazioni'],
-      'stimato': widget.estimate['stimato'], // Assicura che questo campo sia mantenuto
+      'stimato': widget.estimate['stimato'],
     };
 
     try {
-      provider.updateEstimate(estimateId, updatedEstimate); // Verifica che il provider lo aggiorni
+      provider.updateEstimate(estimateId, updatedEstimate);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Stima aggiornata con successo!')),
       );
-      Navigator.pop(context, updatedEstimate); // Verifica che l'aggiornamento avvenga prima del confronto
+      Navigator.pop(context, updatedEstimate);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Errore: ${e.toString()}')),

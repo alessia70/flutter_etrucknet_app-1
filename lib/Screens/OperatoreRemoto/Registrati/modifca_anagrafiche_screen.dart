@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/profile_info_operatore_screen.dart';
+import 'package:flutter_etrucknet_new/Widgets/side_menu.dart';
 import 'package:intl/intl.dart';
 
 class ModifyAnagraficaScreen extends StatefulWidget {
@@ -41,7 +43,6 @@ class _ModifyAnagraficaScreenState extends State<ModifyAnagraficaScreen> {
   @override
   void initState() {
     super.initState();
-
     ragioneSocialeController =
         TextEditingController(text: widget.anagrafica['nome']);
     partitaIVAController =
@@ -58,7 +59,6 @@ class _ModifyAnagraficaScreenState extends State<ModifyAnagraficaScreen> {
     nomeAmministratoreController = TextEditingController(text: widget.anagrafica['nomeAmministratore'] ?? '');
     cognomeAmministratoreController = TextEditingController(text: widget.anagrafica['cognomeAmministratore'] ?? '');
     nomeUtenteAmministratoreController = TextEditingController(text: widget.anagrafica['nomeUtenteAmministratore'] ?? '');
-
     contatti = List<Map<String, dynamic>>.from(widget.anagrafica['contatti'] ?? []);
   }
 
@@ -69,7 +69,20 @@ class _ModifyAnagraficaScreenState extends State<ModifyAnagraficaScreen> {
         title: Text('Modifica Anagrafica'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context, 
+                MaterialPageRoute(builder: (context) => const ProfilePage()
+                )
+              );
+            },
+          ),
+        ],
       ),
+      drawer: SideMenu(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -98,7 +111,6 @@ class _ModifyAnagraficaScreenState extends State<ModifyAnagraficaScreen> {
                   ),
                 ],
               ),
-
               ExpansionTile(
                 title: Text('Note'),
                 initiallyExpanded: false,
@@ -114,7 +126,6 @@ class _ModifyAnagraficaScreenState extends State<ModifyAnagraficaScreen> {
                   ),
                 ],
               ),
-
               ExpansionTile(
                 title: Text('Contatti'),
                 initiallyExpanded: false,
@@ -146,29 +157,27 @@ class _ModifyAnagraficaScreenState extends State<ModifyAnagraficaScreen> {
                       ],
                     );
                   }).toList(),
-
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: ElevatedButton.icon(
                       onPressed: _addNewContact,
-                      icon: Icon(Icons.add, color: Colors.orange), // Imposta il colore dell'icona
+                      icon: Icon(Icons.add, color: Colors.orange),
                       label: Text(
                         'Aggiungi Contatto',
-                        style: TextStyle(color: Colors.orange), // Imposta il colore del testo
+                        style: TextStyle(color: Colors.orange),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white, // Colore di sfondo
-                        foregroundColor: Colors.orange, // Colore del testo quando il bottone è premuto
-                        side: BorderSide(color: Colors.orange), // Colore del contorno
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.orange,
+                        side: BorderSide(color: Colors.orange),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0), // Forma del bottone
+                          borderRadius: BorderRadius.circular(8.0),
                         ),
                       ),
                     ),
                   )
                 ],
               ),
-
               ExpansionTile(
                 title: Text('Dati Gradimento e Attività'),
                 initiallyExpanded: false,
@@ -178,42 +187,32 @@ class _ModifyAnagraficaScreenState extends State<ModifyAnagraficaScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Dropdown per Livello di Interesse
                         _buildDropdownField(
                           'Livello di Interesse',
                           livelloInteresse,
                           ['Nessuno', 'Alto', 'Medio', 'Basso'],
                         ),
-
-                        // Dropdown per Giudizio
                         _buildDropdownField(
                           'Giudizio',
                           giudizio,
                           ['Nessuno', 'Ottimo', 'Sufficiente', 'Scarso'],
                         ),
-
-                        // Dropdown per Categoria ATECO
                         _buildDropdownField(
                           'Categoria ATECO',
                           categoriaAteco,
-                          ['Categoria 1', 'Categoria 2', 'Categoria 3', 'Categoria 4'], // Puoi aggiungere tutte le categorie
+                          ['Categoria 1', 'Categoria 2', 'Categoria 3', 'Categoria 4'], 
                         ),
-
-                        // Dropdown per Codice ATECO
                         _buildDropdownField(
                           'Codice ATECO',
                           codiceAteco,
-                          ['Codice 1', 'Codice 2', 'Codice 3', 'Codice 4'], // Puoi aggiungere tutti i codici
+                          ['Codice 1', 'Codice 2', 'Codice 3', 'Codice 4'],
                         ),
-
-                        // Campo di testo per Attività
                         _buildTextField('Attività', attivitaController),
                       ],
                     ),
                   ),
                 ],
               ),
-
               ExpansionTile(
                 title: Text('Dati Amministratore'),
                 initiallyExpanded: false,
@@ -226,8 +225,6 @@ class _ModifyAnagraficaScreenState extends State<ModifyAnagraficaScreen> {
                         _buildTextField('Nome Amministratore', nomeAmministratoreController),
                         _buildTextField('Cognome Amministratore', cognomeAmministratoreController),
                         _buildTextField('Nome Utente', nomeUtenteAmministratoreController),
-
-                        // Data accettazione termini
                         _buildDatePickerField(
                           'Data Accettazione Termini',
                           dataAccettazioneTermini,
@@ -237,8 +234,6 @@ class _ModifyAnagraficaScreenState extends State<ModifyAnagraficaScreen> {
                             });
                           },
                         ),
-
-                        // Data accettazione condizioni
                         _buildDatePickerField(
                           'Data Accettazione Condizioni',
                           dataAccettazioneCondizioni,
@@ -253,16 +248,13 @@ class _ModifyAnagraficaScreenState extends State<ModifyAnagraficaScreen> {
                   ),
                 ],
               ),
-
               Row(
-                mainAxisAlignment: MainAxisAlignment.start, // Allinea gli elementi a sinistra
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   ElevatedButton(
                     onPressed: () {
-                      // Aggiungi logica per salvare i dati modificati
                       if (_formIsValid()) {
                         print("Dati aggiornati");
-                        // Puoi inviare i dati aggiornati al backend o fare altre operazioni
                         Navigator.pop(context);
                       }
                     },
@@ -271,11 +263,11 @@ class _ModifyAnagraficaScreenState extends State<ModifyAnagraficaScreen> {
                       style: TextStyle(color: Colors.orange),
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white, // Colore di sfondo
-                      foregroundColor: Colors.orange, // Colore del testo quando il bottone è premuto
-                      side: BorderSide(color: Colors.orange), // Colore del contorno
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.orange,
+                      side: BorderSide(color: Colors.orange),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0), // Forma del bottone
+                        borderRadius: BorderRadius.circular(8.0),
                       ),
                     ),
                   ),
@@ -287,7 +279,6 @@ class _ModifyAnagraficaScreenState extends State<ModifyAnagraficaScreen> {
       ),
     );
   }
-
   bool _formIsValid() {
     return ragioneSocialeController.text.isNotEmpty;
   }
@@ -375,8 +366,6 @@ class _ModifyAnagraficaScreenState extends State<ModifyAnagraficaScreen> {
       ),
     );
   }
-
-  // Funzione per aggiungere un nuovo contatto
   void _addNewContact() {
     setState(() {
       contatti.add({

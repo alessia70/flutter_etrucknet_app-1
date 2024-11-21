@@ -19,7 +19,6 @@ class CamionDisponibiliAltriVettoriScreen extends StatelessWidget {
       ),
     );
   }
-
   Widget _buildSearchBar(BuildContext context) {
     return TextField(
       decoration: InputDecoration(
@@ -29,7 +28,6 @@ class CamionDisponibiliAltriVettoriScreen extends StatelessWidget {
       ),
     );
   }
-
   Widget _buildTruckTable(BuildContext context) {
     return Card(
       elevation: 4,
@@ -46,15 +44,14 @@ class CamionDisponibiliAltriVettoriScreen extends StatelessWidget {
             DataColumn(label: Text('')),
             DataColumn(label: Text('')),
           ],
-          rows: List<DataRow>.generate(
-            5, // Numero di righe da visualizzare
+          rows: List<DataRow>.generate( 5,
             (index) => DataRow(cells: [
-              DataCell(Text('Tipo ${index + 1}')), // Tipo Mezzo
-              DataCell(Text('Allestimento ${index + 1}')), // Allestimento
-              DataCell(Text('${(index + 1) * 100} cm')), // Spazio Disponibile
-              DataCell(Text('Località Carico ${index + 1}')), // Località Carico
-              DataCell(Text('Località Scarico ${index + 1}')), // Località Scarico
-              DataCell(Text('01/01/2024')), // Data Ritiro
+              DataCell(Text('Tipo ${index + 1}')),
+              DataCell(Text('Allestimento ${index + 1}')),
+              DataCell(Text('${(index + 1) * 100} cm')),
+              DataCell(Text('Località Carico ${index + 1}')),
+              DataCell(Text('Località Scarico ${index + 1}')),
+              DataCell(Text('01/01/2024')),
               DataCell(
                 IconButton(
                   icon: Icon(Icons.edit),

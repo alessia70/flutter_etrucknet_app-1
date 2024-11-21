@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/profile_info_operatore_screen.dart';
 import 'package:flutter_etrucknet_new/Widgets/add_new_message.dart';
+import 'package:flutter_etrucknet_new/Widgets/side_menu.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_etrucknet_new/Widgets/messaggi_grid.dart'; 
 
@@ -22,7 +24,20 @@ class _MessagesScreenState extends State<MessagesScreen> {
         title: const Text('Messaggi Clienti'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context, 
+                MaterialPageRoute(builder: (context) => const ProfilePage()
+                )
+              );
+            },
+          ),
+        ],
       ),
+      drawer: SideMenu(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -36,7 +51,6 @@ class _MessagesScreenState extends State<MessagesScreen> {
               ),
             ),
             SizedBox(height: 16),
-
             TextField(
               controller: _searchMessageController,
               decoration: InputDecoration(
@@ -45,7 +59,6 @@ class _MessagesScreenState extends State<MessagesScreen> {
               ),
             ),
             SizedBox(height: 16),
-
             Row(
               children: [
                 Expanded(
@@ -80,7 +93,6 @@ class _MessagesScreenState extends State<MessagesScreen> {
                   ),
                 ),
                 SizedBox(width: 130),
-
                 ElevatedButton(
                   onPressed: () {
                     print('Cerca per: ${_searchUserController.text} e Messaggio: ${_searchMessageController.text}');

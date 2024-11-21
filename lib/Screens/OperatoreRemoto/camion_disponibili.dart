@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/camion_disponibili_grid.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/profile_info_operatore_screen.dart';
 import 'package:flutter_etrucknet_new/Widgets/side_menu.dart';
 import 'package:intl/intl.dart';
 
@@ -24,6 +25,18 @@ class _AvailableTrucksScreenState extends State<AvailableTrucksScreen> {
         title: const Text('Camion Disponibili'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context, 
+                MaterialPageRoute(builder: (context) => const ProfilePage()
+                )
+              );
+            },
+          ),
+        ],
       ),
       drawer: const SideMenu(),
       body: Padding(

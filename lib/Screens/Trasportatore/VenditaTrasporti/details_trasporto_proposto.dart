@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/Trasportatore/profile_menu_t_screen.dart';
 
 class TransportDetailPage extends StatelessWidget {
   final String id;
@@ -34,6 +35,17 @@ class TransportDetailPage extends StatelessWidget {
         title: Text('Dettagli Trasporto'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context, 
+                MaterialPageRoute(builder: (context) => const ProfileTrasportatorePage())
+              );
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

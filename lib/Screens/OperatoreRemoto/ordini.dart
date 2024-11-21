@@ -3,6 +3,8 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_etrucknet_new/Models/order_model.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/add_ordine.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/data_grid_ordini.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/profile_info_operatore_screen.dart';
+import 'package:flutter_etrucknet_new/Widgets/side_menu.dart';
 
 class OrdiniScreen extends StatefulWidget {
   const OrdiniScreen({super.key});
@@ -13,16 +15,14 @@ class OrdiniScreen extends StatefulWidget {
 
 class _OrdiniScreenState extends State<OrdiniScreen> {
   final TextEditingController _searchController = TextEditingController();
-  String _selectedOption = 'Tutti'; // Valore iniziale per il dropdown
-  DateTimeRange? _selectedDateRange; // Valore per il selettore di date
-
-  // Esempio di lista di ordini
+  String _selectedOption = 'Tutti';
+  DateTimeRange? _selectedDateRange;
   final List<Order> orders = List.generate(10, (index) {
     return Order(
       id: '${index + 1}',
       customerName: 'Cliente_${index + 1}',
       customerContact: 'Contatto_${index + 1}',
-      date: DateTime.now().subtract(Duration(days: index)), // Data decrescente
+      date: DateTime.now().subtract(Duration(days: index)),
       companyName: 'Azienda_${index + 1}',
       loadingDate: '2024-10-10',
       loadingLocation: 'Luogo_${index + 1}',
@@ -62,7 +62,20 @@ class _OrdiniScreenState extends State<OrdiniScreen> {
         title: Text('Gestione Ordini'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context, 
+                MaterialPageRoute(builder: (context) => const ProfilePage()
+                )
+              );
+            },
+          ),
+        ]
       ),
+      drawer: SideMenu(),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

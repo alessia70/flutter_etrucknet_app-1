@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/Trasportatore/profile_menu_t_screen.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/side_menu_t.dart';
 
 class TrattePage extends StatefulWidget {
@@ -36,6 +37,17 @@ class _TrattePageState extends State<TrattePage> {
         title: Text('Tratte'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context, 
+                MaterialPageRoute(builder: (context) => const ProfileTrasportatorePage())
+              );
+            },
+          ),
+        ],
         leading: IconButton(
           icon: Icon(Icons.menu),
           onPressed: () {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Screens/Committente/side_menu_committente.dart';
-import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/profile_info_screen.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/profile_info_operatore_screen.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/Configurazione/camion_disponibili_t.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/add_camion_disponibile_t.dart';
 
@@ -128,7 +128,6 @@ class CommittenteDashboardScreen extends StatelessWidget {
       ),
     );
   }
-
   Widget _buildTransportRequestCard(BuildContext context) {
     return Card(
       elevation: 4,

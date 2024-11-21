@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/grid_richieste_subvezioni.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/nuova_richieste_subvezioni_page.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/subvezioni_cancellate_page.dart';
+import 'package:flutter_etrucknet_new/Screens/Trasportatore/profile_menu_t_screen.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/side_menu_t.dart'; // Assicurati di importare il SideMenu
 
 class RichiesteSubvezioniPage extends StatefulWidget {
@@ -39,6 +40,17 @@ class _RichiesteSubvezioniPageState extends State<RichiesteSubvezioniPage> {
         title: Text('Richieste Sub-vezioni'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
+        actions: [
+        IconButton(
+          icon: Icon(Icons.person),
+          onPressed: () {
+            Navigator.push(
+              context, 
+              MaterialPageRoute(builder: (context) => const ProfileTrasportatorePage())
+            );
+          },
+        ),
+      ],
         leading: IconButton(
           icon: Icon(Icons.menu),
           onPressed: () {

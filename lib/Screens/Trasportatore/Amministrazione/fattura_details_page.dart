@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/Trasportatore/profile_menu_t_screen.dart';
 
 class FatturaDetailPage extends StatelessWidget {
   final String id;
@@ -23,6 +24,17 @@ class FatturaDetailPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Dettagli Fattura'),
         backgroundColor: Colors.orange,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context, 
+                MaterialPageRoute(builder: (context) => const ProfileTrasportatorePage())
+              );
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

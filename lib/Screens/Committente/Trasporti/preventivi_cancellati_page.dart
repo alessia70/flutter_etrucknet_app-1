@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/Committente/profile_menu_committente.dart';
 import 'package:flutter_etrucknet_new/Screens/Committente/side_menu_committente.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/grid_subvezioni_cancellate.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/nuova_richieste_subvezioni_page.dart';
@@ -39,6 +40,18 @@ class PreventiviCancellatiPage extends StatelessWidget {
           }, 
           icon: Icon(Icons.menu)
         ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context, 
+                MaterialPageRoute(builder: (context) => const ProfileCommittentePage()
+                )
+              );
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

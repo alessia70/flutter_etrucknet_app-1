@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/profile_info_operatore_screen.dart';
+import 'package:flutter_etrucknet_new/Widgets/side_menu.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -20,7 +22,6 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
-
     _markers.addAll([
       Marker(
         markerId: const MarkerId('pickup'),
@@ -33,14 +34,12 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
         infoWindow: InfoWindow(title: 'Consegna', snippet: 'Roma'),
       ),
     ]);
-
     _polylines.add(Polyline(
       polylineId: const PolylineId('route'),
       points: [_pickupLocation, _deliveryLocation],
       color: Colors.blue,
       width: 5,
     ));
-
     mapController.moveCamera(CameraUpdate.newLatLngZoom(_pickupLocation, 6));
   }
 
@@ -51,7 +50,20 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
         title: const Text('Dettagli Ordine'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context, 
+                MaterialPageRoute(builder: (context) => const ProfilePage()
+                )
+              );
+            },
+          ),
+        ],
       ),
+      drawer: SideMenu(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(

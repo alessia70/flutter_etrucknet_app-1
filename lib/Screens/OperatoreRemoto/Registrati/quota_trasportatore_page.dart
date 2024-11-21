@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/profile_info_operatore_screen.dart';
+import 'package:flutter_etrucknet_new/Widgets/side_menu.dart';
 
 class SendQuotePage extends StatelessWidget {
-  final String orderId; // Order ID received from the previous page
+  final String orderId;
   final TextEditingController shipperController = TextEditingController();
 
   SendQuotePage({Key? key, required this.orderId}) : super(key: key);
@@ -15,6 +17,16 @@ class SendQuotePage extends StatelessWidget {
         foregroundColor: Colors.white,
         actions: [
           IconButton(
+            icon: Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context, 
+                MaterialPageRoute(builder: (context) => const ProfilePage()
+                )
+              );
+            },
+          ),
+          IconButton(
             icon: Icon(Icons.save),
             onPressed: () {
               // Handle save action
@@ -22,6 +34,7 @@ class SendQuotePage extends StatelessWidget {
           ),
         ],
       ),
+      drawer: SideMenu(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
@@ -34,7 +47,6 @@ class SendQuotePage extends StatelessWidget {
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 8),
-
               Text(
                 'Cerca Trasportatore',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -48,14 +60,11 @@ class SendQuotePage extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 32),
-
-              // Action Buttons
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   ElevatedButton(
                     onPressed: () {
-                      // Handle send action
                       _sendQuote(context);
                     },
                     child: Text('Invia'),
@@ -66,7 +75,6 @@ class SendQuotePage extends StatelessWidget {
                   ),
                   OutlinedButton(
                     onPressed: () {
-                      // Handle cancel action
                       Navigator.of(context).pop();
                     },
                     child: Text('Annulla', style: TextStyle(color: Colors.grey),),
@@ -79,12 +87,8 @@ class SendQuotePage extends StatelessWidget {
       ),
     );
   }
-
   void _sendQuote(BuildContext context) {
-    // Implement the send quote functionality here
     String shipperName = shipperController.text;
-
-    // For demonstration purposes
     showDialog(
       context: context,
       builder: (context) {

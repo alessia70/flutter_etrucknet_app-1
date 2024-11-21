@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Models/order_model.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/profile_info_operatore_screen.dart';
+import 'package:flutter_etrucknet_new/Widgets/side_menu.dart';
 
 class EditOrderForm extends StatefulWidget {
   final Order order;
@@ -96,11 +98,11 @@ class _EditOrderFormState extends State<EditOrderForm> {
 
   void _saveOrder() {
     final updatedOrder = Order(
-      id: widget.order.id, // Keep the same ID
+      id: widget.order.id,
       customerName: customerNameController.text,
       customerContact: customerContactController.text,
-      date: DateTime.now(), // You can change this as needed
-      companyName: widget.order.companyName, // Assuming company name doesn't change
+      date: DateTime.now(),
+      companyName: widget.order.companyName,
       loadingDate: loadingDateController.text,
       loadingLocation: loadingLocationController.text,
       loadingProvince: loadingProvinceController.text,
@@ -112,19 +114,14 @@ class _EditOrderFormState extends State<EditOrderForm> {
       unloadingProvince: unloadingProvinceController.text,
       unloadingCountry: unloadingCountryController.text,
       offerAmount: double.tryParse(offerAmountController.text) ?? 0.0,
-      activeOffers: widget.order.activeOffers, // Assuming this doesn't change
-      expiredOffers: widget.order.expiredOffers, // Assuming this doesn't change
-      correspondenceCount: widget.order.correspondenceCount, // Assuming this doesn't change
+      activeOffers: widget.order.activeOffers,
+      expiredOffers: widget.order.expiredOffers,
+      correspondenceCount: widget.order.correspondenceCount,
       estimatedBudget: double.tryParse(estimatedBudgetController.text) ?? 0.0,
 
       vehicleType: selectedVehicleType,
       additionalSpecs: selectedAdditionalSpecs,
     );
-
-    // Qui salveresti tipicamente l'ordine aggiornato alla tua fonte di dati
-    // Ad esempio, chiamando una funzione per aggiornare l'ordine nel tuo backend o database
-
-    // Dopo il salvataggio, esci dalla pagina del modulo
     Navigator.of(context).pop(updatedOrder);
   }
 
@@ -137,11 +134,22 @@ class _EditOrderFormState extends State<EditOrderForm> {
         foregroundColor: Colors.white,
         actions: [
           IconButton(
+            icon: Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context, 
+                MaterialPageRoute(builder: (context) => const ProfilePage()
+                )
+              );
+            },
+          ),
+          IconButton(
             icon: Icon(Icons.save),
             onPressed: _saveOrder,
           ),
         ],
       ),
+      drawer: SideMenu(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
@@ -154,8 +162,6 @@ class _EditOrderFormState extends State<EditOrderForm> {
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 16),
-
-              // Dropdown for transport type
               DropdownButtonFormField<String>(
                 value: selectedTransportType,
                 decoration: InputDecoration(

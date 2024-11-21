@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/profile_info_operatore_screen.dart';
+import 'package:flutter_etrucknet_new/Widgets/side_menu.dart';
 
 class NuovoTrasportatoreScreen extends StatefulWidget {
   const NuovoTrasportatoreScreen({super.key});
@@ -10,8 +12,8 @@ class NuovoTrasportatoreScreen extends StatefulWidget {
 class _NuovoTrasportatoreScreenState extends State<NuovoTrasportatoreScreen> {
   //String? _selectedEmail;
   bool _welcomeEmail = false;
-  bool _showAdditionalEmails = false; // Variabile per gestire la visibilità delle email aggiuntive
-  bool _showGradimento = false; // Variabile per gestire la visibilità del campo di gradimento
+  bool _showAdditionalEmails = false;
+  bool _showGradimento = false;
 
   @override
   Widget build(BuildContext context) {
@@ -20,71 +22,61 @@ class _NuovoTrasportatoreScreenState extends State<NuovoTrasportatoreScreen> {
         title: Text('Nuovo Trasportatore'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context, 
+                MaterialPageRoute(builder: (context) => const ProfilePage()
+                )
+              );
+            },
+          ),
+        ],
       ),
+      drawer: SideMenu(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Nazione
               _buildLabel('Nazione'),
               _buildTextField('Inserisci Nazione'),
               SizedBox(height: 16.0),
-
-              // Provincia
               _buildLabel('Provincia'),
               _buildTextField('Inserisci Provincia'),
               SizedBox(height: 16.0),
-
-              // Ragione Sociale
               _buildLabel('Ragione Sociale'),
               _buildTextField('Inserisci Ragione Sociale'),
               SizedBox(height: 16.0),
-
-              // Partita IVA
               _buildLabel('Partita IVA'),
               _buildTextField('Inserisci Partita IVA'),
               SizedBox(height: 16.0),
-
-              // Indirizzo
               _buildLabel('Indirizzo'),
               _buildTextField('Inserisci Indirizzo'),
               SizedBox(height: 16.0),
-
-              // CAP
               _buildLabel('CAP'),
               _buildTextField('Inserisci CAP'),
               SizedBox(height: 16.0),
-
-              // Località
               _buildLabel('Località'),
               _buildTextField('Inserisci Località'),
               SizedBox(height: 16.0),
-
-              // Telefono e Cellulare
               _buildRowWithLabels('Telefono', 'Cellulare'),
               SizedBox(height: 16.0),
-
-              // Nome e Cognome
               _buildRowWithLabels('Nome', 'Cognome'),
               SizedBox(height: 16.0),
-
-              // Email e Username
               _buildLabel('Email/Username'),
               _buildTextField('Inserisci Email/Username'),
               SizedBox(height: 16.0),
-
-              // Password
               _buildLabel('Password'),
               _buildTextField('Inserisci Password'),
               SizedBox(height: 16.0),
-
-              // Titolo per email aggiuntive
               GestureDetector(
                 onTap: () {
                   setState(() {
-                    _showAdditionalEmails = !_showAdditionalEmails; // Cambia la visibilità delle email
+                    _showAdditionalEmails = !_showAdditionalEmails;
                   });
                 },
                 child: Text(
@@ -105,15 +97,10 @@ class _NuovoTrasportatoreScreenState extends State<NuovoTrasportatoreScreen> {
                 SizedBox(height: 16.0),
               ],
               SizedBox(height: 16.0),
-
-              // Codice Univoco e Indirizzo PEC
               _buildRowWithSmallLabels('Codice Univoco', 'Indirizzo PEC'),
               SizedBox(height: 16.0),
-
-              // Iscrizione Albo Trasportatori n. e Aliquota
               _buildRowWithSmallLabels('Iscrizione Albo Trasportatori n.', 'Aliquota'),
               SizedBox(height: 16.0),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -124,7 +111,7 @@ class _NuovoTrasportatoreScreenState extends State<NuovoTrasportatoreScreen> {
                  Row(
                     children: [
                       Transform.scale(
-                        scale: 0.8, // Riduce la dimensione dello switch
+                        scale: 0.8,
                         child: Switch(
                           value: _welcomeEmail,
                           onChanged: (value) {
@@ -132,12 +119,12 @@ class _NuovoTrasportatoreScreenState extends State<NuovoTrasportatoreScreen> {
                               _welcomeEmail = value;
                             });
                           },
-                          activeColor: Colors.orange, // Colore dello switch attivo
+                          activeColor: Colors.orange,
                         ),
                       ),
                       SizedBox(width: 8.0),
                       Text(
-                        _welcomeEmail ? 'Sì' : 'No', // Testo che cambia in base allo stato dello switch
+                        _welcomeEmail ? 'Sì' : 'No',
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
@@ -145,12 +132,10 @@ class _NuovoTrasportatoreScreenState extends State<NuovoTrasportatoreScreen> {
                 ],
               ),
               SizedBox(height: 24.0),
-
-              // Titolo per Dati di Gradimento e Attività
               GestureDetector(
                 onTap: () {
                   setState(() {
-                    _showGradimento = !_showGradimento; // Cambia la visibilità del campo di gradimento
+                    _showGradimento = !_showGradimento;
                   });
                 },
                 child: Text(
@@ -164,8 +149,6 @@ class _NuovoTrasportatoreScreenState extends State<NuovoTrasportatoreScreen> {
                 _buildTextField('Inserisci Giudizio'),
                 SizedBox(height: 16.0),
               ],
-
-              // Pulsante Salva
               Center(
                 child: ElevatedButton(
                   onPressed: () {
@@ -185,8 +168,6 @@ class _NuovoTrasportatoreScreenState extends State<NuovoTrasportatoreScreen> {
       ),
     );
   }
-
-  // Metodo per costruire una riga con due etichette e campi di testo
   Widget _buildRowWithLabels(String label1, String label2) {
     return Row(
       children: [
@@ -212,8 +193,6 @@ class _NuovoTrasportatoreScreenState extends State<NuovoTrasportatoreScreen> {
       ],
     );
   }
-
-  // Metodo per costruire una riga con due etichette e campi di testo più piccoli
   Widget _buildRowWithSmallLabels(String label1, String label2) {
     return Row(
       children: [
@@ -239,11 +218,9 @@ class _NuovoTrasportatoreScreenState extends State<NuovoTrasportatoreScreen> {
       ],
     );
   }
-
-  // Metodo per costruire un campo di testo personalizzato
   Widget _buildTextField(String hintText, {bool isSmall = false}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0), // Padding laterale
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: TextField(
         decoration: InputDecoration(
           hintText: hintText,
@@ -257,7 +234,6 @@ class _NuovoTrasportatoreScreenState extends State<NuovoTrasportatoreScreen> {
       ),
     );
   }
-
   Widget _buildLabel(String text) {
     return Text(
       text,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/VenditaTrasporti/grid_trasporti_eseguiti.dart';
+import 'package:flutter_etrucknet_new/Screens/Trasportatore/profile_menu_t_screen.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/side_menu_t.dart';
 
 class CompletedTransportPage extends StatefulWidget {
@@ -17,6 +18,17 @@ class _CompletedTransportPageState extends State<CompletedTransportPage> {
         title: Text('Trasporti Eseguiti'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context, 
+                MaterialPageRoute(builder: (context) => const ProfileTrasportatorePage())
+              );
+            },
+          ),
+        ],
         leading: IconButton(
           icon: Icon(Icons.menu),
           onPressed: () {

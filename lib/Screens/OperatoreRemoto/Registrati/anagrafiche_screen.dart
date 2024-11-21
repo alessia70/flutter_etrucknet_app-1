@@ -43,7 +43,6 @@ class _AnagraficheGridScreenState extends State<AnagraficheGridScreen> {
               ),
             ),
             SizedBox(height: 16),
-
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -93,14 +92,12 @@ class _AnagraficheGridScreenState extends State<AnagraficheGridScreen> {
               ],
             ),
             SizedBox(height: 20),
-
             Expanded(
               child: AnagraficheDataGrid(),
             ),
           ],
         ),
       ),
-
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.end,
