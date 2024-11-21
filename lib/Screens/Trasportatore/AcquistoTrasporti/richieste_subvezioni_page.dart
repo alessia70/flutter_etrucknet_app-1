@@ -3,7 +3,7 @@ import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/gr
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/nuova_richieste_subvezioni_page.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/subvezioni_cancellate_page.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/profile_menu_t_screen.dart';
-import 'package:flutter_etrucknet_new/Screens/Trasportatore/side_menu_t.dart'; // Assicurati di importare il SideMenu
+import 'package:flutter_etrucknet_new/Screens/Trasportatore/side_menu_t.dart';
 
 class RichiesteSubvezioniPage extends StatefulWidget {
   @override
@@ -46,7 +46,7 @@ class _RichiesteSubvezioniPageState extends State<RichiesteSubvezioniPage> {
           onPressed: () {
             Navigator.push(
               context, 
-              MaterialPageRoute(builder: (context) => const ProfileTrasportatorePage())
+              MaterialPageRoute(builder: (context) =>ProfileTrasportatorePage())
             );
           },
         ),

@@ -38,7 +38,7 @@ class ConfermeSubvezioniPage extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context, 
-                MaterialPageRoute(builder: (context) => const ProfileTrasportatorePage())
+                MaterialPageRoute(builder: (context) => ProfileTrasportatorePage())
               );
             },
           ),

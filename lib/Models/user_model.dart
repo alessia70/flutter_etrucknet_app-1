@@ -1,4 +1,4 @@
-import 'user_role_model.dart';
+//import 'user_role_model.dart';
 
 class UserModel {
   final int id;
@@ -12,21 +12,18 @@ class UserModel {
   final String? lastName;
   final String? fullName;
   final String? companyName;
-  final List<RuoloModel> ruoli; // Lista dei ruoli
   final int? contractId;
   final bool? firstAccess;
   final int? status;
   final bool? acceptContrastCarriers;
   final bool? acceptContractShippers;
   final bool? acceptContractStandard;
-
   String? token;
 
   UserModel({
     required this.id,
     required this.userName,
     required this.email,
-    required this.ruoli,
     this.emailConfirmed,
     this.phoneNumber,
     this.twoFactorEnabled,
@@ -45,29 +42,24 @@ class UserModel {
   });
 
   factory UserModel.fromForm(Map<String, dynamic> form) {
-    // Mappa la lista di ruoli dal JSON
-    var ruoloList = (form['anagraficaRoles'] ?? []) as List;
-    List<RuoloModel> ruoli = ruoloList.map((i) => RuoloModel.fromForm(i)).toList();
-
     return UserModel(
-      id: form['user']['id'],
-      userName: form['user']['userName'],
-      email: form['user']['email'],
-      emailConfirmed: form['user']['emailConfirmed'],
-      phoneNumber: form['user']['phoneNumber'],
-      twoFactorEnabled: form['user']['twoFactorEnabled'],
-      isAuthenticated: form['user']['isAuthenticated'] ?? false,
-      firstName: form['user']['nome'],
-      lastName: form['user']['cognome'],
-      fullName: form['user']['nomeCompleto'],
-      companyName: form['user']['ragioneSociale'],
-      ruoli: ruoli,
-      contractId: form['user']['idContratto'],
-      firstAccess: form['user']['primoAccesso'],
-      status: form['user']['status'],
-      acceptContrastCarriers: form['user']['accettazioneContrattoCarriers'],
-      acceptContractShippers: form['user']['accettazioneContrattoShippers'],
-      acceptContractStandard: form['user']['accettazioneContrattoStandard'],
+      id: form['id'],
+      userName: form['userName'],
+      email: form['email'],
+      emailConfirmed: form['emailConfirmed'],
+      phoneNumber: form['phoneNumber'],
+      twoFactorEnabled: form['twoFactorEnabled'],
+      isAuthenticated: form['isAuthenticated'],
+      firstName: form['nome'],
+      lastName: form['cognome'],
+      fullName: form['nomeCompleto'],
+      companyName: form['ragioneSociale'],
+      contractId: form['idContratto'],
+      firstAccess: form['primoAccesso'],
+      status: form['status'],
+      acceptContrastCarriers: form['accettazioneContrattoCarriers'],
+      acceptContractShippers: form['accettazioneContrattoShippers'],
+      acceptContractStandard: form['accettazioneContrattoStandard'],
       token: form['token'],
     );
   }
@@ -85,7 +77,6 @@ class UserModel {
       'cognome': lastName,
       'nomeCompleto': fullName,
       'ragioneSociale': companyName,
-      'anagraficaRoles': ruoli.map((role) => role.toForm()).toList(),
       'idContratto': contractId,
       'primoAccesso': firstAccess,
       'status': status,

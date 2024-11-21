@@ -70,16 +70,6 @@ class _ProcedureScreenState extends State<ProcedureScreen> {
               );
             },
           ),
-          IconButton(
-            icon: Icon(Icons.person),
-            onPressed: () {
-              Navigator.push(
-                context, 
-                MaterialPageRoute(builder: (context) => const ProfilePage()
-                )
-              );
-            },
-          ),
         ],
       ),
       drawer: SideMenu(),

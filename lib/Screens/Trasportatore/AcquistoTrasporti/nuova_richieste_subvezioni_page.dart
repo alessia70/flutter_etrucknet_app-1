@@ -19,6 +19,7 @@ class _NuovaRichiestaSubvezioneScreenState extends State<NuovaRichiestaSubvezion
   String? _selectedImballo;
   // ignore: unused_field
   String _altreInfo = '';
+  late final String token;
 
   bool _caricataLateralmente = false;
   bool _pagataContrassegno = false;

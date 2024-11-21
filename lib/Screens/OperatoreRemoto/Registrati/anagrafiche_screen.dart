@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/Registrati/nuovo_committente_screen.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/Registrati/nuovo_trasportatore_screen.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/profile_info_operatore_screen.dart';
 import 'anagrafiche_data_grid.dart';
 
 class AnagraficheGridScreen extends StatefulWidget {
@@ -29,6 +30,17 @@ class _AnagraficheGridScreenState extends State<AnagraficheGridScreen> {
         title: const Text('Anagrafiche'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ProfilePage()),
+              );
+            },
+          ),
+        ]
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
