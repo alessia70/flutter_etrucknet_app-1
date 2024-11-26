@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/profile_info_operatore_screen.dart';
 import 'package:flutter_etrucknet_new/Widgets/add_new_message.dart';
-import 'package:flutter_etrucknet_new/Widgets/side_menu.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/side_menu.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_etrucknet_new/Widgets/messaggi_grid.dart'; 
 

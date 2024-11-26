@@ -1,8 +1,11 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/camion_disponibili_grid.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/profile_info_operatore_screen.dart';
-import 'package:flutter_etrucknet_new/Widgets/side_menu.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/side_menu.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AvailableTrucksScreen extends StatefulWidget {
   const AvailableTrucksScreen({super.key});
@@ -18,6 +21,108 @@ class _AvailableTrucksScreenState extends State<AvailableTrucksScreen> {
   final TextEditingController _searchCarrierController = TextEditingController();
   final TextEditingController _searchTruckController = TextEditingController();
 
+  List<Map<String, dynamic>> trucks = [];
+  List<Map<String, dynamic>> filteredTrucks = [];
+
+  Future<void> saveToken(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('access_token', token);
+    print('Token salvato correttamente: $token');
+  }
+
+  Future<String?> getSavedToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('access_token');
+    print('Token recuperato: $token');
+    return token;
+  }
+
+  Future<int?> getSavedUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt('trasportatore_id');
+  }
+
+  Future<void> fetchCamionDisponibili() async {
+    final token = await getSavedToken();
+    final trasportatoreId = await getSavedUserId();
+
+    if (token == null || trasportatoreId == null) {
+      print('Token o TrasportatoreId non trovato.');
+      return;
+    }
+
+    final url = Uri.parse(
+      'https://etrucknetapi.azurewebsites.net/v1/CamionDisponibili'
+      '?TrasportatoreId=$trasportatoreId'
+      '&StartDate=1900-01-01'
+      '&EndDate=2100-01-01',
+    );
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      try {
+        List<dynamic> data = json.decode(response.body);
+        print("Dati caricati: ${data.length} camion disponibili.");
+        setState(() {
+          trucks = List<Map<String, dynamic>>.from(
+            data.map((item) => {
+              'id': item['id'].toString(),
+              'transportCompany': item['transportCompany'] ?? '',
+              'contact': item['contact'] ?? '',
+              'vehicleData': item['vehicleData'] ?? '',
+              'availableSpace': item['availableSpace'] ?? '',
+              'location': item['location'] ?? '',
+              'destination': item['destination'] ?? '',
+              'loadingDate': item['loadingDate'] ?? '',
+              'status': item['status'] ?? '',
+              'availableFrom': DateTime.parse(item['availableFrom'] ?? '1900-01-01'),
+              'availableTo': DateTime.parse(item['availableTo'] ?? '2100-01-01'),
+            }),
+          );
+          filteredTrucks = List.from(trucks);
+        });
+      } catch (e) {
+        print('Errore nel parsing dei dati: $e');
+      }
+    } else {
+      print('Errore nella richiesta: ${response.statusCode}');
+    }
+  }
+
+  void filterTrucks() {
+    final String carrierSearch = _searchCarrierController.text.toLowerCase();
+    final String truckSearch = _searchTruckController.text.toLowerCase();
+    final String? selectedType = _selectedType;
+    final DateTime? selectedFrom = _selectedDateFrom;
+    final DateTime? selectedTo = _selectedDateTo;
+
+    setState(() {
+      filteredTrucks = trucks.where((truck) {
+        final isMatchingCarrier = truck['transportCompany']?.toLowerCase().contains(carrierSearch) ?? false;
+        final isMatchingTruck = truck['vehicleData']?.toLowerCase().contains(truckSearch) ?? false;
+        final isMatchingType = selectedType == null || truck['status'] == selectedType;
+        final isMatchingDateRange = (selectedFrom == null || truck['availableFrom'].isAfter(selectedFrom)) &&
+                                    (selectedTo == null || truck['availableTo'].isBefore(selectedTo));
+
+        return isMatchingCarrier && isMatchingTruck && isMatchingType && isMatchingDateRange;
+      }).toList();
+    });
+
+    print("Camion filtrati: ${filteredTrucks.length}");
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchCamionDisponibili();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,8 +136,7 @@ class _AvailableTrucksScreenState extends State<AvailableTrucksScreen> {
             onPressed: () {
               Navigator.push(
                 context, 
-                MaterialPageRoute(builder: (context) => const ProfilePage()
-                )
+                MaterialPageRoute(builder: (context) => const ProfilePage())
               );
             },
           ),
@@ -145,10 +249,9 @@ class _AvailableTrucksScreenState extends State<AvailableTrucksScreen> {
                   ),
                 ),
                 SizedBox(width: 25),
-
                 ElevatedButton(
                   onPressed: () {
-                    print('Ricerca');
+                    filterTrucks();
                   },
                   child: Text(
                     'Cerca',
@@ -157,22 +260,13 @@ class _AvailableTrucksScreenState extends State<AvailableTrucksScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     foregroundColor: Colors.orange,
-                    side: BorderSide(
-                      color: Colors.orange,
-                      width: 2,
-                    ),
-                    elevation: 0,
-                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
                   ),
                 ),
               ],
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 16),
             Expanded(
-              child: CamionDisponibiliGrid(),
+              child: CamionDisponibiliGrid(camion: filteredTrucks),
             ),
           ],
         ),

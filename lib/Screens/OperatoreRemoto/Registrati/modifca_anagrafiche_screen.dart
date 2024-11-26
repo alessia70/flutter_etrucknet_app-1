@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/profile_info_operatore_screen.dart';
-import 'package:flutter_etrucknet_new/Widgets/side_menu.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/side_menu.dart';
 import 'package:intl/intl.dart';
 
 class ModifyAnagraficaScreen extends StatefulWidget {

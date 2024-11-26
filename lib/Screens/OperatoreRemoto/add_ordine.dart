@@ -160,6 +160,8 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
       expiredOffers: 0,
       correspondenceCount: 0,
       estimatedBudget: 0.0, 
+      isCompleted: false, 
+      isCanceled: false, 
     );
     Navigator.of(context).pop(); 
   }

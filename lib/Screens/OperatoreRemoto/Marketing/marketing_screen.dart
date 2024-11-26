@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/profile_info_operatore_screen.dart';
-import 'package:flutter_etrucknet_new/Widgets/side_menu.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/side_menu.dart';
 import 'dart:io';
 import 'package:open_file/open_file.dart';
 //import 'package:flutter_full_pdf_viewer/flutter_full_pdf_viewer.dart';   flutter_pdfview: ^1.2.5

@@ -61,6 +61,7 @@ class _FlottaScreenState extends State<FlottaScreen> {
         setState(() {
           veicoli = data.map((veicolo) {
             return {
+              'id' : veicolo['id']?.toString() ?? '',
               'tipo': veicolo['tipoAutomezzoString'] as String ?? '',
               'allestimento': veicolo['tipoAllestimentoString'] as String ?? '',
               'specifiche': veicolo['specificheString'] as String ?? '',
@@ -98,6 +99,58 @@ class _FlottaScreenState extends State<FlottaScreen> {
         return tipoMatch && allestimentoMatch;
       }).toList();
     });
+  }
+  Future<void> _aggiornaVeicolo(int veicoloId, String tipo, String allestimento, String specifiche) async {
+    final token = await getSavedToken();
+    if (token == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Token non trovato.')),
+      );
+      return;
+    }
+
+    try {
+      final url = Uri.parse('${AppUrl.fleetEndPoint}/flotta/$veicoloId');
+      final response = await http.put(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({
+          'tipoAutomezzoString': tipo,
+          'tipoAllestimentoString': allestimento,
+          'specificheString': specifiche,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          final index = veicoli.indexWhere((v) => v['id'] == veicoloId.toString());
+          if (index != -1) {
+            veicoli[index] = {
+              'id': veicoloId.toString(),
+              'tipo': tipo,
+              'allestimento': allestimento,
+              'specifiche': specifiche,
+            };
+            veicoliFiltrati = List.from(veicoli);
+          }
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Veicolo aggiornato con successo.')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Errore durante l\'aggiornamento: ${response.statusCode}')),
+        );
+      }
+    } catch (e) {
+      print('Errore di connessione: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Errore di connessione: $e')),
+      );
+    }
   }
 
   @override
@@ -208,6 +261,57 @@ class _FlottaScreenState extends State<FlottaScreen> {
     );
   }
 
+  Future<void> _aggiungiVeicolo(String tipo, String allestimento, String specifiche) async {
+    final token = await getSavedToken();
+    if (token == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Token non trovato.')),
+      );
+      return;
+    }
+
+    try {
+      final url = Uri.parse('${AppUrl.fleetEndPoint}/flotta');
+      final response = await http.post(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({
+          'tipoAutomezzoString': tipo,
+          'tipoAllestimentoString': allestimento,
+          'specificheString': specifiche,
+        }),
+      );
+
+      if (response.statusCode == 201) {
+        final nuovoVeicolo = json.decode(response.body);
+        setState(() {
+          veicoli.add({
+            'id': nuovoVeicolo['id'].toString(),
+            'tipo': nuovoVeicolo['tipoAutomezzoString'] as String ?? '',
+            'allestimento': nuovoVeicolo['tipoAllestimentoString'] as String ?? '',
+            'specifiche': nuovoVeicolo['specificheString'] as String ?? '',
+          });
+          veicoliFiltrati = List.from(veicoli);
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Veicolo aggiunto con successo.')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Errore durante l\'aggiunta: ${response.statusCode}')),
+        );
+      }
+    } catch (e) {
+      print('Errore di connessione: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Errore di connessione: $e')),
+      );
+    }
+  }
+
   void _mostraPopupAggiungi() {
     String nuovoTipoMezzo = '';
     String nuovoAllestimento = '';
@@ -248,16 +352,11 @@ class _FlottaScreenState extends State<FlottaScreen> {
           ),
           actions: [
             ElevatedButton(
-              onPressed: () {
-                if (nuovoTipoMezzo.isNotEmpty && nuovoAllestimento.isNotEmpty && nuoveSpecifiche.isNotEmpty) {
-                  setState(() {
-                    veicoli.add({
-                      'tipo': nuovoTipoMezzo,
-                      'allestimento': nuovoAllestimento,
-                      'specifiche': nuoveSpecifiche,
-                    });
-                    veicoliFiltrati = List.from(veicoli);  // Ricalcola la lista filtrata
-                  });
+              onPressed: () async {
+                if (nuovoTipoMezzo.isNotEmpty &&
+                    nuovoAllestimento.isNotEmpty &&
+                    nuoveSpecifiche.isNotEmpty) {
+                  await _aggiungiVeicolo(nuovoTipoMezzo, nuovoAllestimento, nuoveSpecifiche);
                   Navigator.of(context).pop();
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -273,7 +372,7 @@ class _FlottaScreenState extends State<FlottaScreen> {
             ),
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Chiude il dialogo
+                Navigator.of(context).pop();
               },
               child: Text('Annulla', style: TextStyle(color: Colors.grey)),
             ),
@@ -340,9 +439,21 @@ class _FlottaScreenState extends State<FlottaScreen> {
   }
 
   void _showEditTruckDialog(BuildContext context, Map<String, String> veicolo) {
-    String tipo = veicolo['tipo']!;
-    String allestimento = veicolo['allestimento']!;
-    String specifiche = veicolo['specifiche']!;
+    String tipo = veicolo['tipo'] ?? '';
+    String allestimento = veicolo['allestimento'] ?? '';
+    String specifiche = veicolo['specifiche'] ?? '';
+    int veicoloId = int.tryParse(veicolo['id'] ?? '') ?? -1;
+
+    final tipoController = TextEditingController(text: tipo);
+    final allestimentoController = TextEditingController(text: allestimento);
+    final specificheController = TextEditingController(text: specifiche);
+
+    if (veicoloId == -1) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Errore: ID veicolo non valido.')),
+      );
+      return;
+    }
 
     showDialog(
       context: context,
@@ -358,37 +469,28 @@ class _FlottaScreenState extends State<FlottaScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
-                controller: TextEditingController(text: tipo),
+                controller: tipoController,
                 decoration: InputDecoration(labelText: 'Tipo Automezzo'),
-                onChanged: (value) {
-                  tipo = value;
-                },
               ),
               TextField(
-                controller: TextEditingController(text: allestimento),
+                controller: allestimentoController,
                 decoration: InputDecoration(labelText: 'Tipo Allestimento'),
-                onChanged: (value) {
-                  allestimento = value;
-                },
               ),
               TextField(
-                controller: TextEditingController(text: specifiche),
+                controller: specificheController,
                 decoration: InputDecoration(labelText: 'Specifiche'),
-                onChanged: (value) {
-                  specifiche = value;
-                },
               ),
             ],
           ),
           actions: [
             ElevatedButton(
-              onPressed: () {
-                // Modifica il veicolo
-                setState(() {
-                  veicolo['tipo'] = tipo;
-                  veicolo['allestimento'] = allestimento;
-                  veicolo['specifiche'] = specifiche;
-                });
+              onPressed: () async {
+                await _aggiornaVeicolo(
+                  veicoloId,
+                  tipoController.text,
+                  allestimentoController.text,
+                  specificheController.text,
+                );
                 Navigator.of(context).pop();
               },
               child: Text('Salva'),
@@ -419,10 +521,9 @@ class _FlottaScreenState extends State<FlottaScreen> {
           actions: [
             TextButton(
               onPressed: () {
-                // Elimina il veicolo dalla lista
                 setState(() {
                   veicoli.remove(veicolo);
-                  veicoliFiltrati = List.from(veicoli); // Ricalcola i veicoli filtrati
+                  veicoliFiltrati = List.from(veicoli);
                 });
                 Navigator.of(context).pop();
               },

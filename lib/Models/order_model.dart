@@ -22,12 +22,12 @@ class Order {
   final String? vehicleType;
   final String? additionalSpecs;
 
-  // Campi con valore predefinito
   final bool isSideLoadingRequired;
   final bool isCashOnDelivery;
   final bool hasRoadAccessibilityIssues;
+  bool? isCompleted;  // Cambia in bool? (nullable)
+  bool? isCanceled;   // Cambia in bool? (nullable)
 
-  // Dettagli della merce
   final String? packagingType;
   final String? description;
   final int? quantity;
@@ -60,13 +60,13 @@ class Order {
 
     this.vehicleType,
     this.additionalSpecs,
+    this.isCompleted,
+    this.isCanceled,
 
-    // Imposta valori predefiniti
-    this.isSideLoadingRequired = false,  // Default a false
-    this.isCashOnDelivery = false,  // Default a false
-    this.hasRoadAccessibilityIssues = false,  // Default a false
+    this.isSideLoadingRequired = false,
+    this.isCashOnDelivery = false,
+    this.hasRoadAccessibilityIssues = false,
 
-    // Dettagli merce
     this.packagingType,
     this.description,
     this.quantity,
@@ -75,4 +75,31 @@ class Order {
     this.width,
     this.height,
   });
+
+  factory Order.fromJson(Map<String, dynamic> json) {
+    return Order(
+      id: json['id'],
+      customerName: json['customerName'],
+      customerContact: json['customerContact'],
+      date: DateTime.parse(json['date']),
+      companyName: json['companyName'],
+      loadingDate: json['loadingDate'],
+      loadingLocation: json['loadingLocation'],
+      loadingProvince: json['loadingProvince'],
+      loadingCountry: json['loadingCountry'],
+      isLoadingMandatory: json['isLoadingMandatory'],
+      isUnloadingMandatory: json['isUnloadingMandatory'],
+      unloadingDate: json['unloadingDate'],
+      unloadingLocation: json['unloadingLocation'],
+      unloadingProvince: json['unloadingProvince'],
+      unloadingCountry: json['unloadingCountry'],
+      offerAmount: json['offerAmount'],
+      activeOffers: json['activeOffers'],
+      expiredOffers: json['expiredOffers'],
+      correspondenceCount: json['correspondenceCount'],
+      estimatedBudget: json['estimatedBudget'],
+      isCompleted: json['isCompleted'],
+      isCanceled: json['isCanceled'],
+    );
+  }
 }

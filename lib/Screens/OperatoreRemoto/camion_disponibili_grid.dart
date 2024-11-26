@@ -1,224 +1,105 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http; 
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'modifica_camion.dart';
 
-class CamionDisponibiliGrid extends StatefulWidget {
-  const CamionDisponibiliGrid({super.key});
+class CamionDisponibiliGrid extends StatelessWidget {
+  final List<Map<String, dynamic>> camion;
 
-  @override
-  _CamionDisponibiliGridState createState() => _CamionDisponibiliGridState();
-}
-
-class _CamionDisponibiliGridState extends State<CamionDisponibiliGrid> {
-  List<Map<String, String>> trucks = [];
-
-  Future<String?> getSavedToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('access_token');
-  }
-  Future<int?> getSavedUserId() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getInt('trasportatore_id');
-  }
-  Future<void> fetchCamionDisponibili() async {
-    final token = await getSavedToken();
-    final trasportatoreId = await getSavedUserId();
-
-    if (token == null || trasportatoreId == null) {
-      print('Token or TrasportatoreId not found.');
-      return;
-    }
-
-    final url = Uri.parse(
-      'https://etrucknetapi.azurewebsites.net/v1/CamionDisponibili?TrasportatoreId=$trasportatoreId',
-    );
-
-    final response = await http.get(
-      url,
-      headers: {
-        'Authorization': 'Bearer $token',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      List<dynamic> data = json.decode(response.body);
-
-      setState(() {
-        trucks = List<Map<String, String>>.from(
-          data.map((item) => {
-            'id': item['id'].toString(),
-            'transportCompany': item['transportCompany'] ?? '',
-            'contact': item['contact'] ?? '',
-            'vehicleData': item['vehicleData'] ?? '',
-            'availableSpace': item['availableSpace'] ?? '',
-            'location': item['location'] ?? '',
-            'destination': item['destination'] ?? '',
-            'loadingDate': item['loadingDate'] ?? '',
-          }),
-        );
-      });
-    } else {
-      print('Error fetching camion data: ${response.statusCode}');
-      throw Exception('Failed to load camion data');
-    }
-  }
-  void showEditDialog(BuildContext context, Map<String, String> truck) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return EditCamionDialog(
-          truck: truck,
-          onSave: (updatedTruck) {
-            setState(() {
-              final index = trucks.indexWhere((t) => t['id'] == updatedTruck['id']);
-              if (index != -1) {
-                trucks[index] = updatedTruck;
-              }
-            });
-            Navigator.of(context).pop();
-          },
-        );
-      },
-    );
-  }
-
-  void confirmDeleteTruck(BuildContext context, String id) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Conferma Eliminazione"),
-          content: const Text("Sei sicuro di voler eliminare questo camion?"),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text("Annulla", style: TextStyle(color: Colors.grey)),
-            ),
-            TextButton(
-              onPressed: () {
-                deleteTruck(id);
-                Navigator.of(context).pop();
-              },
-              child: const Text("Elimina", style: TextStyle(color: Colors.red)),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void deleteTruck(String id) {
-    setState(() {
-      trucks.removeWhere((truck) => truck['id'] == id);
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    fetchCamionDisponibili();
-  }
+  const CamionDisponibiliGrid({Key? key, required this.camion}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 1.8,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildHeaderCell('Tipo Mezzo', flex: 2),
+              _buildHeaderCell('Allestimento', flex: 2),
+              _buildHeaderCell('Spazio Disp.', flex: 2),
+              _buildHeaderCell('Luogo Carico', flex: 2),
+              _buildHeaderCell('Luogo Scarico', flex: 2),
+              _buildHeaderCell('Data Ritiro', flex: 2),
+            ],
+          ),
+        ),
+        Expanded(
+          child: camion.isEmpty
+              ? _buildEmptyTable()
+              : _buildDataGrid(),
+        ),
+      ],
+    );
+  }
+  Widget _buildHeaderCell(String title, {required int flex}) {
+    return Expanded(
+      flex: flex,
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 14,
+          color: Colors.black,
+        ),
+        textAlign: TextAlign.center,
       ),
-      itemCount: trucks.length,
+    );
+  }
+  Widget _buildDataGrid() {
+    return GridView.builder(
+      padding: const EdgeInsets.all(8.0),
+      itemCount: camion.length,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 1,
+        childAspectRatio: 5, 
+      ),
       itemBuilder: (context, index) {
-        final truck = trucks[index];
+        final truck = camion[index];
         return Card(
+          color: Colors.orange.shade100,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8.0),
           ),
-          elevation: 4,
-          margin: const EdgeInsets.all(8),
-          child: Container(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'ID: ${truck['id']}',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.orange,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text('Trasportatore:', style: TextStyle(fontWeight: FontWeight.bold)),
-                            Text(truck['transportCompany']!),
-                            const SizedBox(height: 10),
-                            const Text('Contatto:', style: TextStyle(fontWeight: FontWeight.bold)),
-                            Text(truck['contact']!),
-                            const SizedBox(height: 10),
-                            const Text('Dati Automezzo:', style: TextStyle(fontWeight: FontWeight.bold)),
-                            Text(truck['vehicleData']!),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text('Spazio Disponibile:', style: TextStyle(fontWeight: FontWeight.bold)),
-                            Text(truck['availableSpace']!),
-                            const SizedBox(height: 10),
-                            const Text('Luogo:', style: TextStyle(fontWeight: FontWeight.bold)),
-                            Text(truck['location']!),
-                            const SizedBox(height: 10),
-                            const Text('Destinazione:', style: TextStyle(fontWeight: FontWeight.bold)),
-                            Text(truck['destination']!),
-                            const SizedBox(height: 10),
-                            const Text('Data di Carico:', style: TextStyle(fontWeight: FontWeight.bold)),
-                            Text(truck['loadingDate']!),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        showEditDialog(context, truck);
-                      },
-                      child: const Icon(Icons.edit, color: Colors.orange),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        confirmDeleteTruck(context, truck['id']!);
-                      },
-                      child: const Icon(Icons.close, color: Colors.orange),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+          elevation: 2.0,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildDataCell(truck['vehicleData'] ?? 'N/A', flex: 2),
+              _buildDataCell(truck['allestimento'] ?? 'N/A', flex: 2),
+              _buildDataCell('${truck['availableSpace'] ?? 'N/A'}', flex: 2),
+              _buildDataCell(truck['localitaCarico'] ?? 'N/A', flex: 2),
+              _buildDataCell(truck['localitaScarico'] ?? 'N/A', flex: 2),
+              _buildDataCell(truck['loadingDate'] ?? 'N/A', flex: 2),
+            ],
           ),
         );
       },
+    );
+  }
+  Widget _buildDataCell(String data, {required int flex}) {
+    return Expanded(
+      flex: flex,
+      child: Text(
+        data,
+        style: TextStyle(fontSize: 14),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+
+  // Tabella vuota
+  Widget _buildEmptyTable() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.local_shipping, color: Colors.orange, size: 50),
+          const SizedBox(height: 16),
+          Text(
+            'Nessun camion disponibile',
+            style: TextStyle(fontSize: 16, color: Colors.orange.shade700),
+          ),
+        ],
+      ),
     );
   }
 }

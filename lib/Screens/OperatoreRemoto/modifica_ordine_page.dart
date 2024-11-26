@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Models/order_model.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/profile_info_operatore_screen.dart';
-import 'package:flutter_etrucknet_new/Widgets/side_menu.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/side_menu.dart';
 
 class EditOrderForm extends StatefulWidget {
   final Order order;
@@ -120,7 +120,9 @@ class _EditOrderFormState extends State<EditOrderForm> {
       estimatedBudget: double.tryParse(estimatedBudgetController.text) ?? 0.0,
 
       vehicleType: selectedVehicleType,
-      additionalSpecs: selectedAdditionalSpecs,
+      additionalSpecs: selectedAdditionalSpecs, 
+      isCompleted: false, 
+      isCanceled: false,
     );
     Navigator.of(context).pop(updatedOrder);
   }

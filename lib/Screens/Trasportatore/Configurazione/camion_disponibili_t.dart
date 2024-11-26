@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/profile_menu_t_screen.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:flutter_etrucknet_new/Models/camion_model.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/add_camion_disponibile_t.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/side_menu_t.dart';
@@ -39,11 +38,12 @@ class _CamionDisponibiliTPageState extends State<CamionDisponibiliTPage> {
     final token = await getSavedToken();
     final trasportatoreId = await getSavedUserId();
 
-    final defaultStartDate = DateTime(1900, 1, 1);
-    final futureEndDate = DateTime(2100, 12, 31);
+    if (token == null || trasportatoreId == null) {
+      throw Exception('Token o Trasportatore ID non trovato.');
+    }
 
     final url = Uri.parse(
-      'https://etrucknetapi.azurewebsites.net/v1/CamionDisponibili?StartDate=${defaultStartDate.toIso8601String()}&EndDate=${futureEndDate.toIso8601String()}&TrasportatoreId=$trasportatoreId',
+      'https://etrucknetapi.azurewebsites.net/v1/CamionDisponibili?StartDate=2000-01-01&EndDate=2060-01-01&TrasportatoreId=$trasportatoreId',
     );
 
     final response = await http.get(
@@ -55,41 +55,15 @@ class _CamionDisponibiliTPageState extends State<CamionDisponibiliTPage> {
 
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
-      List<Camion> camionList = data.map((json) => Camion.fromJson(json)).toList();
-
-      if (camionList.isEmpty) {
-        print('Nessun camion disponibile.');
-        return [];
-      } else {
-        DateTime endDate = camionList
-            .map((camion) => camion.dataRitiro)
-            .reduce((a, b) => a.isAfter(b) ? a : b);
-
-        final updatedUrl = Uri.parse(
-          'https://etrucknetapi.azurewebsites.net/v1/CamionDisponibili?StartDate=${defaultStartDate.toIso8601String()}&EndDate=${endDate.toIso8601String()}&TrasportatoreId=$trasportatoreId',
-        );
-
-        final updatedResponse = await http.get(
-          updatedUrl,
-          headers: {
-            'Authorization': 'Bearer $token',
-          },
-        );
-        if (updatedResponse.statusCode == 200) {
-          List<dynamic> updatedData = json.decode(updatedResponse.body);
-          return updatedData.map((json) => Camion.fromJson(json)).toList();
-        } else {
-          print('Error response: ${updatedResponse.statusCode}');
-          print('Error body: ${updatedResponse.body}');
-          throw Exception('Errore durante la richiesta con le date aggiornate: ${updatedResponse.statusCode}');
-        }
-      }
+      print('Dati ricevuti: $data');
+      return data.map((json) => Camion.fromJson(json)).toList();
     } else {
-      print('Error response: ${response.statusCode}');
-      print('Error body: ${response.body}');
+      print('Errore nella richiesta: ${response.statusCode}');
+      print('Dettagli errore: ${response.body}');
       throw Exception('Errore nel recupero dei camion: ${response.statusCode}');
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

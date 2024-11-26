@@ -19,7 +19,6 @@ class _OrdersGridState extends State<OrdersGrid> {
   @override
   void initState() {
     super.initState();
-    // Copia la lista degli ordini
     orders = widget.orders;
   }
 
@@ -76,11 +75,9 @@ class _OrdersGridState extends State<OrdersGrid> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Informazioni sul carico e scarico
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // Colonna di sinistra per Carico e Scarico
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,

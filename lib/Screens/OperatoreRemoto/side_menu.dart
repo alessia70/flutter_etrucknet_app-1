@@ -17,7 +17,6 @@ class SideMenu extends StatefulWidget {
 }
 
 class _SideMenuState extends State<SideMenu> {
-  // Stato per tracciare la pagina selezionata
   String selectedPage = '';
 
   @override
