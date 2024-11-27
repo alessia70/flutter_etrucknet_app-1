@@ -137,7 +137,7 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
   }
 
   void _saveOrder() {
-    String orderId = DateTime.now().millisecondsSinceEpoch.toString();
+    int orderId = DateTime.now().millisecondsSinceEpoch.toString() as int;
     // ignore: unused_local_variable
     final newOrder = Order(
       id: orderId,
@@ -254,15 +254,12 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
                   },
                 ),
               ),
-
               SizedBox(height: 20),
               Divider(
                 color: Colors.grey,
                 thickness: 1,
               ),
-
               SizedBox(height: 20),
-
               Row(
                 children: [
                   Expanded(
@@ -299,7 +296,6 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
                     ),
                   ),
                   SizedBox(width: 20),
-
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -335,9 +331,7 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
                   ),
                 ],
               ),
-
               SizedBox(height: 20),
-
               Row(
                 children: [
                   Expanded(

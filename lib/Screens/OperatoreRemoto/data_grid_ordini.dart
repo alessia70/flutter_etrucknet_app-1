@@ -6,8 +6,15 @@ import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/Registrati/quota_t
 
 class OrdersGrid extends StatefulWidget {
   final List<Order> orders;
+  final Function(Order) onDeleteOrder;
+  final Function(Order) onUpdateOrder;
 
-  const OrdersGrid({Key? key, required this.orders}) : super(key: key);
+  const OrdersGrid({
+    Key? key,
+    required this.orders,
+    required this.onDeleteOrder,
+    required this.onUpdateOrder,
+  }) : super(key: key);
 
   @override
   _OrdersGridState createState() => _OrdersGridState();
@@ -24,6 +31,7 @@ class _OrdersGridState extends State<OrdersGrid> {
 
   @override
   Widget build(BuildContext context) {
+    print("Numero di ordini nella grid: ${orders.length}");
     return ListView.builder(
       itemCount: orders.length,
       itemBuilder: (context, index) {
@@ -62,7 +70,7 @@ class _OrdersGridState extends State<OrdersGrid> {
               ],
             ),
             subtitle: Text(
-              'Nome Cliente: ${order.customerName}',
+              'Cliente: ${order.customerName}',
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
@@ -75,6 +83,7 @@ class _OrdersGridState extends State<OrdersGrid> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Riepilogo Committente
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -129,6 +138,8 @@ class _OrdersGridState extends State<OrdersGrid> {
                         ),
                       ],
                     ),
+                    const SizedBox(height: 16),
+                    Text('Info:', style: const TextStyle(fontWeight: FontWeight.bold)),
                   ],
                 ),
               ),
@@ -140,7 +151,7 @@ class _OrdersGridState extends State<OrdersGrid> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => OrderDetailsPage(),
+                          builder: (context) => OrderDetailsPage(orderId: order.id),
                         ),
                       );
                     },
@@ -156,7 +167,6 @@ class _OrdersGridState extends State<OrdersGrid> {
                       ).then((updatedOrder) {
                         if (updatedOrder != null) {
                           setState(() {
-                            // Aggiorna l'ordine nella lista se necessario
                           });
                         }
                       });
@@ -169,7 +179,7 @@ class _OrdersGridState extends State<OrdersGrid> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => SendQuotePage(orderId: order.id),
+                          builder: (context) => SendQuotePage(orderId: order.id.toString()),
                         ),
                       );
                     },
@@ -195,7 +205,7 @@ class _OrdersGridState extends State<OrdersGrid> {
                                 child: const Text('Elimina'),
                                 onPressed: () {
                                   setState(() {
-                                    onDeleteOrder(order);
+                                    widget.onDeleteOrder(order);
                                   });
                                   Navigator.of(context).pop();
                                 },
@@ -215,8 +225,5 @@ class _OrdersGridState extends State<OrdersGrid> {
         );
       },
     );
-  }
-  void onDeleteOrder(Order order) {
-    orders.removeWhere((o) => o.id == order.id);
   }
 }

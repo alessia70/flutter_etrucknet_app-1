@@ -1,5 +1,5 @@
 class Order {
-  final String id;
+  final int id;
   final String customerName;
   final String customerContact;
   final DateTime date;
@@ -25,8 +25,8 @@ class Order {
   final bool isSideLoadingRequired;
   final bool isCashOnDelivery;
   final bool hasRoadAccessibilityIssues;
-  bool? isCompleted;  // Cambia in bool? (nullable)
-  bool? isCanceled;   // Cambia in bool? (nullable)
+  bool? isCompleted;
+  bool? isCanceled; 
 
   final String? packagingType;
   final String? description;
@@ -57,16 +57,13 @@ class Order {
     required this.expiredOffers,
     required this.correspondenceCount,
     required this.estimatedBudget,
-
     this.vehicleType,
     this.additionalSpecs,
     this.isCompleted,
     this.isCanceled,
-
     this.isSideLoadingRequired = false,
     this.isCashOnDelivery = false,
     this.hasRoadAccessibilityIssues = false,
-
     this.packagingType,
     this.description,
     this.quantity,
@@ -78,28 +75,40 @@ class Order {
 
   factory Order.fromJson(Map<String, dynamic> json) {
     return Order(
-      id: json['id'],
-      customerName: json['customerName'],
-      customerContact: json['customerContact'],
-      date: DateTime.parse(json['date']),
-      companyName: json['companyName'],
-      loadingDate: json['loadingDate'],
-      loadingLocation: json['loadingLocation'],
-      loadingProvince: json['loadingProvince'],
-      loadingCountry: json['loadingCountry'],
-      isLoadingMandatory: json['isLoadingMandatory'],
-      isUnloadingMandatory: json['isUnloadingMandatory'],
-      unloadingDate: json['unloadingDate'],
-      unloadingLocation: json['unloadingLocation'],
-      unloadingProvince: json['unloadingProvince'],
-      unloadingCountry: json['unloadingCountry'],
-      offerAmount: json['offerAmount'],
-      activeOffers: json['activeOffers'],
-      expiredOffers: json['expiredOffers'],
-      correspondenceCount: json['correspondenceCount'],
-      estimatedBudget: json['estimatedBudget'],
+      id: json['id'] ?? 0,
+      customerName: json['customerName'] ?? '',
+      customerContact: json['customerContact'] ?? '',
+      date: json['date'] != null ? DateTime.parse(json['date']) : DateTime.now(),
+      companyName: json['companyName'] ?? '',
+      loadingDate: json['loadingDate'] ?? '',
+      loadingLocation: json['loadingLocation'] ?? '',
+      loadingProvince: json['loadingProvince'] ?? '',
+      loadingCountry: json['loadingCountry'] ?? '',
+      isLoadingMandatory: json['isLoadingMandatory'] ?? false,
+      isUnloadingMandatory: json['isUnloadingMandatory'] ?? false,
+      unloadingDate: json['unloadingDate'] ?? '',
+      unloadingLocation: json['unloadingLocation'] ?? '',
+      unloadingProvince: json['unloadingProvince'] ?? '',
+      unloadingCountry: json['unloadingCountry'] ?? '',
+      offerAmount: json['offerAmount']?.toDouble() ?? 0.0,
+      activeOffers: json['activeOffers'] ?? 0,
+      expiredOffers: json['expiredOffers'] ?? 0,
+      correspondenceCount: json['correspondenceCount'] ?? 0,
+      estimatedBudget: json['estimatedBudget']?.toDouble() ?? 0.0,
       isCompleted: json['isCompleted'],
       isCanceled: json['isCanceled'],
+      vehicleType: json['vehicleType'],
+      additionalSpecs: json['additionalSpecs'],
+      isSideLoadingRequired: json['isSideLoadingRequired'] ?? false,
+      isCashOnDelivery: json['isCashOnDelivery'] ?? false,
+      hasRoadAccessibilityIssues: json['hasRoadAccessibilityIssues'] ?? false,
+      packagingType: json['packagingType'],
+      description: json['description'],
+      quantity: json['quantity'],
+      totalWeight: json['totalWeight']?.toDouble(),
+      length: json['length']?.toDouble(),
+      width: json['width']?.toDouble(),
+      height: json['height']?.toDouble(),
     );
   }
 }

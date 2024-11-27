@@ -159,7 +159,7 @@ class _DataGridStimeState extends State<DataGridStime> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ModificaStimaScreen(estimate: estimate), // Passa l'oggetto stima
+                builder: (context) => ModificaStimaScreen(estimate: estimate),
               ),
             );
           },
