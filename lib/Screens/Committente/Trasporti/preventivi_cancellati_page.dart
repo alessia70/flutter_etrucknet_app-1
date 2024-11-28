@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/Committente/Trasporti/data_grid_preventivi_cancellati.dart';
 import 'package:flutter_etrucknet_new/Screens/Committente/profile_menu_committente.dart';
 import 'package:flutter_etrucknet_new/Screens/Committente/side_menu_committente.dart';
-import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/grid_subvezioni_cancellate.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/nuova_richieste_subvezioni_page.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/richieste_subvezioni_page.dart';
 
@@ -63,7 +63,7 @@ class PreventiviCancellatiPage extends StatelessWidget {
             _buildActionButtons(context),
             SizedBox(height: 16),
             Expanded(
-              child: GridSubvezioniCancellate(
+              child: GridPreventiviCancellati(
                 completedTransports: subvezioniCancellate,
               ),
             ),

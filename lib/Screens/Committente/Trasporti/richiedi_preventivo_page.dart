@@ -66,10 +66,6 @@ class _RichiediPreventivoPageState extends State<RichiediPreventivoPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Stima il tuo trasporto',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
                 SizedBox(height: 20),
                 _buildTipologiaTrasportoField(),
                 SizedBox(height: 20),

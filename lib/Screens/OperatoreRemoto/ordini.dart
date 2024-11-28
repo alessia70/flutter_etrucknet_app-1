@@ -56,17 +56,17 @@ class _OrdiniScreenState extends State<OrdiniScreen> {
   List<Order> parseOrders(String responseBody) {
     try {
       final parsed = json.decode(responseBody);
-      print('Parsed response: $parsed');  // Stampa l'intero JSON per vedere cosa stiamo ricevendo
+      print('Parsed response: $parsed');
 
       if (parsed is Map<String, dynamic> && parsed['data'] is List) {
         List<Order> orders = (parsed['data'] as List)
             .map<Order>((json) => Order.fromJson(json))
+            .where((order) => order.id != 0)
             .toList();
 
         orders.forEach((order) {
           print("Ordine ID: ${order.id}, Cliente: ${order.customerName}, Offerta: ${order.offerAmount}");
         });
-
         return orders;
       } else {
         print('Errore: risposta non in formato lista o chiave "data" mancante');
