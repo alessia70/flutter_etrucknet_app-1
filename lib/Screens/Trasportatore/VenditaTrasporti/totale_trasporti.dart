@@ -1,7 +1,11 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Models/transport_model.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/VenditaTrasporti/grid_totale_trasporti.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/profile_menu_t_screen.dart';
+import 'package:flutter_etrucknet_new/Screens/Trasportatore/side_menu_t.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TotaleTrasportiScreen extends StatefulWidget {
   @override
@@ -9,14 +13,18 @@ class TotaleTrasportiScreen extends StatefulWidget {
 }
 
 class _TotaleTrasportiScreenState extends State<TotaleTrasportiScreen> {
-    final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   String selectedStatoTrasporto = 'Tutti';
   String selectedAllestimento = 'Tutti';
   TextEditingController luogoCaricoController = TextEditingController();
   TextEditingController luogoScaricoController = TextEditingController();
   TextEditingController numeroPrezzoController = TextEditingController();
 
-   List<Transport> transports = [];
+  int trasportatoreId = 0;
+  String token = '';
+  List<Transport> transports = [];
+  bool isLoading = true;
 
   @override
   void dispose() {
@@ -34,6 +42,63 @@ class _TotaleTrasportiScreenState extends State<TotaleTrasportiScreen> {
     );
   }
 
+  Future<void> _initializeUserData() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final savedId = prefs.getInt('trasportatore_id') ?? 0;
+      final savedToken = prefs.getString('access_token') ?? '';
+
+      setState(() {
+        trasportatoreId = savedId;
+        token = savedToken;
+      });
+    } catch (e) {
+      print('Errore nel recupero dei dati utente: $e');
+    }
+  }
+
+  Future<void> _loadTransports() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      final url = Uri.parse(
+          'https://etrucknetapi.azurewebsites.net/v1/Proposte/8324?TrasportatoreId=$trasportatoreId&inviato=false&dataInizio=2000-01-01&dataFine=2024-12-31&latitudineCarico=&longitudineCarico=&latitudineScarico=&longitudineScarico=&Tolleranza=&AllestimentoSelezionato=Tutti');
+      final response = await http.get(
+        url,
+        headers: {'Authorization': 'Bearer $token'},
+      );
+
+      if (response.statusCode == 200) {
+        final decodedResponse = json.decode(response.body);
+        if (decodedResponse is Map<String, dynamic> && decodedResponse.containsKey('data')) {
+          final List<dynamic> data = decodedResponse['data'];
+
+          setState(() {
+            transports = data.map((item) => Transport.fromJson(item)).toList();
+          });
+        } else {
+          print('Errore: il formato della risposta non contiene il campo "data".');
+        }
+      } else {
+        print('Errore nella chiamata API: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Errore nel caricamento dei trasporti: $e');
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeUserData().then((_) => _loadTransports());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,25 +112,19 @@ class _TotaleTrasportiScreenState extends State<TotaleTrasportiScreen> {
             icon: Icon(Icons.person),
             onPressed: () {
               Navigator.push(
-                context, 
-                MaterialPageRoute(builder: (context) => const ProfileTrasportatorePage())
+                context,
+                MaterialPageRoute(builder: (context) => const ProfileTrasportatorePage()),
               );
             },
           ),
         ],
-        leading: IconButton(
-          icon: Icon(Icons.menu),
-          onPressed: () {
-            _scaffoldKey.currentState?.openDrawer();
-          },
-        ),
       ),
+      drawer: SideMenuT(),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
             Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
                   flex: 3,
@@ -91,28 +150,19 @@ class _TotaleTrasportiScreenState extends State<TotaleTrasportiScreen> {
                     decoration: InputDecoration(
                       labelText: 'Stato',
                       border: OutlineInputBorder(),
-                      contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 12.0),
                     ),
-                    isDense: true,
-                    isExpanded: true,
                     items: <String>[
                       'Tutti',
                       'Da Quotare',
                       'In Quotazione',
                       'Quotazione Scaduta'
-                    ].map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value, overflow: TextOverflow.ellipsis),
-                      );
-                    }).toList(),
+                    ].map((value) => DropdownMenuItem(value: value, child: Text(value))).toList(),
                   ),
                 ),
                 SizedBox(width: 8),
                 IconButton(
                   icon: Icon(Icons.calendar_today, color: Colors.orange),
                   onPressed: _mostraFiltroDate,
-                  tooltip: 'Filtra Date',
                 ),
               ],
             ),
@@ -131,18 +181,12 @@ class _TotaleTrasportiScreenState extends State<TotaleTrasportiScreen> {
                     decoration: InputDecoration(
                       labelText: 'Tipo Allestimento',
                       border: OutlineInputBorder(),
-                      contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 12.0),
                     ),
                     items: <String>[
                       'Tutti',
                       'Standard',
                       'Furgone isotermico'
-                    ].map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
+                    ].map((value) => DropdownMenuItem(value: value, child: Text(value))).toList(),
                   ),
                 ),
                 SizedBox(width: 8),
@@ -155,18 +199,15 @@ class _TotaleTrasportiScreenState extends State<TotaleTrasportiScreen> {
                     decoration: InputDecoration(
                       labelText: 'Prezzo',
                       border: OutlineInputBorder(),
-                      contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 12.0),
                     ),
                   ),
                 ),
                 Container(
                   width: 30,
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       IconButton(
                         icon: Icon(Icons.arrow_drop_up),
-                        constraints: BoxConstraints(),
                         onPressed: () {
                           setState(() {
                             int currentValue = int.tryParse(numeroPrezzoController.text) ?? 0;
@@ -176,7 +217,6 @@ class _TotaleTrasportiScreenState extends State<TotaleTrasportiScreen> {
                       ),
                       IconButton(
                         icon: Icon(Icons.arrow_drop_down),
-                        constraints: BoxConstraints(),
                         onPressed: () {
                           setState(() {
                             int currentValue = int.tryParse(numeroPrezzoController.text) ?? 0;
@@ -198,7 +238,6 @@ class _TotaleTrasportiScreenState extends State<TotaleTrasportiScreen> {
                     decoration: InputDecoration(
                       labelText: 'Luogo Carico',
                       border: OutlineInputBorder(),
-                      contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 12.0),
                     ),
                   ),
                 ),
@@ -209,7 +248,6 @@ class _TotaleTrasportiScreenState extends State<TotaleTrasportiScreen> {
                     decoration: InputDecoration(
                       labelText: 'Luogo Scarico',
                       border: OutlineInputBorder(),
-                      contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 12.0),
                     ),
                   ),
                 ),
@@ -217,8 +255,9 @@ class _TotaleTrasportiScreenState extends State<TotaleTrasportiScreen> {
             ),
             SizedBox(height: 8),
             Expanded(
-              child: TotaleTrasportiGrid(totTrasporti: [],
-              ),
+              child: isLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : TotaleTrasportiGrid(totTrasporti: transports),
             ),
           ],
         ),

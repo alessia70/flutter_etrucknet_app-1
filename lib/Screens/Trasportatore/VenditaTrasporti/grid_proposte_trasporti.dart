@@ -79,7 +79,7 @@ class _TrasportiGridState extends State<TrasportiGrid> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Conferma Eliminazione'),
-          content: Text('Sei sicuro di voler eliminare il trasporto ${transport.id}?'),
+          content: Text('Sei sicuro di voler eliminare il trasporto ${transport.ordineId}?'),
           actions: [
             TextButton(
               onPressed: () {
@@ -143,7 +143,7 @@ class _TrasportiGridState extends State<TrasportiGrid> {
 
   DataRow _buildDataRow(Transport transport) {
     return DataRow(cells: [
-      DataCell(Text(transport.id.toString())),
+      DataCell(Text(transport.ordineId.toString())),
       DataCell(Text(transport.contattoTrasportatore)),
       DataCell(Text(transport.carico)),
       DataCell(Text(DateFormat.yMd().format(transport.dataCarico))),
@@ -160,7 +160,7 @@ class _TrasportiGridState extends State<TrasportiGrid> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => TransportDetailPage(
-                    id: transport.id.toString(),
+                    id: transport.ordineId.toString(),
                     tipoTrasporto: transport.tipoTrasporto,
                     distanza: "581 Km",
                     tempo: "6 ore 53 minuti",

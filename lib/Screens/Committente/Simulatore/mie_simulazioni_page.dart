@@ -148,15 +148,15 @@ class _MieSimulazioniPageState extends State<MieSimulazioniPage> {
                   onPressed: _handleCompare,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orange,
-                    foregroundColor: Colors.white,  // Colore del testo
+                    foregroundColor: Colors.white,
                   ),
                   child: Text('Confronta'),
                 ),
                 ElevatedButton(
                   onPressed: _handleNewEstimate,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange,  // Colore di sfondo
-                    foregroundColor: Colors.white,  // Colore del testo
+                    backgroundColor: Colors.orange,
+                    foregroundColor: Colors.white, 
                   ),
                   child: Text('Nuova stima'),
                 ),

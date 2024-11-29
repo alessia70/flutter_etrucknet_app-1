@@ -1,5 +1,5 @@
 class Transport {
-  final int id;
+  final int ordineId;
   final String carico;
   final String provinciaCarico;
   final DateTime dataInizio;
@@ -21,7 +21,7 @@ class Transport {
   final String tipoTrasporto;
 
   Transport({
-    required this.id,
+    required this.ordineId,
     required this.carico,
     required this.provinciaCarico,
     required this.dataInizio,
@@ -44,7 +44,7 @@ class Transport {
 
   factory Transport.fromJson(Map<String, dynamic> json) {
     return Transport(
-      id: json['ordineId'] ?? 0,
+      ordineId: json['ordineId'] ?? 0,
       carico: json['carico'] ?? '',
       provinciaCarico: json['provinciaCarico']?.trim() ?? '',
       dataInizio: _parseDate(json['dataInizio']),
@@ -74,5 +74,9 @@ class Transport {
     } catch (e) {
       return DateTime.now();
     }
+  }
+  @override
+  String toString() {
+    return 'Transport(ordineId: $ordineId, operatore: $operatore, dataInizio: $dataInizio, dataFine: $dataFine)';
   }
 }

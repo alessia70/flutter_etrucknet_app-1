@@ -255,7 +255,20 @@ class _CamionDisponibiliTPageState extends State<CamionDisponibiliTPage> {
     );
 
     if (confirmed == true) {
-      await deleteCamion(camionId);
+      try {
+        await deleteCamion(camionId);
+        setState(() {
+          futureCamion = futureCamion.then((camionList) =>
+              camionList.where((camion) => camion.id != camionId).toList());
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Camion eliminato con successo!')),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Errore durante l\'eliminazione del camion.')),
+        );
+      }
     }
   }
 

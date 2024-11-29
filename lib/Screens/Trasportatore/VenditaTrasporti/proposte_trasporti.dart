@@ -51,12 +51,6 @@ class _TrasportiPropostiScreenState extends State<TrasportiPropostiScreen> {
             },
           ),
         ],
-        leading: IconButton(
-          icon: Icon(Icons.menu),
-          onPressed: () {
-            _scaffoldKey.currentState?.openDrawer();
-          },
-        ),
       ),
       drawer: SideMenuT(),
       body: Padding(

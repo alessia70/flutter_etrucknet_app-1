@@ -47,7 +47,7 @@ class _NuovaSimulazioneScreenState extends State<NuovaSimulazioneScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Modifica Stima'),
+        title: Text('Stima il tuo trasporto'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
         actions: [
