@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Screens/Committente/side_menu_committente.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/profile_info_operatore_screen.dart';
-import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/side_menu.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class PreventivoDetailsPage extends StatefulWidget {
-  final Map<String, String> preventivo; // Mappa che contiene i dettagli del preventivo
-  final String orderStatus; // Stato dell'ordine
-  final String orderId; // ID del trasporto
+  final Map<String, String> preventivo;
+  final String orderStatus;
+  final String orderId;
 
   const PreventivoDetailsPage({
     Key? key,
     required this.preventivo,
     required this.orderStatus,
-    required this.orderId, // ID del trasporto passato come parametro
+    required this.orderId,
   }) : super(key: key);
 
   @override
@@ -32,11 +31,10 @@ class _PreventivoDetailsPageState extends State<PreventivoDetailsPage> {
   @override
   void initState() {
     super.initState();
-    // Inizializza le posizioni per la mappa, controllando i valori null
-    String pickupLat = widget.preventivo['pickupLat'] ?? '0.0'; // Fallback a '0.0' se è null
-    String pickupLng = widget.preventivo['pickupLng'] ?? '0.0'; // Fallback a '0.0' se è null
-    String deliveryLat = widget.preventivo['deliveryLat'] ?? '0.0'; // Fallback a '0.0' se è null
-    String deliveryLng = widget.preventivo['deliveryLng'] ?? '0.0'; // Fallback a '0.0' se è null
+    String pickupLat = widget.preventivo['pickupLat'] ?? '0.0';
+    String pickupLng = widget.preventivo['pickupLng'] ?? '0.0';
+    String deliveryLat = widget.preventivo['deliveryLat'] ?? '0.0';
+    String deliveryLng = widget.preventivo['deliveryLng'] ?? '0.0'; 
 
     _pickupLocation = LatLng(double.parse(pickupLat), double.parse(pickupLng));
     _deliveryLocation = LatLng(double.parse(deliveryLat), double.parse(deliveryLng));
@@ -92,7 +90,6 @@ class _PreventivoDetailsPageState extends State<PreventivoDetailsPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Mappa con i marker di ritiro e consegna
               Card(
                 elevation: 4,
                 child: SizedBox(
@@ -110,7 +107,6 @@ class _PreventivoDetailsPageState extends State<PreventivoDetailsPage> {
               ),
               const SizedBox(height: 16),
 
-              // Dettagli generali del preventivo
               Card(
                 elevation: 4,
                 margin: const EdgeInsets.symmetric(vertical: 8),
@@ -124,7 +120,7 @@ class _PreventivoDetailsPageState extends State<PreventivoDetailsPage> {
                           Icon(FontAwesomeIcons.tag, size: 20, color: Colors.orange),
                           const SizedBox(width: 8),
                           Text(
-                            'ID Ordine: ${widget.orderId}', // Mostra l'ID del trasporto
+                            'ID Ordine: ${widget.orderId}', 
                             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                         ],
@@ -147,8 +143,6 @@ class _PreventivoDetailsPageState extends State<PreventivoDetailsPage> {
               ),
 
               const SizedBox(height: 16),
-
-              // Dettagli di ritiro e consegna
               Row(
                 children: [
                   Expanded(
@@ -213,7 +207,6 @@ class _PreventivoDetailsPageState extends State<PreventivoDetailsPage> {
                 ],
               ),
               const SizedBox(height: 16),
-              // Altri dettagli della merce, specifiche e stivaggio
               Card(
                 elevation: 4,
                 margin: const EdgeInsets.symmetric(vertical: 8),

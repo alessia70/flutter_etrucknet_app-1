@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Models/order_model.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class Merce {
   String tipoImballo;
@@ -38,14 +40,6 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
     'Trasporto Ferroviario'
   ];
 
-  /*final String _selectedVehicleType = 'Seleziona...';
-  final List<String> _vehicleTypes = [
-    'Seleziona...',
-    'Furgone',
-    'Camion',
-    'Motocarro',
-    'Auto'
-  ];*/
 
   String _selectedPackagingType = 'Seleziona...';
   final List<String> _packagingTypes = [
@@ -58,10 +52,6 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
 
   DateTime? _pickupDate;
   DateTime? _deliveryDate;
-
-  //bool _sideLoadedGoods = false;
-  //bool _cashOnDelivery = false;
-  //bool _trafficIssues = false;
 
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
@@ -136,35 +126,57 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
     });
   }
 
-  void _saveOrder() {
-    int orderId = DateTime.now().millisecondsSinceEpoch.toString() as int;
-    // ignore: unused_local_variable
-    final newOrder = Order(
-      id: orderId,
-      customerName: 'Customer Name',
-      customerContact: 'Customer Contact',
-      date: DateTime.now(),
-      companyName: 'Company Name',
-      loadingDate: _pickupDate?.toIso8601String() ?? '',
-      loadingLocation: 'Loading Location',
-      loadingProvince: 'Province',
-      loadingCountry: 'Country',
-      isLoadingMandatory: true,
-      isUnloadingMandatory: false,
-      unloadingDate: _deliveryDate?.toIso8601String() ?? '',
-      unloadingLocation: 'Unloading Location',
-      unloadingProvince: 'Province',
-      unloadingCountry: 'Country',
-      offerAmount: 0.0, 
-      activeOffers: 0,
-      expiredOffers: 0,
-      correspondenceCount: 0,
-      estimatedBudget: 0.0, 
-      isCompleted: false, 
-      isCanceled: false, 
-    );
-    Navigator.of(context).pop(); 
+  void _saveOrder() async {
+  int orderId = DateTime.now().millisecondsSinceEpoch;
+  int tipoCarico = await _getTipoCarico(orderId);
+
+  final newOrder = Order(
+    id: orderId,
+    customerName: 'Customer Name',
+    customerContact: 'Customer Contact',
+    date: DateTime.now(),
+    companyName: 'Company Name',
+    loadingDate: _pickupDate?.toIso8601String() ?? '',
+    loadingLocation: 'Loading Location',
+    loadingProvince: 'Province',
+    loadingCountry: 'Country',
+    isLoadingMandatory: true,
+    isUnloadingMandatory: false,
+    unloadingDate: _deliveryDate?.toIso8601String() ?? '',
+    unloadingLocation: 'Unloading Location',
+    unloadingProvince: 'Province',
+    unloadingCountry: 'Country',
+    offerAmount: 0.0,
+    activeOffers: 0,
+    expiredOffers: 0,
+    correspondenceCount: 0,
+    estimatedBudget: 0.0,
+    isCompleted: false,
+    isCanceled: false,
+  );
+
+  print("Order created with tipoCarico: $tipoCarico");
+  Navigator.of(context).pop();
+}
+
+Future<int> _getTipoCarico(int idOrdine) async {
+  const String apiUrl = 'https://etrucknetapi.azurewebsites.net/v1/GetTipoCarico';
+
+  try {
+    final response = await http.get(Uri.parse('$apiUrl/$idOrdine'));
+
+    if (response.statusCode == 200) {
+      final result = json.decode(response.body);
+      return result;
+    } else {
+      print("Errore durante la chiamata API: ${response.statusCode}");
+      return 0;
+    }
+  } catch (e) {
+    print("Errore: $e");
+    return 0;
   }
+}
 
   void _cancelOrder() {
     Navigator.of(context).pop();

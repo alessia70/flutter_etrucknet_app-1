@@ -56,7 +56,6 @@ class _OrdiniScreenState extends State<OrdiniScreen> {
   List<Order> parseOrders(String responseBody) {
     try {
       final parsed = json.decode(responseBody);
-      print('Parsed response: $parsed');
 
       if (parsed is Map<String, dynamic> && parsed['data'] is List) {
         List<Order> orders = (parsed['data'] as List)
@@ -272,7 +271,7 @@ class _OrdiniScreenState extends State<OrdiniScreen> {
                     : orders.isEmpty
                         ? const Center(child: Text('Nessun ordine disponibile.'))
                         : OrdersGrid(
-                            orders: orders,
+                            orders: filteredOrders,
                             onDeleteOrder: _handleDeleteOrder,
                             onUpdateOrder: _handleUpdateOrder,
                         ),

@@ -76,58 +76,32 @@ class TrasportatoreDashboardScreen extends StatelessWidget {
   }
 
   Widget _buildSquareCard(BuildContext context, String title, IconData icon, VoidCallback onTap) {
-    return Container(
-      width: 200,
-      child: AspectRatio(
-        aspectRatio: 1,
-        child: Card(
-          elevation: 4,
-          child: Stack(
-            children: [
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(icon, size: 50, color: Colors.orange),
-                      SizedBox(height: 10),
-                      Text(
-                        title,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8), 
+      child: Card(
+        elevation: 4,
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, size: 50, color: Colors.orange),
+                SizedBox(height: 10),
+                Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-              ),
-              Positioned(
-                top: 6,
-                right: 6,
-                child: OutlinedButton(
-                  onPressed: onTap,
-                  style: OutlinedButton.styleFrom(
-                    minimumSize: Size(28, 28),
-                    backgroundColor: Colors.white,
-                    side: BorderSide(color: Colors.orange),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: EdgeInsets.zero,
-                  ),
-                  child: Icon(
-                    Icons.arrow_forward,
-                    size: 18,
-                    color: Colors.orange,
-                  ),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
     );
   }
+
 
   Widget _buildTransportRequestCard(BuildContext context) {
     return Card(

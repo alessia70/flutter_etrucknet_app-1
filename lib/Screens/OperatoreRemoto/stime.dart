@@ -34,7 +34,6 @@ class _EstimatesScreenState extends State<StimeScreen> {
 
   void _handleCompare() {
   final estimatesProvider = Provider.of<EstimatesProvider>(context, listen: false);
-
   Navigator.of(context).push(
     MaterialPageRoute(
       builder: (BuildContext context) => ConfrontaStimeDialog(stime: estimatesProvider.estimates),
@@ -85,8 +84,6 @@ class _EstimatesScreenState extends State<StimeScreen> {
               ),
             ),
             SizedBox(height: 20),
-
-            // Barra di ricerca
             TextField(
               controller: _searchController,
               decoration: InputDecoration(
@@ -100,7 +97,6 @@ class _EstimatesScreenState extends State<StimeScreen> {
               },
             ),
             SizedBox(height: 20),
-
             Row(
               children: [
                 Expanded(
@@ -124,7 +120,6 @@ class _EstimatesScreenState extends State<StimeScreen> {
                   ),
                 ),
                 SizedBox(width: 20),
-
                  Expanded(
                       child: TextField(
                         readOnly: true,
@@ -143,15 +138,11 @@ class _EstimatesScreenState extends State<StimeScreen> {
                  )
               ],
             ),
-
             SizedBox(height: 20),
-
-            Expanded(
-              child: DataGridStime(), 
+            Flexible(
+              child: DataGridStime(),
             ),
-
             SizedBox(height: 20),
-
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

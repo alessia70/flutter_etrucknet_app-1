@@ -4,6 +4,7 @@ import 'package:flutter_etrucknet_new/Models/transport_model.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/VenditaTrasporti/details_trasporto_eseguito.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 
 class TotaleTrasportiGrid extends StatefulWidget {
   final List<dynamic> totTrasporti;
@@ -56,8 +57,17 @@ class _TotaleTrasportiGridState extends State<TotaleTrasportiGrid> {
   Future<void> _fetchTransports(String token) async {
     try {
       final trasportatoreId = this.trasportatoreId;
+      final startDate = DateTime(2000, 1, 1);
+
+      DateTime endDate = DateTime(2080, 1, 1);
+      endDate = DateTime(endDate.year, endDate.month + 1, 1);
+      String startDateString = DateFormat('yyyy-MM-dd').format(startDate);
+      String endDateString = DateFormat('yyyy-MM-dd').format(endDate);
+
       final url = Uri.parse(
-          'https://etrucknetapi.azurewebsites.net/v1/Proposte/8324?TrasportatoreId=$trasportatoreId&inviato=false&dataInizio=2000-01-01&dataFine=2024-12-31&latitudineCarico=&longitudineCarico=&latitudineScarico=&longitudineScarico=&Tolleranza=&AllestimentoSelezionato=Tutti');
+        'https://etrucknetapi.azurewebsites.net/v1/Proposte/8324?TrasportatoreId=$trasportatoreId'
+      );
+
       final response = await http.get(
         url,
         headers: {'Authorization': 'Bearer $token'},
@@ -75,6 +85,7 @@ class _TotaleTrasportiGridState extends State<TotaleTrasportiGrid> {
         } else {
           print('Nessun trasporto trovato.');
         }
+
         DateTime? maxEndDate;
         for (var transport in jsonResponse['data'] ?? []) {
           final endDateString = transport['dataFine'];
@@ -87,6 +98,7 @@ class _TotaleTrasportiGridState extends State<TotaleTrasportiGrid> {
             }
           }
         }
+
         if (maxEndDate != null) {
           print('Data più lontana trovata: $maxEndDate');
         } else {
@@ -130,21 +142,27 @@ class _TotaleTrasportiGridState extends State<TotaleTrasportiGrid> {
                         DataColumn(label: Text('Ordine')),
                         DataColumn(label: Text('Carico')),
                         DataColumn(label: Text('Scarico')),
-                        DataColumn(label: Text('Numero Fattura')),
-                        DataColumn(label: Text('Importo Fattura')),
-                        DataColumn(label: Text('Data Fattura')),
-                        DataColumn(label: Text('Data Scadenza')),
+                        DataColumn(label: Text('Status')),
                         DataColumn(label: Text('Azioni')),
                       ],
                       rows: widget.totTrasporti.map((transport) {
                         return DataRow(cells: [
                           DataCell(Text(transport.ordineId.toString() ?? '')),
-                          DataCell(Text(transport.luogoCarico ?? '')),
-                          DataCell(Text(transport.luogoScarico ?? '')),
-                          DataCell(Text(transport.dataCarico.toString() ?? '')),
-                          DataCell(Text(transport.dataScarico.toString() ?? '')),
-                          DataCell(Text(transport.tipoTrasporto ?? '')),
-                          DataCell(Text(transport.status ?? '')),
+                          DataCell(Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(transport.carico ?? ''),
+                              Text(transport.dataInizio.toString() ?? ''),
+                            ],
+                          )),
+                          DataCell(Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(transport.scarico ?? ''),
+                              Text(transport.dataFine.toString() ?? ''),
+                            ],
+                          )),
+                          DataCell(Text(transport.esito ?? '')),
                           DataCell(Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [

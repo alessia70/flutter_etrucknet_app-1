@@ -83,7 +83,6 @@ class _OrdersGridState extends State<OrdersGrid> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Riepilogo Committente
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [

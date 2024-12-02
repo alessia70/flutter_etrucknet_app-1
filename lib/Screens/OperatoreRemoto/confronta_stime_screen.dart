@@ -70,7 +70,7 @@ void showConfrontaStimeDialog(BuildContext context, List<Map<String, dynamic>> s
 class ConfrontaStimeDialog extends StatefulWidget {
   final List<Map<String, dynamic>> stime;
 
-  const ConfrontaStimeDialog({super.key, required this.stime}); 
+  const ConfrontaStimeDialog({super.key, required this.stime});
 
   @override
   _ConfrontaStimeDialogState createState() => _ConfrontaStimeDialogState();
@@ -87,6 +87,24 @@ class _ConfrontaStimeDialogState extends State<ConfrontaStimeDialog> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.stime.isEmpty) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        title: Text('Confronta Stime'),
+        content: Text("Non ci sono stime disponibili per il confronto."),
+        actions: <Widget>[
+          TextButton(
+            child: Text('Chiudi'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    }
+
     return AlertDialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
@@ -138,8 +156,9 @@ class _ConfrontaStimeDialogState extends State<ConfrontaStimeDialog> {
               child: ListView.builder(
                 itemCount: widget.stime.length,
                 itemBuilder: (context, index) {
+                  final estimate = widget.stime[index];
                   return CheckboxListTile(
-                    title: Text(widget.stime[index]['stimato']),
+                    title: Text(estimate['stimato'] ?? 'N/A'),
                     value: _selectedItems[index],
                     onChanged: (bool? value) {
                       setState(() {
@@ -167,20 +186,26 @@ class _ConfrontaStimeDialogState extends State<ConfrontaStimeDialog> {
         ),
         ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.orange, 
+            backgroundColor: Colors.orange,
           ),
           onPressed: () {
             final stimeSelezionate = widget.stime
                 .asMap()
                 .entries
-                .where((entry) => _selectedItems[entry.key]) 
-                .map((entry) => entry.value) 
+                .where((entry) => _selectedItems[entry.key])
+                .map((entry) => entry.value)
                 .toList();
 
-            RisultatoConfrontoStimeDialog(
-              context, 
-              stimeSelezionate, 
-            );
+            if (stimeSelezionate.isNotEmpty) {
+              RisultatoConfrontoStimeDialog(
+                context,
+                stimeSelezionate,
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("Seleziona almeno una stima per il confronto.")),
+              );
+            }
           },
           child: Text(
             'Conferma',

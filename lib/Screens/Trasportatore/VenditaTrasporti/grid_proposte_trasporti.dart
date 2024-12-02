@@ -17,6 +17,15 @@ class _TrasportiGridState extends State<TrasportiGrid> {
   late List<Transport> transports = [];
   int trasportatoreId = 0;
 
+  DateTime? dataInizio;
+  DateTime? dataFine;
+  double? latitudineCarico;
+  double? longitudineCarico;
+  double? latitudineScarico;
+  double? longitudineScarico;
+  int? tolleranza;
+  String? allestimento;
+
   @override
   void initState() {
     super.initState();
@@ -53,8 +62,10 @@ class _TrasportiGridState extends State<TrasportiGrid> {
 
   Future<void> _fetchTransports(String token) async {
     try {
+      final url = Uri.parse('https://etrucknetapi.azurewebsites.net/v1/Proposte/$trasportatoreId?inviato=true');
+
       final response = await http.get(
-        Uri.parse('https://etrucknetapi.azurewebsites.net/v1/Proposte/$trasportatoreId?inviato=true'),
+        url,
         headers: {'Authorization': 'Bearer $token'},
       );
 
@@ -73,7 +84,7 @@ class _TrasportiGridState extends State<TrasportiGrid> {
     }
   }
 
-  void _deleteTransport(Transport transport) {
+  Future<void> _deleteTransport(String token, Transport transport) async {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -88,13 +99,47 @@ class _TrasportiGridState extends State<TrasportiGrid> {
               child: Text('Annulla'),
             ),
             TextButton(
-              onPressed: () {
-                setState(() {
-                  transports.remove(transport);
-                });
-                Navigator.of(context).pop();
+              onPressed: () async {
+                final url = Uri.parse('https://etrucknetapi.azurewebsites.net/v1/Trasporti/${transport.ordineId}');
+                final response = await http.delete(
+                  url,
+                  headers: {
+                    'Authorization': 'Bearer $token',
+                  },
+                );
+
+                if (response.statusCode == 200) {
+                  setState(() {
+                    transports.removeWhere((item) => item.ordineId == transport.ordineId);
+                  });
+                  Navigator.of(context).pop();
+                } else {
+                  print('Errore nell\'eliminazione: ${response.statusCode}');
+                  Navigator.of(context).pop();
+                  _showErrorMessage();
+                }
               },
               child: Text('Elimina'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showErrorMessage() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Errore'),
+          content: Text('Si è verificato un errore nell\'eliminazione del trasporto.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Chiudi'),
             ),
           ],
         );
@@ -186,8 +231,14 @@ class _TrasportiGridState extends State<TrasportiGrid> {
           ),
           IconButton(
             icon: const Icon(Icons.delete, color: Colors.grey),
-            onPressed: () {
-              _deleteTransport(transport);
+            onPressed: () async {
+              final token = await getSavedToken();
+              
+              if (token != null) {
+                _deleteTransport(token, transport);
+              } else {
+                print("Token non trovato");
+              }
             },
           ),
         ],

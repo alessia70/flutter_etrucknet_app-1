@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/Committente/Trasporti/preventivi_richiesti_page.dart';
 import 'package:flutter_etrucknet_new/Screens/Committente/side_menu_committente.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/profile_info_operatore_screen.dart';
-import 'package:flutter_etrucknet_new/Screens/Trasportatore/Configurazione/camion_disponibili_t.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/add_camion_disponibile_t.dart';
 
 class CommittenteDashboardScreen extends StatelessWidget {
@@ -33,9 +33,9 @@ class CommittenteDashboardScreen extends StatelessWidget {
               GridView.count(
                 physics: NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
-                crossAxisCount: 2,
+                crossAxisCount: 4,
                 childAspectRatio: 1,
-                crossAxisSpacing: 16,
+                crossAxisSpacing: 10,
                 mainAxisSpacing: 16,
                 children: [
                   _buildSquareCard(context, 'Richiedi targa e autista', Icons.request_quote_outlined, () {
@@ -44,7 +44,7 @@ class CommittenteDashboardScreen extends StatelessWidget {
                   _buildSquareCard(context, 'Trasporti Non Assegnati', Icons.assignment_ind, () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => CamionDisponibiliTPage()),
+                      MaterialPageRoute(builder: (context) => PreventiviRichiestiPage()),
                     );
                   }),
                   _buildSquareCard(context, 'Stima il costo del tuo trasporto', Icons.search, () {
@@ -76,58 +76,32 @@ class CommittenteDashboardScreen extends StatelessWidget {
   }
 
   Widget _buildSquareCard(BuildContext context, String title, IconData icon, VoidCallback onTap) {
-    return Container(
-      width: 200,
-      child: AspectRatio(
-        aspectRatio: 1,
-        child: Card(
-          elevation: 4,
-          child: Stack(
-            children: [
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(icon, size: 50, color: Colors.orange),
-                      SizedBox(height: 10),
-                      Text(
-                        title,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Card(
+        elevation: 4,
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, size: 50, color: Colors.orange),
+                SizedBox(height: 10),
+                Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-              ),
-              Positioned(
-                top: 6,
-                right: 6,
-                child: OutlinedButton(
-                  onPressed: onTap,
-                  style: OutlinedButton.styleFrom(
-                    minimumSize: Size(28, 28),
-                    backgroundColor: Colors.white,
-                    side: BorderSide(color: Colors.orange),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: EdgeInsets.zero,
-                  ),
-                  child: Icon(
-                    Icons.arrow_forward,
-                    size: 18,
-                    color: Colors.orange,
-                  ),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
     );
   }
+
   Widget _buildTransportRequestCard(BuildContext context) {
     return Card(
       elevation: 4,
