@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 
 class TotaleTrasportiGrid extends StatefulWidget {
-  final List<dynamic> totTrasporti;
+  final List<Transport> totTrasporti;
   TotaleTrasportiGrid({Key? key, required this.totTrasporti}) : super(key: key);
 
   @override
@@ -61,11 +61,9 @@ class _TotaleTrasportiGridState extends State<TotaleTrasportiGrid> {
 
       DateTime endDate = DateTime(2080, 1, 1);
       endDate = DateTime(endDate.year, endDate.month + 1, 1);
-      String startDateString = DateFormat('yyyy-MM-dd').format(startDate);
-      String endDateString = DateFormat('yyyy-MM-dd').format(endDate);
 
       final url = Uri.parse(
-        'https://etrucknetapi.azurewebsites.net/v1/Proposte/8324?TrasportatoreId=$trasportatoreId'
+         'https://etrucknetapi.azurewebsites.net/v1/Proposte/$trasportatoreId'
       );
 
       final response = await http.get(
@@ -85,25 +83,6 @@ class _TotaleTrasportiGridState extends State<TotaleTrasportiGrid> {
         } else {
           print('Nessun trasporto trovato.');
         }
-
-        DateTime? maxEndDate;
-        for (var transport in jsonResponse['data'] ?? []) {
-          final endDateString = transport['dataFine'];
-          if (endDateString != null) {
-            final endDate = DateTime.tryParse(endDateString);
-            if (endDate != null) {
-              if (maxEndDate == null || endDate.isAfter(maxEndDate)) {
-                maxEndDate = endDate;
-              }
-            }
-          }
-        }
-
-        if (maxEndDate != null) {
-          print('Data più lontana trovata: $maxEndDate');
-        } else {
-          print('Nessuna data valida trovata nei dati ricevuti.');
-        }
       } else {
         print('Errore nell\'API: ${response.statusCode} - ${response.body}');
       }
@@ -112,9 +91,34 @@ class _TotaleTrasportiGridState extends State<TotaleTrasportiGrid> {
     }
   }
 
+  Future<void> deleteTransport(int transportId) async {
+    try {
+      final token = await getSavedToken();
+      if (token == null) {
+        print('Errore: token non trovato');
+        return;
+      }
+
+      final url = Uri.parse('https://etrucknetapi.azurewebsites.net/v1/Proposte/$trasportatoreId/$transportId');
+
+      final response = await http.delete(
+        url,
+        headers: {'Authorization': 'Bearer $token'},
+      );
+
+      if (response.statusCode == 204) {
+        print('Trasporto eliminato con successo');
+        _fetchTransports(token);
+      } else {
+        print('Errore nell\'eliminazione del trasporto: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Errore durante la cancellazione del trasporto: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    print(widget.totTrasporti);
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Card(
@@ -147,22 +151,22 @@ class _TotaleTrasportiGridState extends State<TotaleTrasportiGrid> {
                       ],
                       rows: widget.totTrasporti.map((transport) {
                         return DataRow(cells: [
-                          DataCell(Text(transport.ordineId.toString() ?? '')),
+                          DataCell(Text(transport.ordineId.toString())),
                           DataCell(Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(transport.carico ?? ''),
-                              Text(transport.dataInizio.toString() ?? ''),
+                              Text(DateFormat('dd/MM/yyyy').format(transport.dataInizio)),
                             ],
                           )),
                           DataCell(Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(transport.scarico ?? ''),
-                              Text(transport.dataFine.toString() ?? ''),
+                              Text(DateFormat('dd/MM/yyyy').format(transport.dataFine)),
                             ],
                           )),
-                          DataCell(Text(transport.esito ?? '')),
+                          DataCell(Text(transport.status ?? '')),
                           DataCell(Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
@@ -197,25 +201,11 @@ class _TotaleTrasportiGridState extends State<TotaleTrasportiGrid> {
                                 tooltip: 'Mostra Dettagli',
                               ),
                               IconButton(
-                                icon: Icon(Icons.picture_as_pdf, color: Colors.orange.shade500),
+                                icon: Icon(Icons.delete, color: Colors.red),
                                 onPressed: () {
-                                  _showDDTPopup(context, transport['id'] ?? '');
+                                  deleteTransport(transport.idProposta);
                                 },
-                                tooltip: 'Mostra DDT',
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.car_repair, color: Colors.orange.shade400),
-                                onPressed: () {
-                                  _showCommunicaTargaPopup(context, transport['id'] ?? '');
-                                },
-                                tooltip: 'Comunica Targa',
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.reviews_outlined, color: Colors.orange.shade300),
-                                onPressed: () {
-                                  _showFeedbackPopup(context, transport['id'] ?? '');
-                                },
-                                tooltip: 'Feedbacks',
+                                tooltip: 'Elimina Trasporto',
                               ),
                             ],
                           )),
@@ -229,143 +219,6 @@ class _TotaleTrasportiGridState extends State<TotaleTrasportiGrid> {
           ),
         ),
       ),
-    );
-  }
-
-  void _showDDTPopup(BuildContext context, String transportId) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('DDT Trasporto N $transportId'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Table(
-                border: TableBorder(
-                  horizontalInside: BorderSide(color: Colors.grey, width: 0.5),
-                ),
-                children: [
-                  TableRow(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text('Committente', style: TextStyle(fontWeight: FontWeight.bold)),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text('Numero DDT', style: TextStyle(fontWeight: FontWeight.bold)),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text('Data DDT', style: TextStyle(fontWeight: FontWeight.bold)),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text('Stato DDT', style: TextStyle(fontWeight: FontWeight.bold)),
-                      ),
-                    ],
-                  ),
-                  TableRow(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text('Committente $transportId'),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text('$transportId'),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text('2024-11-30'),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text('In Consegna'),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('Chiudi'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _showCommunicaTargaPopup(BuildContext context, String transportId) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Comunica Targa per Trasporto $transportId'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                decoration: InputDecoration(labelText: 'Inserisci la targa del veicolo'),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('Annulla'),
-            ),
-            TextButton(
-              onPressed: () {
-                // Logica per inviare la targa
-              },
-              child: Text('Invia'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _showFeedbackPopup(BuildContext context, String transportId) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Aggiungi Feedback per Trasporto $transportId'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                decoration: InputDecoration(labelText: 'Inserisci il tuo feedback'),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('Annulla'),
-            ),
-            TextButton(
-              onPressed: () {
-                // Logica per inviare il feedback
-              },
-              child: Text('Invia'),
-            ),
-          ],
-        );
-      },
     );
   }
 }

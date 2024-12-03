@@ -30,12 +30,12 @@ class Camion {
   }
   factory Camion.fromJson(Map<String, dynamic> json) {
     return Camion(
-      id: json['id'],
-      tipoMezzo: json['tipoMezzo'],
-      spazioDisponibile: json['spazioDisponibile'],
-      localitaCarico: json['localitaCarico'],
-      dataRitiro: DateTime.parse(json['dataRitiro']),
-      localitaScarico: json['localitaScarico'],
+      id: json['id'] as int?,
+      tipoMezzo: json['tipoMezzo'] ?? 'Non specificato',
+      spazioDisponibile: json['spazioDisponibile']  ?? 0,
+      localitaCarico: json['localitaCarico'] as String?,
+      dataRitiro: DateTime.parse(json['dataRitiro'] ?? 'N/A'),
+      localitaScarico: json['localitaScarico'] as String?,
     );
   }
 }

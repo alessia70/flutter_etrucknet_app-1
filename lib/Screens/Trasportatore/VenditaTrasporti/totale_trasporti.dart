@@ -64,7 +64,7 @@ class _TotaleTrasportiScreenState extends State<TotaleTrasportiScreen> {
 
     try {
       final url = Uri.parse(
-          'https://etrucknetapi.azurewebsites.net/v1/Proposte/8324?TrasportatoreId=$trasportatoreId&inviato=false&dataInizio=2000-01-01&dataFine=2024-12-31&latitudineCarico=&longitudineCarico=&latitudineScarico=&longitudineScarico=&Tolleranza=&AllestimentoSelezionato=Tutti');
+          'https://etrucknetapi.azurewebsites.net/v1/Proposte/$trasportatoreId');
       final response = await http.get(
         url,
         headers: {'Authorization': 'Bearer $token'},

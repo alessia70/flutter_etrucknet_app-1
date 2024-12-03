@@ -20,6 +20,18 @@ class Transport {
   final String status;
   final String tipoTrasporto;
 
+  final String? distanza;
+  final String? tempo;
+  final String? localitaRitiro;
+  final DateTime? dataRitiro;
+  final String? localitaConsegna;
+  final DateTime? dataConsegna;
+  final String? mezziAllestimenti;
+  final String? ulterioriSpecifiche;
+  final List<Map<String, String>>? dettagliTrasporto;
+  final List<Map<String, String>>? dettagliMerce;
+
+
   Transport({
     required this.ordineId,
     required this.carico,
@@ -40,6 +52,17 @@ class Transport {
     required this.dataScarico,
     required this.status,
     required this.tipoTrasporto,
+    
+    this.distanza,
+    this.tempo,
+    this.localitaRitiro,
+    this.dataRitiro,
+    this.localitaConsegna,
+    this.dataConsegna,
+    this.mezziAllestimenti,
+    this.ulterioriSpecifiche,
+    this.dettagliTrasporto,
+    this.dettagliMerce,
   });
 
   factory Transport.fromJson(Map<String, dynamic> json) {
@@ -63,8 +86,24 @@ class Transport {
       dataScarico: _parseDate(json['dataScarico']),
       status: json['status'] ?? '', 
       tipoTrasporto: json['tipoTrasporto'] ?? '',
+      
+      distanza: json['distanza'],
+      tempo: json['tempo'],
+      localitaRitiro: json['localitaRitiro'],
+      dataRitiro: json['dataRitiro'] != null ? DateTime.parse(json['dataRitiro']) : null,
+      localitaConsegna: json['localitaConsegna'],
+      dataConsegna: json['dataConsegna'] != null ? DateTime.parse(json['dataConsegna']) : null,
+      mezziAllestimenti: json['mezziAllestimenti'],
+      ulterioriSpecifiche: json['ulterioriSpecifiche'],
+      dettagliTrasporto: (json['dettagliTrasporto'] as List<dynamic>?)
+        ?.map((item) => Map<String, String>.from(item as Map))
+        .toList(),
+      dettagliMerce: (json['dettagliMerce'] as List<dynamic>?)
+          ?.map((item) => Map<String, String>.from(item as Map))
+          .toList(),
     );
   }
+
   static DateTime _parseDate(String? dateString) {
     if (dateString == null || dateString.isEmpty) {
       return DateTime.now();
@@ -75,6 +114,7 @@ class Transport {
       return DateTime.now();
     }
   }
+
   @override
   String toString() {
     return 'Transport(ordineId: $ordineId, operatore: $operatore, dataInizio: $dataInizio, dataFine: $dataFine)';

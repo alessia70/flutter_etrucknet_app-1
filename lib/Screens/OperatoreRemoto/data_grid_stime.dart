@@ -47,7 +47,7 @@ class _DataGridStimeState extends State<DataGridStime> {
 
     final url = Uri.parse(
       'https://etrucknetapi.azurewebsites.net/v1/Proposte/$trasportatoreId'
-      '?TrasportatoreId=$trasportatoreId',
+      '?TrasportatoreId=$trasportatoreId&stimaId',
     );
 
     final response = await http.get(

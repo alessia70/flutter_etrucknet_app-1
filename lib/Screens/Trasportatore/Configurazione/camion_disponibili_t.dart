@@ -55,7 +55,6 @@ class _CamionDisponibiliTPageState extends State<CamionDisponibiliTPage> {
 
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
-      print('Dati ricevuti: $data');
       return data.map((json) => Camion.fromJson(json)).toList();
     } else {
       print('Errore nella richiesta: ${response.statusCode}');
@@ -213,10 +212,10 @@ class _CamionDisponibiliTPageState extends State<CamionDisponibiliTPage> {
 
   DataRow _buildDataRow(Camion camion) {
     return DataRow(cells: [
-      DataCell(Text(camion.tipoMezzo)),
-      DataCell(Text(camion.spazioDisponibile.toString())),
+      DataCell(Text(camion.tipoMezzo ?? '')),
+      DataCell(Text(camion.spazioDisponibile.toString() ?? '0')),
       DataCell(Text(camion.localitaCarico ?? 'Non specificato')),
-      DataCell(Text('${camion.dataRitiro.day}/${camion.dataRitiro.month}/${camion.dataRitiro.year}')),
+      DataCell(Text(camion.dataRitiro != null ?'${camion.dataRitiro.day}/${camion.dataRitiro.month}/${camion.dataRitiro.year}' : 'N/A')),
       DataCell(Text(camion.localitaScarico ?? 'Non specificato')),
       DataCell(Row(
         children: [
