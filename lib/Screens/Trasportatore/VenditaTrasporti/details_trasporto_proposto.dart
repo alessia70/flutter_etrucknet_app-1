@@ -111,7 +111,7 @@ class TransportDetailPage extends StatelessWidget {
               SizedBox(height: 16),
 
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Distribuzione uniforme
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Flexible(
                     child: _buildFixedHeightLocationCard('Ritiro', localitaRitiro, dataRitiro),

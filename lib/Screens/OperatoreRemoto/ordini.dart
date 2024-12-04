@@ -95,7 +95,7 @@ class _OrdiniScreenState extends State<OrdiniScreen> {
           end: DateTime(2100, 01, 01),
         );
 
-    String url = 'https://etrucknetapi.azurewebsites.net/v1/Proposte/8324'
+    String url = 'https://etrucknetapi.azurewebsites.net/v1/Proposte/$transporterId'
         '?TrasportatoreId=$transporterId'
         '&inviato=true'
         '&latitudineCarico='

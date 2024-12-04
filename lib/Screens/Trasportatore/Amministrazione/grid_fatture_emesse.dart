@@ -120,53 +120,58 @@ class _GridFattureEmesseState extends State<GridFattureEmesse> {
                     } else {
                       return SingleChildScrollView(
                         scrollDirection: Axis.vertical,
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: DataTable(
-                            columnSpacing: 16.0,
-                            columns: [
-                              DataColumn(label: Text('Ordine')),
-                              DataColumn(label: Text('Cliente')),
-                              DataColumn(label: Text('Data')),
-                              DataColumn(label: Text('Importo')),
-                              DataColumn(label: Text('Stato')),
-                              DataColumn(label: Text('Azioni')),
-                            ],
-                            rows: snapshot.data!.map((fattura) {
-                              return DataRow(cells: [
-                                DataCell(Text(fattura.id.toString())),
-                                DataCell(Text(fattura.ragioneSociale)),
-                                DataCell(Text(fattura.dataFattura.toIso8601String())),
-                                DataCell(Text(fattura.importo.toString())),
-                                DataCell(Text(fattura.stato.toString())),
-                                DataCell(Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    IconButton(
-                                      icon: Icon(Icons.check_circle_outline, color: Colors.orange.shade700),
-                                      onPressed: () {
-                                        // Azione per il pulsante
-                                      },
-                                      tooltip: 'Vedi Conferma',
-                                    ),
-                                    IconButton(
-                                      icon: Icon(Icons.info_outline, color: Colors.orange.shade600),
-                                      onPressed: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => TransportoEseguitioDetailPage(
-                                              id: fattura.id, tipoTrasporto: '', distanza: '', tempo: '', localitaRitiro: '', dataRitiro: '', localitaConsegna: '', dataConsegna: '', mezziAllestimenti: '', ulterioriSpecifiche: '', dettagliMerce: [], dettagliTrasporto: [],
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            minWidth: MediaQuery.of(context).size.width,
+                          ),
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: DataTable(
+                              columnSpacing: 16.0,
+                              columns: [
+                                DataColumn(label: Text('Ordine')),
+                                DataColumn(label: Text('Cliente')),
+                                DataColumn(label: Text('Data')),
+                                DataColumn(label: Text('Importo')),
+                                DataColumn(label: Text('Stato')),
+                                DataColumn(label: Text('Azioni')),
+                              ],
+                              rows: snapshot.data!.map((fattura) {
+                                return DataRow(cells: [
+                                  DataCell(Text(fattura.id.toString())),
+                                  DataCell(Text(fattura.ragioneSociale)),
+                                  DataCell(Text(fattura.dataFattura.toIso8601String())),
+                                  DataCell(Text(fattura.importo.toString())),
+                                  DataCell(Text(fattura.stato.toString())),
+                                  DataCell(Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      IconButton(
+                                        icon: Icon(Icons.check_circle_outline, color: Colors.orange.shade700),
+                                        onPressed: () {
+                                          // Azione per il pulsante
+                                        },
+                                        tooltip: 'Vedi Conferma',
+                                      ),
+                                      IconButton(
+                                        icon: Icon(Icons.info_outline, color: Colors.orange.shade600),
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => TransportoEseguitioDetailPage(
+                                                id: fattura.id, tipoTrasporto: '', distanza: '', tempo: '', localitaRitiro: '', dataRitiro: '', localitaConsegna: '', dataConsegna: '', mezziAllestimenti: '', ulterioriSpecifiche: '', dettagliMerce: [], dettagliTrasporto: [],
+                                              ),
                                             ),
-                                          ),
-                                        );
-                                      },
-                                      tooltip: 'Mostra Dettagli',
-                                    ),
-                                  ],
-                                )),
-                              ]);
-                            }).toList(),
+                                          );
+                                        },
+                                        tooltip: 'Mostra Dettagli',
+                                      ),
+                                    ],
+                                  )),
+                                ]);
+                              }).toList(),
+                            ),
                           ),
                         ),
                       );

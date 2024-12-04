@@ -141,8 +141,8 @@ class _TransportiEseguitiGridState extends State<TransportiEseguitiGrid> {
                                   DataCell(Text(formatDate(transport.dataCarico))),
                                   DataCell(Text(transport.luogoScarico ?? '')),
                                   DataCell(Text(formatDate(transport.dataScarico))),
-                                  DataCell(Text(transport.fatturaId != 0 ? transport.fatturaId.toString() : 'N/A')),
-                                  DataCell(Text(transport.importoFattura.toStringAsFixed(2))),
+                                  DataCell(Text(transport.fatturaId != null && transport.fatturaId != 0 ? transport.fatturaId.toString() : 'N/A')),
+                                  DataCell(Text('${transport.importoFattura.toStringAsFixed(2)} €')),
                                   DataCell(Text(transport.dataFattura != "0001-01-01T00:00:00"
                                       ? formatDate(transport.dataFattura)
                                       : 'N/A')),

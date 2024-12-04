@@ -1,13 +1,12 @@
 class Item {
   final int quantity;
-  final double weight; // Peso totale
-  final double length; // Lunghezza
-  final double width; // Larghezza
-  final double height; // Altezza
-  final String packagingType; // Tipo di imballo
-  final String description; // Descrizione
-  final String specifications; // Specifiche
-
+  final double weight;
+  final double length;
+  final double width;
+  final double height;
+  final String packagingType;
+  final String description;
+  final String specifications;
   Item({
     required this.quantity,
     required this.weight,
@@ -35,17 +34,17 @@ class Item {
 
 
 class Estimate {
-  final String id; // ID della stima
-  final String user; // Utente che crea la stima
-  final String pickupLocation; // Luogo di ritiro
-  final String deliveryLocation; // Luogo di consegna
-  final DateTime requestDate; // Data della richiesta
-  final String transportType; // Tipologia di trasporto
-  final List<Item> items; // Lista di articoli
-  final bool loadedLaterally; // Merce caricata lateralmente
-  final bool cashOnDelivery; // Pagata in contrassegno
-  final bool trafficProblems; // Problemi di viabilità
-  final String additionalInfo; // Altre informazioni utili
+  final String id;
+  final String user; 
+  final String pickupLocation;
+  final String deliveryLocation;
+  final DateTime requestDate;
+  final String transportType;
+  final List<Item> items;
+  final bool loadedLaterally;
+  final bool cashOnDelivery;
+  final bool trafficProblems;
+  final String additionalInfo;
 
   Estimate({
     required this.id,

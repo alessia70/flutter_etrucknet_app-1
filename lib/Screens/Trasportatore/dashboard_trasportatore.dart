@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/Configurazione/camion_disponibili_t.dart';
+import 'package:flutter_etrucknet_new/Screens/Trasportatore/VenditaTrasporti/proposte_trasporti.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/add_camion_disponibile_t.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/profile_menu_t_screen.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/side_menu_t.dart';
@@ -48,7 +49,10 @@ class TrasportatoreDashboardScreen extends StatelessWidget {
                     );
                   }),
                   _buildSquareCard(context, 'Trova i Tuoi Carichi', Icons.search, () {
-                    Navigator.pushNamed(context, '/trova_carichi');
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => TrasportiPropostiScreen()),
+                    );
                   }),
                   _buildSquareCard(context, 'Trend Costo Carburante', Icons.trending_up, () {
                     Navigator.pushNamed(context, '/trend_costo_carburante');

@@ -54,6 +54,19 @@ class _TotaleTrasportiGridState extends State<TotaleTrasportiGrid> {
     }
   }
 
+  String getEsitoString(int esito) {
+    switch (esito) {
+      case 1:
+        return 'Da quotare';
+      case 2:
+        return 'Quotazione in corso';
+      case 3:
+        return 'Quotazione scaduta';
+      default:
+        return 'Sconosciuto';
+    }
+  }
+
   Future<void> _fetchTransports(String token) async {
     try {
       final trasportatoreId = this.trasportatoreId;
@@ -166,7 +179,7 @@ class _TotaleTrasportiGridState extends State<TotaleTrasportiGrid> {
                               Text(DateFormat('dd/MM/yyyy').format(transport.dataFine)),
                             ],
                           )),
-                          DataCell(Text(transport.status ?? '')),
+                          DataCell(Text(getEsitoString(transport.esito ?? 0))),
                           DataCell(Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [

@@ -59,7 +59,18 @@ class _TrasportiGridState extends State<TrasportiGrid> {
       print('Errore durante il caricamento dei dati utente: $e');
     }
   }
-
+  String getEsitoString(int esito) {
+    switch (esito) {
+      case 1:
+        return 'Da quotare';
+      case 2:
+        return 'Quotazione in corso';
+      case 3:
+        return 'Quotazione scaduta';
+      default:
+        return 'Sconosciuto';
+    }
+  }
   Future<void> _fetchTransports(String token) async {
     try {
       final url = Uri.parse('https://etrucknetapi.azurewebsites.net/v1/Proposte/$trasportatoreId?inviato=true');
@@ -194,7 +205,7 @@ class _TrasportiGridState extends State<TrasportiGrid> {
       DataCell(Text(DateFormat.yMd().format(transport.dataCarico))),
       DataCell(Text(transport.scarico)),
       DataCell(Text(DateFormat.yMd().format(transport.dataScarico))),
-      DataCell(Text(transport.status)),
+      DataCell(Text(getEsitoString(transport.esito ?? 0))),
       DataCell(Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [

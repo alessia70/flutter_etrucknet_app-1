@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/Trasportatore/Configurazione/edit_camion.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/profile_menu_t_screen.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -220,8 +221,19 @@ class _CamionDisponibiliTPageState extends State<CamionDisponibiliTPage> {
       DataCell(Row(
         children: [
           IconButton(
-            icon: const Icon(Icons.edit, color: Colors.orange),
-            onPressed: () => _openAddCamionDialog(camion: camion),
+           icon: const Icon(Icons.edit, color: Colors.orange),
+            onPressed: () async {
+              final result = await showDialog<bool>(
+                context: context,
+                builder: (context) => EditCamionDialog(camion: camion),
+              );
+
+              if (result == true) {
+                setState(() {
+                  futureCamion = fetchCamionDisponibili();
+                });
+              }
+            },
           ),
           IconButton(
             icon: const Icon(Icons.delete, color: Colors.grey),
