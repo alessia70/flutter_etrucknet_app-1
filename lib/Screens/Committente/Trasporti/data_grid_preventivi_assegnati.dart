@@ -60,7 +60,7 @@ class _GridPreventiviAssegnatiState extends State<GridPreventiviAssegnati> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => TransportoEseguitioDetailPage(
-                                    id: transport['id'] ?? '',
+                                    id: int.tryParse(['id'].toString()) ?? 0,
                                     tipoTrasporto: transport['tipo'] ?? '',
                                     distanza: transport['distanza'] ?? '',
                                     tempo: transport['tempo'] ?? '',

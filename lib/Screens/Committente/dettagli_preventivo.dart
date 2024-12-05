@@ -65,7 +65,7 @@ class _PreventivoDetailsPageState extends State<PreventivoDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    String title = widget.orderStatus;
+    //String title = widget.orderStatus;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Dettagli Preventivo'),

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Models/rdtEseguiti_model.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/VenditaTrasporti/details_trasporto_eseguito.dart';
+import 'package:flutter_etrucknet_new/Widgets/popup_feedbacks.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -195,6 +196,23 @@ class _TransportiEseguitiGridState extends State<TransportiEseguitiGrid> {
                                           );
                                         },
                                         tooltip: 'Mostra DDT',
+                                      ),
+                                      IconButton(
+                                        icon: Icon(Icons.check_box_outlined, color: Colors.orange.shade700),
+                                        onPressed: () {
+                                          // logica comunica targa
+                                        },
+                                        tooltip: 'Comunica targa',
+                                      ),
+                                      IconButton(
+                                        icon: Icon(Icons.feedback_outlined, color: Colors.orange.shade700),
+                                        onPressed: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) => FeedbackPopup(),
+                                          );
+                                        },
+                                        tooltip: 'Feedbacks',
                                       ),
                                     ],
                                   )),

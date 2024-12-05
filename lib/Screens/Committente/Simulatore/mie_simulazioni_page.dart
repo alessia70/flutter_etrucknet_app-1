@@ -6,6 +6,9 @@ import 'package:flutter_etrucknet_new/Screens/Committente/side_menu_committente.
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/data_grid_stime.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_etrucknet_new/Services/estimates_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class MieSimulazioniPage extends StatefulWidget {
   const MieSimulazioniPage({super.key});
@@ -18,6 +21,9 @@ class _MieSimulazioniPageState extends State<MieSimulazioniPage> {
   final TextEditingController _searchController = TextEditingController();
   String _selectedOption = 'Tutte';
   DateTimeRange? _selectedDateRange;
+  List<Map<String, dynamic>> trucks = [];
+  List<Map<String, dynamic>> filteredTrucks = [];
+
 
   Future<void> _selectDateRange(BuildContext context) async {
     final DateTimeRange? picked = await showDateRangePicker(
@@ -33,21 +39,81 @@ class _MieSimulazioniPageState extends State<MieSimulazioniPage> {
   }
 
   void _handleCompare() {
-  final estimatesProvider = Provider.of<EstimatesProvider>(context, listen: false);
+    final estimatesProvider = Provider.of<EstimatesProvider>(context, listen: false);
 
-  Navigator.of(context).push(
-    MaterialPageRoute(
-      builder: (BuildContext context) => ConfrontaSimulazioniDialog(stime: estimatesProvider.estimates),
-    ),
-  );
-}
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (BuildContext context) => ConfrontaSimulazioniDialog(stime: estimatesProvider.estimates),
+      ),
+    );
+  }
 
   void _handleNewEstimate() {
-   Navigator.of(context).push(
-    MaterialPageRoute(
-      builder: (BuildContext context) => NuovaSimulazioneScreen(estimate: {},),
-    ),
-  );
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (BuildContext context) => NuovaSimulazioneScreen(estimate: {},),
+      ),
+    );
+  }
+
+  Future<String?> getSavedToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('access_token');
+    return token;
+  }
+
+  Future<int?> getSavedUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt('trasportatore_id');
+  }
+
+  Future<void> _fetchEstimates() async {
+    final token = await getSavedToken();
+    final trasportatoreId = await getSavedUserId();
+
+    if (token == null || trasportatoreId == null) {
+      print('Token o TrasportatoreId non trovato.');
+      return;
+    }
+
+    final url = Uri.parse(
+      'https://etrucknetapi.azurewebsites.net/v1/Proposte/$trasportatoreId'
+      '?TrasportatoreId=$trasportatoreId&stimaId',
+    );
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      try {
+        final responseData = json.decode(response.body);
+        List<dynamic>? data = responseData['data'];
+        if (data == null || data.isEmpty) {
+          print("Nessuna proposta trovata.");
+          return;
+        }
+        setState(() {
+          trucks = List<Map<String, dynamic>>.from(
+            data.map((item) => {
+              'id': item['ordineId'].toString(),
+              'carico': item['carico'] ?? '',
+              'scarico': item['scarico'] ?? '',
+              'stimato': item['idproposta'] ?? '',
+              'data': item['dataOrdine'] ?? '',
+            }),
+          );
+          filteredTrucks = List.from(trucks);
+        });
+      } catch (e) {
+        print('Errore nel parsing dei dati: $e');
+      }
+    } else {
+      print('Errore nella richiesta: ${response.statusCode}');
+    }
   }
 
   @override
@@ -89,7 +155,6 @@ class _MieSimulazioniPageState extends State<MieSimulazioniPage> {
               },
             ),
             SizedBox(height: 20),
-
             Row(
               children: [
                 Expanded(
@@ -113,8 +178,7 @@ class _MieSimulazioniPageState extends State<MieSimulazioniPage> {
                   ),
                 ),
                 SizedBox(width: 20),
-
-                 Expanded(
+                Expanded(
                       child: TextField(
                         readOnly: true,
                         decoration: InputDecoration(
@@ -132,15 +196,11 @@ class _MieSimulazioniPageState extends State<MieSimulazioniPage> {
                  )
               ],
             ),
-
             SizedBox(height: 20),
-
             Expanded(
               child: DataGridStime(), 
             ),
-
             SizedBox(height: 20),
-
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
