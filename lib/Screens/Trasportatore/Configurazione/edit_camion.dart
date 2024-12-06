@@ -28,7 +28,7 @@ class _EditCamionDialogState extends State<EditCamionDialog> {
     super.initState();
     tipoMezzoController = TextEditingController(text: widget.camion.tipoMezzo);
     spazioController = TextEditingController(
-        text: widget.camion.spazioDisponibile?.toString() ?? '');
+        text: widget.camion.spazioDisponibile.toString() ?? '');
     luogoRitiroController =
         TextEditingController(text: widget.camion.localitaCarico);
     luogoConsegnaController =

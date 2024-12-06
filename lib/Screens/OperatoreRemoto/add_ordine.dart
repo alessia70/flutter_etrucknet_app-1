@@ -130,6 +130,7 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
   int orderId = DateTime.now().millisecondsSinceEpoch;
   int tipoCarico = await _getTipoCarico(orderId);
 
+  // ignore: unused_local_variable
   final newOrder = Order(
     id: orderId,
     customerName: 'Customer Name',

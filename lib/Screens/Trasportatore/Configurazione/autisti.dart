@@ -46,7 +46,7 @@ class _AutistiPageState extends State<AutistiPage> {
           children: [
             _buildSearchBar(),
             SizedBox(height: 16),
-            _buildAutistiTable(),
+            _buildAutistiCards(),
           ],
         ),
       ),
@@ -75,44 +75,114 @@ class _AutistiPageState extends State<AutistiPage> {
     );
   }
 
-  Widget _buildAutistiTable() {
-    return Card(
-      elevation: 4,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Tabella degli Autisti',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 16),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: DataTable(
-                columns: [
-                  DataColumn(label: Text('Cognome')),
-                  DataColumn(label: Text('Nome')),
-                  DataColumn(label: Text('Telefono')),
-                  DataColumn(label: Text('Email')),
-                  DataColumn(label: Text('Azioni')),
-                ],
-                rows: autistiList.map((autista) {
-                  return _buildDataRow(
-                    autista['cognome']!,
-                    autista['nome']!,
-                    autista['telefono']!,
-                    autista['email']!,
-                  );
-                }).toList(),
+  Widget _buildAutistiCards() {
+    return Expanded(
+      child: GridView.builder(
+        padding: const EdgeInsets.all(8.0),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          crossAxisSpacing: 8.0,
+          mainAxisSpacing: 8.0,
+        ),
+        itemCount: autistiList.length,
+        itemBuilder: (context, index) {
+          final autista = autistiList[index];
+          return SizedBox(
+            height: 220,
+            child:  Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "${autista['nome']} ${autista['cognome']}",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.orange,
+                      ),
+                    ),
+                    Center(
+                      child: Icon(
+                        Icons.person_3_outlined,
+                        size: 60,
+                        color: Colors.orange,
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Divider(color: Colors.grey[300], thickness: 0.5),
+                    SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Icon(Icons.phone, size: 16, color: Colors.grey[600]),
+                        SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            autista['telefono'] ?? '',
+                            style: TextStyle(fontSize: 14),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Icon(Icons.email, size: 16, color: Colors.grey[600]),
+                        SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            autista['email'] ?? '',
+                            style: TextStyle(fontSize: 14),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Spacer(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.edit, color: Colors.orange),
+                          onPressed: () {
+                            _showAddOrEditAutistaDialog(
+                              cognome: autista['cognome'],
+                              nome: autista['nome'],
+                              telefono: autista['telefono'],
+                              email: autista['email'],
+                            );
+                          },
+                          tooltip: 'Modifica',
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.delete, color: Colors.grey),
+                          onPressed: () {
+                            setState(() {
+                              autistiList.removeAt(index);
+                            });
+                          },
+                          tooltip: 'Elimina',
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
+
 
   DataRow _buildDataRow(String cognome, String nome, String telefono, String email) {
     return DataRow(cells: [

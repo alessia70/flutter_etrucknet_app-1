@@ -212,47 +212,76 @@ class _FlottaScreenState extends State<FlottaScreen> {
             ),
             SizedBox(height: 16),
             Expanded(
-              child: Card(
-                elevation: 4,
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Scrollbar(
-                    controller: _scrollController,
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      controller: _scrollController,
-                      child: DataTable(
-                        columns: [
-                          DataColumn(label: Text('Tipo Automezzo')),
-                          DataColumn(label: Text('Tipo Allestimento')),
-                          DataColumn(label: Text('Specifiche')),
-                          DataColumn(label: Text('Azioni')),
-                        ],
-                        rows: veicoliFiltrati.map((veicolo) {
-                          return DataRow(cells: [
-                            DataCell(Text(veicolo['tipo']!)),
-                            DataCell(Text(veicolo['allestimento']!)),
-                            DataCell(Text(veicolo['specifiche']!)),
-                            DataCell(
-                              Row(
-                                children: [
-                                  IconButton(
-                                    icon: Icon(Icons.edit, color: Colors.orange),
-                                    onPressed: () => _showEditTruckDialog(context, veicolo),
-                                  ),
-                                  IconButton(
-                                    icon: Icon(Icons.delete, color: Colors.grey),
-                                    onPressed: () => _showDeleteConfirmationDialog(context, veicolo),
-                                  ),
-                                ],
+              child: GridView.builder(
+                padding: const EdgeInsets.all(8.0),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 8.0,
+                  mainAxisSpacing: 8.0,
+                ),
+                itemCount: veicoliFiltrati.length,
+                itemBuilder: (context, index) {
+                  final veicolo = veicoliFiltrati[index];
+                  return SizedBox(
+                    height: 220,
+                    child: Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              veicolo['tipo'] ?? 'Tipo non disponibile',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.orange,
                               ),
                             ),
-                          ]);
-                        }).toList(),
+                            SizedBox(height: 8),
+                            Center(
+                              child: Icon(
+                                Icons.local_shipping,
+                                size: 60,
+                                color: Colors.orange,
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            Text(
+                              "Allestimento: ${veicolo['allestimento'] ?? 'N/A'}",
+                              style: TextStyle(fontSize: 14),
+                              textAlign: TextAlign.center,
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              "Specifiche: ${veicolo['specifiche'] ?? 'N/A'}",
+                              style: TextStyle(fontSize: 14),
+                              textAlign: TextAlign.center,
+                            ),
+                            Spacer(),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                IconButton(
+                                  icon: Icon(Icons.edit, color: Colors.orange),
+                                  onPressed: () => _showEditTruckDialog(context, veicolo),
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.delete, color: Colors.grey),
+                                  onPressed: () => _showDeleteConfirmationDialog(context, veicolo),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ),
-                ),
+                    )
+                  );
+                },
               ),
             ),
           ],

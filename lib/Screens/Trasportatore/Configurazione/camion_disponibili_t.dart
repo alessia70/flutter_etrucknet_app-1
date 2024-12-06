@@ -192,24 +192,98 @@ class _CamionDisponibiliTPageState extends State<CamionDisponibiliTPage> {
           return Center(child: Text('Nessun camion disponibile.'));
         } else {
           final camionList = snapshot.data!;
-          return SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: DataTable(
-              columns: [
-                DataColumn(label: Text('Tipo Mezzo')),
-                DataColumn(label: Text('Spazio Disponibile (cm)')),
-                DataColumn(label: Text('Luogo di Carico')),
-                DataColumn(label: Text('Data di Ritiro')),
-                DataColumn(label: Text('Luogo di Scarico')),
-                DataColumn(label: Text('Azioni')),
-              ],
-              rows: camionList.map((camion) => _buildDataRow(camion)).toList(),
-            ),
-          );
+        return GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            crossAxisSpacing: 16.0,
+            mainAxisSpacing: 16.0,
+            childAspectRatio: 0.7,
+          ),
+          itemCount: camionList.length,
+          itemBuilder: (context, index) {
+            return _buildCamionCard(camionList[index]);
+          },
+        );
         }
       },
     );
   }
+
+  Widget _buildCamionCard(Camion camion) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      elevation: 5,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                camion.tipoMezzo ?? 'Tipo Mezzo Non Specificato',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.orange,
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            Icon(
+              Icons.local_shipping,
+              color: Colors.orange,
+              size: 60,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'Spazio Disponibile: ${camion.spazioDisponibile} cm',
+              style: TextStyle(fontSize: 16),
+            ),
+            Text(
+              'Luogo di Carico: ${camion.localitaCarico ?? 'Non Specificato'}',
+              style: TextStyle(fontSize: 16),
+            ),
+            Text(
+              'Data di Ritiro: ${camion.dataRitiro != null ? '${camion.dataRitiro!.day}/${camion.dataRitiro!.month}/${camion.dataRitiro!.year}' : 'N/A'}',
+              style: TextStyle(fontSize: 16),
+            ),
+            Text(
+              'Luogo di Scarico: ${camion.localitaScarico ?? 'Non Specificato'}',
+              style: TextStyle(fontSize: 16),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.edit, color: Colors.orange),
+                  onPressed: () async {
+                    final result = await showDialog<bool>(
+                      context: context,
+                      builder: (context) => EditCamionDialog(camion: camion),
+                    );
+
+                    if (result == true) {
+                      setState(() {
+                        futureCamion = fetchCamionDisponibili();
+                      });
+                    }
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.delete, color: Colors.grey),
+                  onPressed: () => _confirmDelete(camion.id),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
 
   DataRow _buildDataRow(Camion camion) {
     return DataRow(cells: [
