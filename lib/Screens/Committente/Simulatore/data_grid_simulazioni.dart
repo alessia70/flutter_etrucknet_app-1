@@ -1,31 +1,32 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/change_stima_to_order.dart';
-import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/dettagli_stima_screen.dart';
-import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/modifica_stima_page.dart';
+import 'package:flutter_etrucknet_new/Screens/Committente/Simulatore/change_simulazione_toOrder.dart';
+import 'package:flutter_etrucknet_new/Screens/Committente/Simulatore/dettaglio_simulazione.dart';
+import 'package:flutter_etrucknet_new/Screens/Committente/Simulatore/modifica_simulazione_screen.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:open_filex/open_filex.dart';
 
-class DataGridStime extends StatefulWidget {
-  const DataGridStime({Key? key, required this.onUpdateVisibleEstimates}) : super(key: key);
-  final Function(List<dynamic>) onUpdateVisibleEstimates;
+class DataGridSimulazioni extends StatefulWidget {
+  const DataGridSimulazioni({Key? key, required this.onUpdateVisibleSimulations}) : super(key: key);
+  final Function(List<dynamic>) onUpdateVisibleSimulations;
 
   @override
-  DataGridStimeState createState() => DataGridStimeState();
+  DataGridSimulazioniState createState() => DataGridSimulazioniState();
 }
 
-class DataGridStimeState extends State<DataGridStime> {
+class DataGridSimulazioniState extends State<DataGridSimulazioni> {
   List<Map<String, dynamic>> trucks = [];
   List<Map<String, dynamic>> filteredTrucks = [];
 
   @override
   void initState() {
     super.initState();
-    _fetchEstimates();
+    _fetchSimulations();
   }
+
   Future<void> saveToken(String token) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('access_token', token);
@@ -42,12 +43,12 @@ class DataGridStimeState extends State<DataGridStime> {
     return prefs.getInt('trasportatore_id');
   }
 
-  Future<void> _fetchEstimates() async {
+  Future<void> _fetchSimulations() async {
     final token = await getSavedToken();
     final trasportatoreId = await getSavedUserId();
 
     if (token == null || trasportatoreId == null) {
-      print('Token o TrasportatoreId non trovato.');
+      print('Token o CommittenteId non trovato.');
       return;
     }
 
@@ -67,7 +68,7 @@ class DataGridStimeState extends State<DataGridStime> {
         final responseData = json.decode(response.body);
         List<dynamic>? data = responseData['data'];
         if (data == null || data.isEmpty) {
-          print("Nessuna proposta trovata.");
+          print("Nessuna simulazione trovata.");
           return;
         }
         setState(() {
@@ -76,7 +77,7 @@ class DataGridStimeState extends State<DataGridStime> {
               'id': item['ordineId'].toString(),
               'carico': item['carico'] ?? '',
               'scarico': item['scarico'] ?? '',
-              'stimato': item['idproposta'] ?? '',
+              'stimato': item['idSimulazione'] ?? '',
               'data': item['dataOrdine'] ?? '',
             }),
           );
@@ -98,7 +99,7 @@ class DataGridStimeState extends State<DataGridStime> {
     }
 
     final url = Uri.parse(
-      'https://etrucknetapi.azurewebsites.net/Proposte/$trasportatoreId',
+      'https://etrucknetapi.azurewebsites.net/Simulazioni/$trasportatoreId',
     );
 
     final response = await http.get(
@@ -112,7 +113,7 @@ class DataGridStimeState extends State<DataGridStime> {
       try {
         final bytes = response.bodyBytes;
         final tempDir = await getTemporaryDirectory();
-        final filePath = '${tempDir.path}/Stima_${ordineId}_$trasportatoreId.pdf';
+        final filePath = '${tempDir.path}/Simulazione_${ordineId}_$trasportatoreId.pdf';
         final file = File(filePath);
         await file.writeAsBytes(bytes);
 
@@ -130,7 +131,7 @@ class DataGridStimeState extends State<DataGridStime> {
   Widget build(BuildContext context) {
     if (trucks.isEmpty) {
       return Center(
-        child: Text('Nessuna stima disponibile'),
+        child: Text('Nessuna simulazione disponibile'),
       );
     }
 
@@ -145,77 +146,77 @@ class DataGridStimeState extends State<DataGridStime> {
         ),
         itemCount: trucks.length,
         itemBuilder: (context, index) {
-          final estimate = trucks[index];
+          final simulation = trucks[index];
           return GestureDetector(
             onTap: () {
-              print('Tapped on ${estimate['carico']}');
+              print('Tapped on ${simulation['carico']}');
             },
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Stima ${estimate['id']}',
+                  'Simulazione ${simulation['id']}',
                   style: TextStyle(
-                      color: Colors.orange,
+                      color: Colors.blue,
                       fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 5),
-                Text('Carico: ${estimate['carico']}'),
-                Text('Scarico: ${estimate['scarico']}'),
+                Text('Carico: ${simulation['carico']}'),
+                Text('Scarico: ${simulation['scarico']}'),
                 SizedBox(height: 5),
-                Text('Stimato: ${estimate['stimato']}'),
+                Text('Stimato: ${simulation['stimato']}'),
                 SizedBox(height: 5),
-                Text('Data: ${estimate['data']}'),
+                Text('Data: ${simulation['data']}'),
                 SizedBox(height: 5),
-                Text('Stimato: ${estimate['idProposta'] ?? "N/A"}'),
+                Text('Stimato: ${simulation['idSimulazione'] ?? "N/A"}'),
                 SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     IconButton(
-                      icon: Icon(Icons.edit_outlined, color: Colors.orange.shade700),
+                      icon: Icon(Icons.edit_outlined, color: Colors.orange),
                       onPressed: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ModificaStimaScreen(estimate: estimate,),
+                            builder: (context) => ModificaSimulazioneScreen(simulation: simulation,),
                           ),
                         );
                       },
                       tooltip: 'Modifica',
                     ),
                     IconButton(
-                      icon: Icon(Icons.info_outline, color: Colors.orange.shade600),
+                      icon: Icon(Icons.info_outline, color: Colors.orange),
                       onPressed: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => DettaglioStimaScreen(estimate: estimate),
+                            builder: (context) => DettaglioSimulazioneScreen(simulation: simulation),
                           ),
                         );
                       },
                       tooltip: 'Mostra Dettagli',
                     ),
                     IconButton(
-                      icon: Icon(Icons.picture_as_pdf, color: Colors.orange.shade600),
+                      icon: Icon(Icons.picture_as_pdf, color: Colors.orange),
                       onPressed: () async {
-                        final ordineId = int.tryParse(estimate['ordineId'] ?? '0') ?? 0;
-                        final trasportatoreId = await getSavedUserId() ?? 0;
-                        if (ordineId > 0 && trasportatoreId > 0) {
-                          _showPDF(ordineId, trasportatoreId);
+                        final ordineId = int.tryParse(simulation['ordineId'] ?? '0') ?? 0;
+                        final committenteId = await getSavedUserId() ?? 0;
+                        if (ordineId > 0 && committenteId > 0) {
+                          _showPDF(ordineId, committenteId);
                         } else {
-                          print("ID Stima o Shipper non valido.");
+                          print("ID Simulazione o Committente non valido.");
                         }
                       },
                       tooltip: 'Mostra PDF',
                     ),
                     IconButton(
-                      icon: Icon(Icons.local_shipping_outlined, color: Colors.orange.shade600),
+                      icon: Icon(Icons.local_shipping_outlined, color: Colors.orange),
                       onPressed: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ChangeStimaToOrder(stimaMerceList: [], stimaTransportType: '',
+                            builder: (context) => ChangeSimulazioneToOrder(simulazioneTransportType: '', simulazioneList: [],
                             ),
                           ),
                         );
@@ -223,7 +224,7 @@ class DataGridStimeState extends State<DataGridStime> {
                       tooltip: 'Converti in ordine',
                     ),
                     IconButton(
-                      icon: Icon(Icons.share_outlined, color: Colors.orange.shade600),
+                      icon: Icon(Icons.share_outlined, color: Colors.orange),
                       onPressed: () {
                         //logica per condividere
                       },

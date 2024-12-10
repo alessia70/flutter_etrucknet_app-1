@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Screens/Committente/Simulatore/confronta_simulazioni_page.dart';
+import 'package:flutter_etrucknet_new/Screens/Committente/Simulatore/data_grid_simulazioni.dart';
 import 'package:flutter_etrucknet_new/Screens/Committente/Simulatore/nuova_simulazione_page.dart';
 import 'package:flutter_etrucknet_new/Screens/Committente/profile_menu_committente.dart';
 import 'package:flutter_etrucknet_new/Screens/Committente/side_menu_committente.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/data_grid_stime.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_etrucknet_new/Services/estimates_provider.dart';
+import 'package:flutter_etrucknet_new/Provider/estimates_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -18,6 +19,7 @@ class MieSimulazioniPage extends StatefulWidget {
 }
 
 class _MieSimulazioniPageState extends State<MieSimulazioniPage> {
+  final GlobalKey<DataGridStimeState> gridKey = GlobalKey<DataGridStimeState>();
   final TextEditingController _searchController = TextEditingController();
   String _selectedOption = 'Tutte';
   DateTimeRange? _selectedDateRange;
@@ -77,8 +79,7 @@ class _MieSimulazioniPageState extends State<MieSimulazioniPage> {
     }
 
     final url = Uri.parse(
-      'https://etrucknetapi.azurewebsites.net/v1/Proposte/$trasportatoreId'
-      '?TrasportatoreId=$trasportatoreId&stimaId',
+      'https://etrucknetapi.azurewebsites.net/v1/Proposte/$trasportatoreId',
     );
 
     final response = await http.get(
@@ -198,7 +199,12 @@ class _MieSimulazioniPageState extends State<MieSimulazioniPage> {
             ),
             SizedBox(height: 20),
             Expanded(
-              child: DataGridStime(), 
+              child: DataGridSimulazioni(
+                key: gridKey,
+                onUpdateVisibleSimulations: (visibleEstimates) {
+                  print('Stime visibili aggiornate: $visibleEstimates');
+                },
+              ),
             ),
             SizedBox(height: 20),
             Row(

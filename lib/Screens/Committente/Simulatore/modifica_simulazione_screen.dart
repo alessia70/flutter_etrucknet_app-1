@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_etrucknet_new/Provider/estimates_provider.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/profile_info_operatore_screen.dart';
+import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/side_menu.dart';
+import 'package:provider/provider.dart';
 
-class NuovaSimulazioneScreen extends StatefulWidget {
-  final Map<String, dynamic> estimate;
-  const NuovaSimulazioneScreen({Key? key, required this.estimate}) : super(key: key);
+class ModificaSimulazioneScreen extends StatefulWidget {
+  final Map<String, dynamic> simulation;
+  const ModificaSimulazioneScreen({Key? key, required this.simulation}) : super(key: key);
 
   @override
-  _NuovaSimulazioneScreenState createState() => _NuovaSimulazioneScreenState();
+  _ModificaSimulazioneScreenState createState() => _ModificaSimulazioneScreenState();
 }
 
-class _NuovaSimulazioneScreenState extends State<NuovaSimulazioneScreen> {
+class _ModificaSimulazioneScreenState extends State<ModificaSimulazioneScreen> {
   final TextEditingController _tipologiaTrasportoController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _mezzoController = TextEditingController();
@@ -19,16 +21,20 @@ class _NuovaSimulazioneScreenState extends State<NuovaSimulazioneScreen> {
   final TextEditingController _dettagliMerceController = TextEditingController();
   final TextEditingController _altreInformazioniController = TextEditingController();
 
+  void _cancelSimulation() {
+    Navigator.of(context).pop();
+  }
+
   @override
   void initState() {
     super.initState();
-    _tipologiaTrasportoController.text = widget.estimate['carico'] ?? '';
-    _locationController.text = widget.estimate['scarico'] ?? '';
-    _mezzoController.text = widget.estimate['mezzo'] ?? '';
-    _specificheController.text = widget.estimate['specifiche'] ?? '';
-    _additionalOptionsController.text = widget.estimate['opzioniAggiuntive'] ?? '';
-    _dettagliMerceController.text = widget.estimate['dettagliMerce'] ?? '';
-    _altreInformazioniController.text = widget.estimate['altreInformazioni'] ?? '';
+    _tipologiaTrasportoController.text = widget.simulation['carico'] ?? '';
+    _locationController.text = widget.simulation['scarico'] ?? '';
+    _mezzoController.text = widget.simulation['mezzo'] ?? '';
+    _specificheController.text = widget.simulation['specifiche'] ?? '';
+    _additionalOptionsController.text = widget.simulation['opzioniAggiuntive'] ?? '';
+    _dettagliMerceController.text = widget.simulation['dettagliMerce'] ?? '';
+    _altreInformazioniController.text = widget.simulation['altreInformazioni'] ?? '';
   }
 
   @override
@@ -47,18 +53,28 @@ class _NuovaSimulazioneScreenState extends State<NuovaSimulazioneScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Stima il tuo trasporto'),
-        backgroundColor: Colors.orange,
+        title: Text('Modifica Simulazione'),
+        backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
         actions: [
           IconButton(
+            icon: Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ProfilePage()),
+              );
+            },
+          ),
+          IconButton(
             icon: Icon(Icons.save),
             onPressed: () {
-              updateEstimate(context, widget.estimate['id']);
+              updateSimulation(context, widget.simulation['id']);
             },
           ),
         ],
       ),
+      drawer: SideMenu(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
@@ -66,7 +82,7 @@ class _NuovaSimulazioneScreenState extends State<NuovaSimulazioneScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Modifica Stima',
+                'Modifica Simulazione',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 20),
@@ -83,18 +99,31 @@ class _NuovaSimulazioneScreenState extends State<NuovaSimulazioneScreen> {
               _buildTextField(_dettagliMerceController, 'Dettagli Merce'),
               SizedBox(height: 16),
               _buildTextField(_altreInformazioniController, 'Altre Informazioni'),
-
               SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  updateEstimate(context, widget.estimate['id']);
-                },
-                child: Text('Aggiorna Stima'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
-                  foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      updateSimulation(context, widget.simulation['id']);
+                    },
+                    child: Text('Aggiorna Simulazione'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: _cancelSimulation,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey,
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                    ),
+                    child: Icon(Icons.close, size: 12),
+                  ),
+                ],
               ),
             ],
           ),
@@ -116,43 +145,43 @@ class _NuovaSimulazioneScreenState extends State<NuovaSimulazioneScreen> {
     );
   }
 
-  void updateEstimate(BuildContext context, int estimateId) {
+  void updateSimulation(BuildContext context, int simulationId) {
     final provider = Provider.of<EstimatesProvider>(context, listen: false);
 
-    Map<String, dynamic> updatedEstimate = {
-      'id': estimateId,
+    Map<String, dynamic> updatedSimulation = {
+      'id': simulationId,
       'data': DateTime.now().toString(),
       'utente': 'Utente A',
       'carico': _tipologiaTrasportoController.text.isNotEmpty
           ? _tipologiaTrasportoController.text
-          : widget.estimate['carico'],
+          : widget.simulation['carico'],
       'scarico': _locationController.text.isNotEmpty
           ? _locationController.text
-          : widget.estimate['scarico'],
+          : widget.simulation['scarico'],
       'mezzo': _mezzoController.text.isNotEmpty
           ? _mezzoController.text
-          : widget.estimate['mezzo'],
+          : widget.simulation['mezzo'],
       'specifiche': _specificheController.text.isNotEmpty
           ? _specificheController.text
-          : widget.estimate['specifiche'],
+          : widget.simulation['specifiche'],
       'opzioniAggiuntive': _additionalOptionsController.text.isNotEmpty
           ? _additionalOptionsController.text
-          : widget.estimate['opzioniAggiuntive'],
+          : widget.simulation['opzioniAggiuntive'],
       'dettagliMerce': _dettagliMerceController.text.isNotEmpty
           ? _dettagliMerceController.text
-          : widget.estimate['dettagliMerce'],
+          : widget.simulation['dettagliMerce'],
       'altreInformazioni': _altreInformazioniController.text.isNotEmpty
           ? _altreInformazioniController.text
-          : widget.estimate['altreInformazioni'],
-      'stimato': widget.estimate['stimato'], 
+          : widget.simulation['altreInformazioni'],
+      'stimato': widget.simulation['stimato'],
     };
 
     try {
-      provider.updateEstimate(estimateId, updatedEstimate); 
+      provider.updateSimulation(simulationId, updatedSimulation);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Stima aggiornata con successo!')),
+        SnackBar(content: Text('Simulazione aggiornata con successo!')),
       );
-      Navigator.pop(context, updatedEstimate);
+      Navigator.pop(context, updatedSimulation);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Errore: ${e.toString()}')),

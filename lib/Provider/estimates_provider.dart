@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
 
 class EstimatesProvider with ChangeNotifier {
   final List<Map<String, dynamic>> _estimates = [];
@@ -23,6 +24,25 @@ class EstimatesProvider with ChangeNotifier {
       notifyListeners();
     } else {
       throw Exception('Stima con ID $id non trovata.');
+    }
+  }
+
+  Future<void> updateSimulation(int simulationId, Map<String, dynamic> updatedSimulation) async {
+    final Database db = await openDatabase('simulations.db'); // Apri il database
+
+    try {
+      await db.update(
+        'simulations',
+        updatedSimulation,
+        where: 'id = ?',
+        whereArgs: [simulationId],
+      );
+
+      print('Simulazione aggiornata con successo!');
+    } catch (e) {
+      print('Errore durante l\'aggiornamento della simulazione: $e');
+    } finally {
+      await db.close();
     }
   }
 }

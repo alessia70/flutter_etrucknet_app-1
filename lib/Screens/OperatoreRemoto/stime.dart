@@ -5,16 +5,17 @@ import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/nuova_stima_screen
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/profile_info_operatore_screen.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/side_menu.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_etrucknet_new/Services/estimates_provider.dart';
+import 'package:flutter_etrucknet_new/Provider/estimates_provider.dart';
 
 class StimeScreen extends StatefulWidget {
-  const StimeScreen({super.key});
-
+  const StimeScreen({Key? key}) : super(key: key);
+  
   @override
   _EstimatesScreenState createState() => _EstimatesScreenState();
 }
 
 class _EstimatesScreenState extends State<StimeScreen> {
+  final GlobalKey<DataGridStimeState> gridKey = GlobalKey<DataGridStimeState>();
   final TextEditingController _searchController = TextEditingController();
   String _selectedOption = 'Tutte';
   DateTimeRange? _selectedDateRange;
@@ -33,13 +34,20 @@ class _EstimatesScreenState extends State<StimeScreen> {
   }
 
   void _handleCompare() {
-  final estimatesProvider = Provider.of<EstimatesProvider>(context, listen: false);
-  Navigator.of(context).push(
-    MaterialPageRoute(
-      builder: (BuildContext context) => ConfrontaStimeDialog(stime: estimatesProvider.estimates),
-    ),
-  );
-}
+    final visibleEstimates = gridKey.currentState?.filteredTrucks ?? [];
+    if (visibleEstimates.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Nessuna stima disponibile per il confronto.")),
+      );
+      return;
+    }
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (BuildContext context) => ConfrontaStimeDialog(stime: visibleEstimates),
+      ),
+    );
+  }
 
   void _handleNewEstimate() {
    Navigator.of(context).push(
@@ -140,7 +148,12 @@ class _EstimatesScreenState extends State<StimeScreen> {
             ),
             SizedBox(height: 20),
             Flexible(
-              child: DataGridStime(),
+              child: DataGridStime(
+                key: gridKey,
+                onUpdateVisibleEstimates: (visibleEstimates) {
+                  print('Stime visibili aggiornate: $visibleEstimates');
+                },
+              ),
             ),
             SizedBox(height: 20),
             Row(

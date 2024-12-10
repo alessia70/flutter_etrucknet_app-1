@@ -35,7 +35,7 @@ class ChangeStimaToOrder extends StatefulWidget {
 }
 
 class _ChangeStimaToOrderState extends State<ChangeStimaToOrder> {
-  late String _selectedTransportType;
+  late String? _selectedTransportType;
   final List<String> _transportTypes = [
     'Seleziona...',
     'Trasporto Aereo',
@@ -45,35 +45,66 @@ class _ChangeStimaToOrderState extends State<ChangeStimaToOrder> {
   ];
 
   late String _selectedPackagingType;
-  /*final List<String> _packagingTypes = [
+  final List<String> _packagingTypes = [
     'Seleziona...',
     'Cartone',
     'Plastica',
     'Legno',
     'Metallo'
   ];
-
-  DateTime? _pickupDate;
-  DateTime? _deliveryDate;*/
-
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
   final TextEditingController _weightController = TextEditingController();
   final TextEditingController _lengthController = TextEditingController();
   final TextEditingController _widthController = TextEditingController();
   final TextEditingController _heightController = TextEditingController();
-  //final TextEditingController _altreInfoController = TextEditingController();
+  final TextEditingController _altreInfoController = TextEditingController();
 
   List<Merce> merceList = [];
+  DateTime? _pickupDate;
+  DateTime? _deliveryDate;
+
+  Future<void> _selectPickupDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2030),
+    );
+    if (picked != null && picked != _pickupDate) {
+      setState(() {
+        _pickupDate = picked;
+      });
+    }
+  }
+
+  Future<void> _selectDeliveryDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2030),
+    );
+    if (picked != null && picked != _deliveryDate) {
+      setState(() {
+        _deliveryDate = picked;
+      });
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-    _selectedTransportType = _transportTypes.contains(widget.stimaTransportType) 
-    ? widget.stimaTransportType 
-    : 'Seleziona...';
-
+    _selectedTransportType = widget.stimaTransportType;
     merceList = widget.stimaMerceList;
+    _selectedPackagingType = 'Seleziona...';
+    if (_transportTypes.contains(widget.stimaTransportType)) {
+      _selectedTransportType = widget.stimaTransportType;
+    } else {
+      _selectedTransportType = 'Seleziona...';
+    }
+    merceList = widget.stimaMerceList;
+    _selectedPackagingType = 'Seleziona...';
   }
 
   void _addMerce() {
@@ -105,11 +136,11 @@ class _ChangeStimaToOrderState extends State<ChangeStimaToOrder> {
     });
   }
 
-  void _saveStimaasOrder() {
-
+  void _saveOrder() {
+    // Handle save order logic
   }
 
-  void _cancelStima() {
+  void _cancelOrder() {
     Navigator.of(context).pop();
   }
 
@@ -127,6 +158,34 @@ class _ChangeStimaToOrderState extends State<ChangeStimaToOrder> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+               Row(
+                children: [
+                  Icon(Icons.local_shipping, color: Colors.orange, size: 24),
+                  SizedBox(width: 8),
+                  Text(
+                    'Seleziona Shipper',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 10),
+              SizedBox(
+                height: 40,
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: 'Inserisci nome shipper...',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: Colors.grey),
+                    ),
+                    prefixIcon: Icon(Icons.search),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
               Row(
                 children: [
                   Icon(Icons.directions_car, color: Colors.orange, size: 24),
@@ -166,8 +225,171 @@ class _ChangeStimaToOrderState extends State<ChangeStimaToOrder> {
                 ),
               ),
               SizedBox(height: 20),
-              Divider(color: Colors.grey, thickness: 1),
 
+              Divider(color: Colors.grey, thickness: 1),
+              SizedBox(height: 20),
+
+              // Pickup and Delivery Details
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.storefront, color: Colors.orange, size: 24),
+                            SizedBox(width: 8),
+                            Text(
+                              'Ritiro',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        SizedBox(
+                          height: 40,
+                          child: TextField(
+                            decoration: InputDecoration(
+                              hintText: 'Luogo di ritiro...',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide(color: Colors.grey),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 20),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.home_outlined, color: Colors.orange, size: 24),
+                            SizedBox(width: 8),
+                            Text(
+                              'Consegna',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        SizedBox(
+                          height: 40,
+                          child: TextField(
+                            decoration: InputDecoration(
+                              hintText: 'Luogo di consegna...',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide(color: Colors.grey),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20),
+
+              // Pickup and Delivery Dates
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.date_range, color: Colors.orange, size: 24),
+                            SizedBox(width: 8),
+                            Text(
+                              'Data Ritiro',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        SizedBox(
+                          height: 40,
+                          child: TextField(
+                            readOnly: true,
+                            decoration: InputDecoration(
+                              hintText: _pickupDate == null
+                                  ? 'Seleziona data...'
+                                  : _pickupDate!.toLocal().toString().split(' ')[0],
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide(color: Colors.grey),
+                              ),
+                              prefixIcon: Icon(Icons.calendar_today, color: Colors.orange),
+                            ),
+                            onTap: () => _selectPickupDate(context),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 20),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.date_range, color: Colors.orange, size: 24),
+                            SizedBox(width: 8),
+                            Text(
+                              'Data Consegna',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        SizedBox(
+                          height: 40,
+                          child: TextField(
+                            readOnly: true,
+                            decoration: InputDecoration(
+                              hintText: _deliveryDate == null
+                                  ? 'Seleziona data...'
+                                  : _deliveryDate!.toLocal().toString().split(' ')[0],
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide(color: Colors.grey),
+                              ),
+                              prefixIcon: Icon(Icons.calendar_today, color: Colors.orange),
+                            ),
+                            onTap: () => _selectDeliveryDate(context),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20),
+              Divider(
+                color: Colors.grey,
+                thickness: 1,
+              ),
               SizedBox(height: 20),
               Text(
                 'Dettagli Merce',
@@ -178,9 +400,51 @@ class _ChangeStimaToOrderState extends State<ChangeStimaToOrder> {
                 ),
               ),
               SizedBox(height: 10),
-              
+
+              Row(
+                children: [
+                  Icon(Icons.archive, color: Colors.orange, size: 24),
+                  SizedBox(width: 8),
+                  Text(
+                    'Tipo Imballo',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 10),
+              Container(
+                height: 40,
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: DropdownButton<String>(
+                  value: _selectedPackagingType,
+                  isExpanded: true,
+                  underline: SizedBox(),
+                  items: _packagingTypes.map((String type) {
+                    return DropdownMenuItem<String>(
+                      value: type,
+                      child: Text(type),
+                    );
+                  }).toList(),
+                  onChanged: (newValue) {
+                    setState(() {
+                      _selectedPackagingType = newValue!;
+                    });
+                  },
+                ),
+              ),
+
+              SizedBox(height: 20),
+
               TextField(
                 controller: _descriptionController,
+                maxLines: 3,
                 decoration: InputDecoration(
                   hintText: 'Descrizione della merce...',
                   border: OutlineInputBorder(
@@ -189,11 +453,108 @@ class _ChangeStimaToOrderState extends State<ChangeStimaToOrder> {
                   ),
                 ),
               ),
+
+              SizedBox(height: 20),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _quantityController,
+                      decoration: InputDecoration(
+                        hintText: 'Quantità (nr)',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(color: Colors.grey),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: TextField(
+                      controller: _weightController,
+                      decoration: InputDecoration(
+                        hintText: 'Peso totale (kg)',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(color: Colors.grey),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
               SizedBox(height: 10),
-              
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _lengthController,
+                      decoration: InputDecoration(
+                        hintText: 'Lunghezza (cm)',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(color: Colors.grey),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: TextField(
+                      controller: _widthController,
+                      decoration: InputDecoration(
+                        hintText: 'Larghezza (cm)',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(color: Colors.grey),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              SizedBox(height: 10),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _heightController,
+                      decoration: InputDecoration(
+                        hintText: 'Altezza (cm)',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(color: Colors.grey),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  IconButton(
+                    icon: Icon(Icons.add, color: Colors.orange),
+                    onPressed: _addMerce,
+                  ),
+                ],
+              ),
+
+              SizedBox(height: 20),
+
+              Divider(
+                color: Colors.grey,
+                thickness: 1,
+              ),
+
               SizedBox(height: 20),
               Text(
-                'Merci Aggiunte dalla Stima:',
+                'Merci Aggiunte:',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -217,6 +578,32 @@ class _ChangeStimaToOrderState extends State<ChangeStimaToOrder> {
                   ),
                 );
               }),
+
+              SizedBox(height: 20),
+
+              Divider(
+                color: Colors.grey,
+                thickness: 1,
+              ),
+
+              SizedBox(height: 20),
+
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(
+                    controller: _altreInfoController,
+                    maxLines: 5,
+                    decoration: InputDecoration.collapsed(
+                      hintText: 'Inserisci ulteriori informazioni...',
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -225,7 +612,7 @@ class _ChangeStimaToOrderState extends State<ChangeStimaToOrder> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           FloatingActionButton(
-            onPressed: _saveStimaasOrder,
+            onPressed: _saveOrder,
             backgroundColor: Colors.orange,
             foregroundColor: Colors.white,
             tooltip: 'Salva Ordine',
@@ -233,7 +620,7 @@ class _ChangeStimaToOrderState extends State<ChangeStimaToOrder> {
           ),
           SizedBox(width: 10),
           FloatingActionButton(
-            onPressed: _cancelStima,
+            onPressed: _cancelOrder,
             backgroundColor: Colors.red,
             foregroundColor: Colors.white,
             tooltip: 'Annulla',

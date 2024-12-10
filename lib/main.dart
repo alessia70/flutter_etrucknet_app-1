@@ -21,7 +21,7 @@ import 'package:flutter_etrucknet_new/Screens/Trasportatore/Configurazione/tratt
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/VenditaTrasporti/totale_trasporti.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/VenditaTrasporti/trasporti_eseguiti.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/dashboard_trasportatore.dart';
-import 'package:flutter_etrucknet_new/Services/estimates_provider.dart';
+import 'package:flutter_etrucknet_new/Provider/estimates_provider.dart';
 import 'package:flutter_etrucknet_new/Services/message_provider.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/VenditaTrasporti/proposte_trasporti.dart';
 import 'Widgets/sign_in_form.dart'; 

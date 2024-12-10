@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/profile_info_operatore_screen.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/side_menu.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_etrucknet_new/Services/estimates_provider.dart';
+import 'package:flutter_etrucknet_new/Provider/estimates_provider.dart';
 
 class ModificaStimaScreen extends StatefulWidget {
   final Map<String, dynamic> estimate;
@@ -21,7 +21,9 @@ class _ModificaStimaScreenState extends State<ModificaStimaScreen> {
   final TextEditingController _dettagliMerceController = TextEditingController();
   final TextEditingController _altreInformazioniController = TextEditingController();
 
-  // Initialize the controllers with the data from the estimate
+  void _cancelOrder() {
+      Navigator.of(context).pop();
+  }
   @override
   void initState() {
     super.initState();
@@ -79,7 +81,6 @@ class _ModificaStimaScreenState extends State<ModificaStimaScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Title
               Text(
                 'Modifica Stima',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -99,16 +100,30 @@ class _ModificaStimaScreenState extends State<ModificaStimaScreen> {
               SizedBox(height: 16),
               _buildTextField(_altreInformazioniController, 'Altre Informazioni'),
               SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  updateEstimate(context, widget.estimate['id']);
-                },
-                child: Text('Aggiorna Stima'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
-                  foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      updateEstimate(context, widget.estimate['id']);
+                    },
+                    child: Text('Aggiorna Stima'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: _cancelOrder,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey,
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                    ),
+                    child: Icon(Icons.close, size: 12),
+                  ),
+                ],
               ),
             ],
           ),

@@ -4,42 +4,42 @@ import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/side_menu.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class DettaglioStimaScreen extends StatefulWidget {
-  final Map<String, dynamic> estimate;
+class DettaglioSimulazioneScreen extends StatefulWidget {
+  final Map<String, dynamic> simulation;
 
-  const DettaglioStimaScreen({Key? key, required this.estimate}) : super(key: key);
+  const DettaglioSimulazioneScreen({Key? key, required this.simulation}) : super(key: key);
 
   @override
-  _DettaglioStimaScreenState createState() => _DettaglioStimaScreenState();
+  _DettaglioSimulazioneScreenState createState() => _DettaglioSimulazioneScreenState();
 }
 
-class _DettaglioStimaScreenState extends State<DettaglioStimaScreen> {
+class _DettaglioSimulazioneScreenState extends State<DettaglioSimulazioneScreen> {
   late GoogleMapController mapController;
 
-  static const LatLng _center = LatLng(45.4642, 9.1900);
+  static const LatLng _center = LatLng(45.4642, 9.1900); // Default center
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
   }
-  void _cancelOrder() {
-      Navigator.of(context).pop();
+
+  void _cancelSimulation() {
+    Navigator.of(context).pop();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Dettaglio Stima'),
-        backgroundColor: Colors.orange,
+        title: const Text('Dettaglio Simulazione'),
+        backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
         actions: [
           IconButton(
             icon: Icon(Icons.person),
             onPressed: () {
               Navigator.push(
-                context, 
-                MaterialPageRoute(builder: (context) => const ProfilePage()
-                )
+                context,
+                MaterialPageRoute(builder: (context) => const ProfilePage()),
               );
             },
           ),
@@ -76,10 +76,10 @@ class _DettaglioStimaScreenState extends State<DettaglioStimaScreen> {
                     children: [
                       Row(
                         children: [
-                          Icon(FontAwesomeIcons.tag, size: 20, color: Colors.orange),
+                          Icon(FontAwesomeIcons.chartLine, size: 20, color: Colors.blue),
                           const SizedBox(width: 8),
                           Text(
-                            'ID Stima: ${widget.estimate['id'] ?? 'N/A'}',
+                            'ID Simulazione: ${widget.simulation['id'] ?? 'N/A'}',
                             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                         ],
@@ -87,10 +87,10 @@ class _DettaglioStimaScreenState extends State<DettaglioStimaScreen> {
                       const SizedBox(height: 8),
                       Row(
                         children: [
-                          Icon(FontAwesomeIcons.truck, size: 20, color: Colors.orange),
+                          Icon(FontAwesomeIcons.cogs, size: 20, color: Colors.blue),
                           const SizedBox(width: 8),
                           Text(
-                            'Tipologia Trasporto: ${widget.estimate['tipo_trasporto'] ?? 'N/A'}',
+                            'Tipo Simulazione: ${widget.simulation['tipo_simulazione'] ?? 'N/A'}',
                             style: const TextStyle(fontSize: 16),
                           ),
                         ],
@@ -98,11 +98,11 @@ class _DettaglioStimaScreenState extends State<DettaglioStimaScreen> {
                       const SizedBox(height: 8),
                       Row(
                         children: [
-                          Icon(FontAwesomeIcons.euroSign, size: 20, color: Colors.orange),
+                          Icon(FontAwesomeIcons.clock, size: 20, color: Colors.blue),
                           const SizedBox(width: 8),
                           Text(
-                            'Stima Effettiva: €${widget.estimate['stima_effettiva'] ?? '0.00'}',
-                            style: const TextStyle(fontSize: 16, color: Colors.orange, fontWeight: FontWeight.bold),
+                            'Data: ${widget.simulation['data'] ?? 'N/A'}',
+                            style: const TextStyle(fontSize: 16, color: Colors.blue, fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
@@ -125,20 +125,20 @@ class _DettaglioStimaScreenState extends State<DettaglioStimaScreen> {
                           children: [
                             Row(
                               children: [
-                                Icon(FontAwesomeIcons.locationArrow, size: 20, color: Colors.orange),
+                                Icon(FontAwesomeIcons.locationArrow, size: 20, color: Colors.blue),
                                 const SizedBox(width: 8),
                                 const Text(
-                                  'Ritiro',
+                                  'Punto di Partenza',
                                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                 ),
                               ],
                             ),
                             const SizedBox(height: 8),
-                            Text('Località: ${widget.estimate['ritiro_localita'] ?? 'N/A'}'),
+                            Text('Località: ${widget.simulation['partenza_localita'] ?? 'N/A'}'),
                             const SizedBox(height: 4),
-                            Text('Provincia: ${widget.estimate['ritiro_provincia'] ?? 'N/A'}'),
+                            Text('Provincia: ${widget.simulation['partenza_provincia'] ?? 'N/A'}'),
                             const SizedBox(height: 4),
-                            Text('Stato: ${widget.estimate['ritiro_stato'] ?? 'N/A'}'),
+                            Text('Stato: ${widget.simulation['partenza_stato'] ?? 'N/A'}'),
                           ],
                         ),
                       ),
@@ -157,82 +157,20 @@ class _DettaglioStimaScreenState extends State<DettaglioStimaScreen> {
                           children: [
                             Row(
                               children: [
-                                Icon(FontAwesomeIcons.locationArrow, size: 20, color: Colors.orange),
+                                Icon(FontAwesomeIcons.locationArrow, size: 20, color: Colors.blue),
                                 const SizedBox(width: 8),
                                 const Text(
-                                  'Consegna',
+                                  'Punto di Arrivo',
                                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                 ),
                               ],
                             ),
                             const SizedBox(height: 8),
-                            Text('Località: ${widget.estimate['consegna_localita'] ?? 'N/A'}'),
+                            Text('Località: ${widget.simulation['arrivo_localita'] ?? 'N/A'}'),
                             const SizedBox(height: 4),
-                            Text('Provincia: ${widget.estimate['consegna_provincia'] ?? 'N/A'}'),
+                            Text('Provincia: ${widget.simulation['arrivo_provincia'] ?? 'N/A'}'),
                             const SizedBox(height: 4),
-                            Text('Stato: ${widget.estimate['consegna_stato'] ?? 'N/A'}'),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    flex: 1,
-                    child: Card(
-                      elevation: 4,
-                      margin: const EdgeInsets.symmetric(vertical: 8),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(FontAwesomeIcons.truck, size: 20, color: Colors.orange),
-                                const SizedBox(width: 8),
-                                const Text(
-                                  'Dati del Mezzo / Allestimenti',
-                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            Text('Tipologia: ${widget.estimate['mezzo_tipo'] ?? 'N/A'}'),
-                            const SizedBox(height: 4),
-                            Text('Allestimenti: ${widget.estimate['allestimenti'] ?? 'N/A'}'),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    flex: 1,
-                    child: Card(
-                      elevation: 4,
-                      margin: const EdgeInsets.symmetric(vertical: 8),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(FontAwesomeIcons.infoCircle, size: 20, color: Colors.orange),
-                                const SizedBox(width: 8),
-                                const Text(
-                                  'Ulteriori Specifiche',
-                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            Text('Note: ${widget.estimate['note'] ?? 'N/A'}'),
+                            Text('Stato: ${widget.simulation['arrivo_stato'] ?? 'N/A'}'),
                           ],
                         ),
                       ),
@@ -251,41 +189,18 @@ class _DettaglioStimaScreenState extends State<DettaglioStimaScreen> {
                     children: [
                       Row(
                         children: [
-                          Icon(FontAwesomeIcons.box, size: 20, color: Colors.orange),
+                          Icon(FontAwesomeIcons.infoCircle, size: 20, color: Colors.blue),
                           const SizedBox(width: 8),
                           const Text(
-                            'Dettagli Merce e Stivaggio',
+                            'Ulteriori Dettagli',
                             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
                       const SizedBox(height: 8),
-                      Text('Quantità: ${widget.estimate['quantita'] ?? '0'}'),
+                      Text('Descrizione: ${widget.simulation['descrizione'] ?? 'N/A'}'),
                       const SizedBox(height: 4),
-                      Text('Descrizione: ${widget.estimate['descrizione'] ?? 'N/A'}'),
-                      const SizedBox(height: 8),
-                      const Text('Dimensioni:', style: TextStyle(fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 8),
-                      DataTable(
-                        columns: const [
-                          DataColumn(label: Text('Misura')),
-                          DataColumn(label: Text('Valore')),
-                        ],
-                        rows: [
-                          DataRow(cells: [
-                            const DataCell(Text('Lunghezza')),
-                            DataCell(Text('${widget.estimate['misura_lunghezza'] ?? 'N/A'} cm')),
-                          ]),
-                          DataRow(cells: [
-                            const DataCell(Text('Larghezza')),
-                            DataCell(Text('${widget.estimate['misura_larghezza'] ?? 'N/A'} cm')),
-                          ]),
-                          DataRow(cells: [
-                            const DataCell(Text('Altezza')),
-                            DataCell(Text('${widget.estimate['misura_altezza'] ?? 'N/A'} cm')),
-                          ]),
-                        ],
-                      ),
+                      Text('Risultati: ${widget.simulation['risultati'] ?? 'N/A'}'),
                     ],
                   ),
                 ),
@@ -301,7 +216,7 @@ class _DettaglioStimaScreenState extends State<DettaglioStimaScreen> {
                     children: [
                       Row(
                         children: [
-                          Icon(FontAwesomeIcons.exclamationTriangle, size: 20, color: Colors.orange),
+                          Icon(FontAwesomeIcons.exclamationTriangle, size: 20, color: Colors.blue),
                           const SizedBox(width: 8),
                           const Text(
                             'Comunicazioni Importanti',
@@ -310,13 +225,13 @@ class _DettaglioStimaScreenState extends State<DettaglioStimaScreen> {
                         ],
                       ),
                       const SizedBox(height: 8),
-                      Text(widget.estimate['comunicazioni_importanti'] ?? 'N/A'),
+                      Text(widget.simulation['comunicazioni_importanti'] ?? 'N/A'),
                     ],
                   ),
                 ),
               ),
               FloatingActionButton(
-                onPressed: _cancelOrder,
+                onPressed: _cancelSimulation,
                 backgroundColor: Colors.grey,
                 foregroundColor: Colors.white,
                 child: Icon(Icons.close, size: 30),
