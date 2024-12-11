@@ -145,31 +145,30 @@ class _ModificaStimaScreenState extends State<ModificaStimaScreen> {
   }
   void updateEstimate(BuildContext context, int estimateId) {
     final provider = Provider.of<EstimatesProvider>(context, listen: false);
-
     Map<String, dynamic> updatedEstimate = {
       'id': estimateId,
-      'data': DateTime.now().toString(),
+      'data': DateTime.now().toIso8601String(),
       'utente': 'Utente A',
-      'carico': _tipologiaTrasportoController.text.isNotEmpty
-          ? _tipologiaTrasportoController.text
+      'carico': _tipologiaTrasportoController.text.trim().isNotEmpty
+          ? _tipologiaTrasportoController.text.trim()
           : widget.estimate['carico'],
-      'scarico': _locationController.text.isNotEmpty
-          ? _locationController.text
+      'scarico': _locationController.text.trim().isNotEmpty
+          ? _locationController.text.trim()
           : widget.estimate['scarico'],
-      'mezzo': _mezzoController.text.isNotEmpty
-          ? _mezzoController.text
+      'mezzo': _mezzoController.text.trim().isNotEmpty
+          ? _mezzoController.text.trim()
           : widget.estimate['mezzo'],
-      'specifiche': _specificheController.text.isNotEmpty
-          ? _specificheController.text
+      'specifiche': _specificheController.text.trim().isNotEmpty
+          ? _specificheController.text.trim()
           : widget.estimate['specifiche'],
-      'opzioniAggiuntive': _additionalOptionsController.text.isNotEmpty
-          ? _additionalOptionsController.text
+      'opzioniAggiuntive': _additionalOptionsController.text.trim().isNotEmpty
+          ? _additionalOptionsController.text.trim()
           : widget.estimate['opzioniAggiuntive'],
-      'dettagliMerce': _dettagliMerceController.text.isNotEmpty
-          ? _dettagliMerceController.text
+      'dettagliMerce': _dettagliMerceController.text.trim().isNotEmpty
+          ? _dettagliMerceController.text.trim()
           : widget.estimate['dettagliMerce'],
-      'altreInformazioni': _altreInformazioniController.text.isNotEmpty
-          ? _altreInformazioniController.text
+      'altreInformazioni': _altreInformazioniController.text.trim().isNotEmpty
+          ? _altreInformazioniController.text.trim()
           : widget.estimate['altreInformazioni'],
       'stimato': widget.estimate['stimato'],
     };
@@ -177,12 +176,13 @@ class _ModificaStimaScreenState extends State<ModificaStimaScreen> {
     try {
       provider.updateEstimate(estimateId, updatedEstimate);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Stima aggiornata con successo!')),
+        const SnackBar(content: Text('Stima aggiornata con successo!')),
       );
+
       Navigator.pop(context, updatedEstimate);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Errore: ${e.toString()}')),
+        SnackBar(content: Text('Errore durante l\'aggiornamento: ${e.toString()}')),
       );
     }
   }

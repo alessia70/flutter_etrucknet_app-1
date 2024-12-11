@@ -4,8 +4,6 @@ import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/data_grid_stime.da
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/nuova_stima_screen.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/profile_info_operatore_screen.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/side_menu.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter_etrucknet_new/Provider/estimates_provider.dart';
 
 class StimeScreen extends StatefulWidget {
   const StimeScreen({Key? key}) : super(key: key);

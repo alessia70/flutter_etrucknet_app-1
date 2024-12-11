@@ -155,9 +155,9 @@ class DataGridSimulazioniState extends State<DataGridSimulazioni> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Simulazione ${simulation['id']}',
+                  'Stima ${simulation['id']}',
                   style: TextStyle(
-                      color: Colors.blue,
+                      color: Colors.orange,
                       fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 5),

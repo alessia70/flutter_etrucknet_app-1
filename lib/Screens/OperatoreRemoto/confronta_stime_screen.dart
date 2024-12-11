@@ -159,7 +159,8 @@ class _ConfrontaStimeDialogState extends State<ConfrontaStimeDialog> {
                 itemBuilder: (context, index) {
                   final estimate = widget.stime[index];
                   return CheckboxListTile(
-                    title: Text(estimate['stimato'] ?? 'N/A'),
+                    title: Text(estimate['id'] ?? 'N/A'),
+                    subtitle: Text('${estimate['utente'] ?? 'N/A'}, ${estimate['carico'] ?? 'N/A'}'),
                     value: _selectedItems[index],
                     onChanged: (bool? value) {
                       setState(() {
