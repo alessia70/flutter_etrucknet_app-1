@@ -40,7 +40,7 @@ class _GridPreventiviAssegnatiState extends State<GridPreventiviAssegnati> {
                   rows: widget.completedTransports.map((transport) {
                     return DataRow(cells: [
                       DataCell(Text(transport['id'] ?? '')),
-                      DataCell(Text(transport['utente'] ?? '')),
+                      DataCell(Text(transport['operatore'] ?? '')),
                       DataCell(Text(transport['localitaRitiro'] ?? '')),
                       DataCell(Text(transport['localitaConsegna'] ?? '')),
                       DataCell(Text(transport['offerte'] ?? '')),
