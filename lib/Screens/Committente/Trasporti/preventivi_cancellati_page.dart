@@ -9,24 +9,7 @@ class PreventiviCancellatiPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
      final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-    List<Map<String, String>> subvezioniCancellate = [
-      {
-        'id': '1',
-        'localitaRitiro': 'Milano',
-        'localitaConsegna': 'Roma',
-        'dataRitiro': '01/11/2024',
-        'dataConsegna': '02/11/2024',
-        'tipo': 'Espresso',
-      },
-      {
-        'id': '2',
-        'localitaRitiro': 'Torino',
-        'localitaConsegna': 'Napoli',
-        'dataRitiro': '03/11/2024',
-        'dataConsegna': '04/11/2024',
-        'tipo': 'Standard',
-      },
-    ];
+    List<Map<String, String>> subvezioniCancellate = [];
 
     return Scaffold(
       key: _scaffoldKey,

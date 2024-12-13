@@ -1,11 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/Committente/Trasporti/preventivi_cancellati_page.dart';
+import 'package:flutter_etrucknet_new/Screens/Committente/Trasporti/richiedi_preventivo_page.dart';
 import 'package:flutter_etrucknet_new/Screens/Committente/dettagli_preventivo.dart';
 import 'package:flutter_etrucknet_new/Screens/Committente/profile_menu_committente.dart';
 import 'package:flutter_etrucknet_new/Screens/Committente/side_menu_committente.dart';
-import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/nuova_richieste_subvezioni_page.dart';
-import 'package:flutter_etrucknet_new/Screens/Trasportatore/AcquistoTrasporti/subvezioni_cancellate_page.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -16,7 +16,9 @@ class PreventiviRichiestiPage extends StatefulWidget {
 
 class _PreventiviRichiestiPageState extends State<PreventiviRichiestiPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  // ignore: unused_field
   bool _isLoading = true;
+  // ignore: unused_field
   String? _errorMessage;
   List<Map<String, String>> preventiviRichiesti = [];
 
@@ -373,7 +375,7 @@ class _PreventiviRichiestiPageState extends State<PreventiviRichiestiPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => NuovaRichiestaSubvezioneScreen(),
+        builder: (context) => RichiediPreventivoPage(),
       ),
     );
   }
@@ -382,7 +384,7 @@ class _PreventiviRichiestiPageState extends State<PreventiviRichiestiPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => SubvezioniCancellatePage(),
+        builder: (context) => PreventiviCancellatiPage(),
       ),
     );
   }

@@ -16,7 +16,7 @@ class DettaglioSimulazioneScreen extends StatefulWidget {
 class _DettaglioSimulazioneScreenState extends State<DettaglioSimulazioneScreen> {
   late GoogleMapController mapController;
 
-  static const LatLng _center = LatLng(45.4642, 9.1900); // Default center
+  static const LatLng _center = LatLng(45.4642, 9.1900);
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
@@ -31,7 +31,7 @@ class _DettaglioSimulazioneScreenState extends State<DettaglioSimulazioneScreen>
     return Scaffold(
       appBar: AppBar(
         title: const Text('Dettaglio Simulazione'),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
         actions: [
           IconButton(
@@ -76,7 +76,7 @@ class _DettaglioSimulazioneScreenState extends State<DettaglioSimulazioneScreen>
                     children: [
                       Row(
                         children: [
-                          Icon(FontAwesomeIcons.chartLine, size: 20, color: Colors.blue),
+                          Icon(FontAwesomeIcons.chartLine, size: 20, color: Colors.orange),
                           const SizedBox(width: 8),
                           Text(
                             'ID Simulazione: ${widget.simulation['id'] ?? 'N/A'}',
@@ -87,7 +87,7 @@ class _DettaglioSimulazioneScreenState extends State<DettaglioSimulazioneScreen>
                       const SizedBox(height: 8),
                       Row(
                         children: [
-                          Icon(FontAwesomeIcons.cogs, size: 20, color: Colors.blue),
+                          Icon(FontAwesomeIcons.cogs, size: 20, color: Colors.orange),
                           const SizedBox(width: 8),
                           Text(
                             'Tipo Simulazione: ${widget.simulation['tipo_simulazione'] ?? 'N/A'}',
@@ -98,11 +98,11 @@ class _DettaglioSimulazioneScreenState extends State<DettaglioSimulazioneScreen>
                       const SizedBox(height: 8),
                       Row(
                         children: [
-                          Icon(FontAwesomeIcons.clock, size: 20, color: Colors.blue),
+                          Icon(FontAwesomeIcons.clock, size: 20, color: Colors.orange),
                           const SizedBox(width: 8),
                           Text(
                             'Data: ${widget.simulation['data'] ?? 'N/A'}',
-                            style: const TextStyle(fontSize: 16, color: Colors.blue, fontWeight: FontWeight.bold),
+                            style: const TextStyle(fontSize: 16, color: Colors.orange, fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
@@ -125,7 +125,7 @@ class _DettaglioSimulazioneScreenState extends State<DettaglioSimulazioneScreen>
                           children: [
                             Row(
                               children: [
-                                Icon(FontAwesomeIcons.locationArrow, size: 20, color: Colors.blue),
+                                Icon(FontAwesomeIcons.locationArrow, size: 20, color: Colors.orange),
                                 const SizedBox(width: 8),
                                 const Text(
                                   'Punto di Partenza',
@@ -157,7 +157,7 @@ class _DettaglioSimulazioneScreenState extends State<DettaglioSimulazioneScreen>
                           children: [
                             Row(
                               children: [
-                                Icon(FontAwesomeIcons.locationArrow, size: 20, color: Colors.blue),
+                                Icon(FontAwesomeIcons.locationArrow, size: 20, color: Colors.orange),
                                 const SizedBox(width: 8),
                                 const Text(
                                   'Punto di Arrivo',
@@ -189,7 +189,7 @@ class _DettaglioSimulazioneScreenState extends State<DettaglioSimulazioneScreen>
                     children: [
                       Row(
                         children: [
-                          Icon(FontAwesomeIcons.infoCircle, size: 20, color: Colors.blue),
+                          Icon(FontAwesomeIcons.infoCircle, size: 20, color: Colors.orange),
                           const SizedBox(width: 8),
                           const Text(
                             'Ulteriori Dettagli',
@@ -216,7 +216,7 @@ class _DettaglioSimulazioneScreenState extends State<DettaglioSimulazioneScreen>
                     children: [
                       Row(
                         children: [
-                          Icon(FontAwesomeIcons.exclamationTriangle, size: 20, color: Colors.blue),
+                          Icon(FontAwesomeIcons.exclamationTriangle, size: 20, color: Colors.orange),
                           const SizedBox(width: 8),
                           const Text(
                             'Comunicazioni Importanti',

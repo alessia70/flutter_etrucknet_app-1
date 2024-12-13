@@ -32,7 +32,6 @@ class Item {
   }
 }
 
-
 class Estimate {
   final String id;
   final String user; 
@@ -40,6 +39,7 @@ class Estimate {
   final String deliveryLocation;
   final DateTime requestDate;
   final String transportType;
+  final double kmTratta;
   final List<Item> items;
   final bool loadedLaterally;
   final bool cashOnDelivery;
@@ -58,6 +58,7 @@ class Estimate {
     required this.cashOnDelivery,
     required this.trafficProblems,
     required this.additionalInfo,
+    required this.kmTratta
   });
 
   Map<String, dynamic> toJson() {

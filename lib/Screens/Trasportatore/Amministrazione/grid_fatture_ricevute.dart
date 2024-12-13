@@ -135,12 +135,12 @@ class _GridFattureRicevuteState extends State<GridFattureRicevute> {
                             ],
                             rows: snapshot.data!.map((fattura) {
                               return DataRow(cells: [
-                                DataCell(Text(fattura.id.toString())),
-                                DataCell(Text(fattura.ricevutaDa)),
+                                DataCell(Text(fattura.idFattura.toString())),
+                                DataCell(Text(fattura.ricevutaDa ?? '')),
                                 DataCell(Text(fattura.data.toIso8601String())),
                                 DataCell(Text(fattura.importo.toString())),
-                                DataCell(Text(fattura.descrizione)),
-                                DataCell(Text(fattura.infoScadenza)),
+                                DataCell(Text(fattura.descrizione ?? '')),
+                                DataCell(Text(fattura.infoScadenza ?? '')),
                                 DataCell(Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   children: [
@@ -151,12 +151,12 @@ class _GridFattureRicevuteState extends State<GridFattureRicevute> {
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) => FatturaDetailPage(
-                                              id: fattura.id.toString(),
+                                              id: fattura.idFattura.toString(),
                                               data: fattura.data.toIso8601String(),
-                                              ricevutaDa: fattura.ricevutaDa,
+                                              ricevutaDa: fattura.ricevutaDa ?? '',
                                               importo: fattura.importo.toString(),
-                                              descrizione: fattura.descrizione,
-                                              infoScadenza: fattura.infoScadenza,
+                                              descrizione: fattura.descrizione ?? '',
+                                              infoScadenza: fattura.infoScadenza ?? '',
                                             ),
                                           ),
                                         );

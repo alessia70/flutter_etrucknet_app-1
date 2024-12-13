@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/Committente/Amminiztrazione/fatture_ricevute_committente_grid.dart';
 import 'package:flutter_etrucknet_new/Screens/Committente/profile_menu_committente.dart';
 import 'package:flutter_etrucknet_new/Screens/Committente/side_menu_committente.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FattureRicevuteCommittentePage extends StatefulWidget {
   @override
@@ -10,12 +12,26 @@ class FattureRicevuteCommittentePage extends StatefulWidget {
 class _FattureRicevuteCommittentePageState extends State<FattureRicevuteCommittentePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   String dropdownValue = 'Tutte';
+  DateTime? startDate;
+  DateTime? endDate;
+  int stato = 1;
+  int trasportatoreId = 0;
   final List<String> statoRicevuteOptions = ['Tutte', 'Scadute', 'Non Scadute', 'Acconto', 'Saldate'];
 
-  final List<Map<String, String>> fattureRicevute = [
-    {'id': '1', 'fornitore': 'Fornitore A', 'data': '01/11/2024', 'importo': '1200 €', 'stato': 'Saldata'},
-    {'id': '2', 'fornitore': 'Fornitore B', 'data': '03/11/2024', 'importo': '800 €', 'stato': 'Scaduta'},
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+    startDate = DateTime.now().subtract(Duration(days: 365));
+    endDate = DateTime.now();
+  }
+
+  Future<void> _loadUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      trasportatoreId = prefs.getInt('trasportatoreId') ?? 0;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,57 +61,23 @@ class _FattureRicevuteCommittentePageState extends State<FattureRicevuteCommitte
       ),
       drawer: SideMenuCommittente(),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildSearchAndFilterBox(context),
-            SizedBox(height: 16),
-            Expanded(
-              child: Card(
-                elevation: 4,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Fatture Ricevute',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                      ),
-                      SizedBox(height: 16),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: DataTable(
-                          columns: [
-                            DataColumn(label: Text('Fattura')),
-                            DataColumn(label: Text('Fornitore')),
-                            DataColumn(label: Text('Data')),
-                            DataColumn(label: Text('Importo')),
-                            DataColumn(label: Text('Stato')),
-                          ],
-                          rows: fattureRicevute.map((fattura) {
-                            return DataRow(cells: [
-                              DataCell(Text(fattura['id'] ?? '')),
-                              DataCell(Text(fattura['fornitore'] ?? '')),
-                              DataCell(Text(fattura['data'] ?? '')),
-                              DataCell(Text(fattura['importo'] ?? '')),
-                              DataCell(Text(fattura['stato'] ?? '')),
-                            ]);
-                          }).toList(),
-                        ),
-                      ),
-                    ],
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildSearchAndFilterBox(context),
+                  SizedBox(height: 16),
+                  Expanded(
+                    child: GridFattureRicevuteCommittente(
+                      trasportatoreId: trasportatoreId,
+                      startDate: startDate!,
+                      endDate: endDate!,
+                      stato: stato,
+                    ),
                   ),
-                ),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -126,7 +108,6 @@ class _FattureRicevuteCommittentePageState extends State<FattureRicevuteCommitte
           ],
         ),
         SizedBox(height: 8),
-        
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -154,7 +135,6 @@ class _FattureRicevuteCommittentePageState extends State<FattureRicevuteCommitte
               ),
             ),
             SizedBox(width: 8),
-            
             IconButton(
               icon: Icon(Icons.calendar_today_outlined, color: Colors.orange),
               onPressed: () => _mostraFiltroDate(context),
@@ -166,11 +146,19 @@ class _FattureRicevuteCommittentePageState extends State<FattureRicevuteCommitte
     );
   }
 
-  void _mostraFiltroDate(BuildContext context) {
-    showDateRangePicker(
+  void _mostraFiltroDate(BuildContext context) async {
+    final DateTimeRange? picked = await showDateRangePicker(
       context: context,
       firstDate: DateTime(2020),
       lastDate: DateTime(2025),
+      initialDateRange: DateTimeRange(start: startDate!, end: endDate!),
     );
+
+    if (picked != null) {
+      setState(() {
+        startDate = picked.start;
+        endDate = picked.end;
+      });
+    }
   }
 }
