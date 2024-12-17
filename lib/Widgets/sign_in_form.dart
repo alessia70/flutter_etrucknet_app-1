@@ -51,6 +51,7 @@ class _SignInFormState extends State<SignInForm> {
       body: credentials.toForm(),
     );
 
+    print(response);
     if (response.statusCode == 200) {
       final responseData = jsonDecode(response.body);
       final tipoRuolo = responseData['user']['tipoRuolo'] ?? 'Tipo Ruolo Sconosciuto';

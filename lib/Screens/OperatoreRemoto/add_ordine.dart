@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Models/allestimento_model.dart';
 import 'package:flutter_etrucknet_new/Models/order_model.dart';
+import 'package:flutter_etrucknet_new/Services/tipoAllestimento_services.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -32,13 +34,6 @@ class AddOrdineScreen extends StatefulWidget {
 
 class _AddOrdineScreenState extends State<AddOrdineScreen> {
   String _selectedTransportType = 'Seleziona...';
-  final List<String> _transportTypes = [
-    'Seleziona...',
-    'Trasporto Aereo',
-    'Trasporto Marittimo',
-    'Trasporto Stradale',
-    'Trasporto Ferroviario'
-  ];
 
 
   String _selectedPackagingType = 'Seleziona...';
@@ -59,8 +54,9 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
   final TextEditingController _lengthController = TextEditingController();
   final TextEditingController _widthController = TextEditingController();
   final TextEditingController _heightController = TextEditingController();
+  final TipoAllestimentoService tipoAllestimentoService = TipoAllestimentoService();
 
-   final TextEditingController _altreInfoController = TextEditingController();
+  final TextEditingController _altreInfoController = TextEditingController();
 
   List<Merce> merceList = [];
 
@@ -68,6 +64,25 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
    final Map<String, dynamic> _orderData = {
     'altreInfo': '',
   };
+  List<Allestimento> allestimenti = [];
+  int? selectedAllestimentoId;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAllestimenti();
+  }
+
+   Future<void> _loadAllestimenti() async {
+    try {
+      final allestimentiData = await tipoAllestimentoService.fetchTipoAllestimenti();
+      setState(() {
+        allestimenti = allestimentiData;
+      });
+    } catch (e) {
+      print("Errore nel recupero degli allestimenti: $e");
+    }
+  }
 
   Future<void> _selectPickupDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -227,7 +242,6 @@ Future<int> _getTipoCarico(int idOrdine) async {
                 ),
               ),
               SizedBox(height: 20),
-
               Row(
                 children: [
                   Icon(Icons.directions_car, color: Colors.orange, size: 24),
@@ -242,7 +256,6 @@ Future<int> _getTipoCarico(int idOrdine) async {
                 ],
               ),
               SizedBox(height: 10),
-
               Container(
                 height: 40,
                 padding: EdgeInsets.symmetric(horizontal: 10),
@@ -250,14 +263,14 @@ Future<int> _getTipoCarico(int idOrdine) async {
                   border: Border.all(color: Colors.grey),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: DropdownButton<String>(
+               /* child: DropdownButton<String>(
                   value: _selectedTransportType,
                   isExpanded: true,
                   underline: SizedBox(),
-                  items: _transportTypes.map((String type) {
+                  items: allestimenti.map((String type) {
                     return DropdownMenuItem<String>(
-                      value: type,
-                      child: Text(type),
+                      value: allestimento.idtipoAllestimento,
+                        child: Text(allestimento),
                     );
                   }).toList(),
                   onChanged: (newValue) {
@@ -265,7 +278,7 @@ Future<int> _getTipoCarico(int idOrdine) async {
                       _selectedTransportType = newValue!;
                     });
                   },
-                ),
+                ),*/
               ),
               SizedBox(height: 20),
               Divider(
@@ -386,7 +399,6 @@ Future<int> _getTipoCarico(int idOrdine) async {
                     ),
                   ),
                   SizedBox(width: 20),
-
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -434,9 +446,7 @@ Future<int> _getTipoCarico(int idOrdine) async {
                 color: Colors.grey,
                 thickness: 1
               ),
-
               SizedBox(height: 20),
-
               Text(
                 'Dettagli Merce',
                 style: TextStyle(

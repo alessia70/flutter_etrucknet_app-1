@@ -169,6 +169,99 @@ class _TrasportiGridState extends State<TrasportiGrid> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              /*Expanded(
+              child: GridView.builder(
+                padding: const EdgeInsets.all(8.0),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 8.0,
+                  mainAxisSpacing: 8.0,
+                ),
+                itemCount: veicoliFiltrati.length,
+                itemBuilder: (context, index) {
+                  final veicolo = veicoliFiltrati[index];
+                  return SizedBox(
+                    height: 220,
+                    child: Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              veicolo['tipo'] ?? 'Tipo non disponibile',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.orange,
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            Center(
+                              child: Icon(
+                                Icons.local_shipping,
+                                size: 60,
+                                color: Colors.orange,
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            Text(
+                              "Allestimento: ${veicolo['Ordine'] ?? 'N/A'}",
+                              style: TextStyle(fontSize: 14),
+                              textAlign: TextAlign.center,
+                            ),
+                            Text(
+                              "Allestimento: ${veicolo['Contatto Trasportatore'] ?? 'N/A'}",
+                              style: TextStyle(fontSize: 14),
+                              textAlign: TextAlign.center,
+                            ),
+                            Text(
+                              "Allestimento: ${veicolo['Luogo Carico'] ?? 'N/A'}",
+                              style: TextStyle(fontSize: 14),
+                              textAlign: TextAlign.center,
+                            ),
+                            Text(
+                              "Allestimento: ${veicolo['Data Carico'] ?? 'N/A'}",
+                              style: TextStyle(fontSize: 14),
+                              textAlign: TextAlign.center,
+                            ),
+                            Text(
+                              "Allestimento: ${veicolo['Luogo Scarico'] ?? 'N/A'}",
+                              style: TextStyle(fontSize: 14),
+                              textAlign: TextAlign.center,
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              "Specifiche: ${veicolo['Data Scarico'] ?? 'N/A'}",
+                              style: TextStyle(fontSize: 14),
+                              textAlign: TextAlign.center,
+                            ),
+                            Spacer(),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                IconButton(
+                                  icon: Icon(Icons.edit, color: Colors.orange),
+                                  onPressed: () => _showEditTruckDialog(context, veicolo),
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.delete, color: Colors.grey),
+                                  onPressed: () => _showDeleteConfirmationDialog(context, veicolo),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  );
+                },
+              ),
+            ),*/
               Expanded(
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
