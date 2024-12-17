@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Screens/Committente/side_menu_committente.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/profile_info_operatore_screen.dart';
-import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/side_menu.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -45,7 +45,7 @@ class _DettaglioSimulazioneScreenState extends State<DettaglioSimulazioneScreen>
           ),
         ],
       ),
-      drawer: SideMenu(),
+      drawer: SideMenuCommittente(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(

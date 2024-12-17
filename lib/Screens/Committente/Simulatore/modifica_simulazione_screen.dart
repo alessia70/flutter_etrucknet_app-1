@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Provider/estimates_provider.dart';
+import 'package:flutter_etrucknet_new/Screens/Committente/side_menu_committente.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/profile_info_operatore_screen.dart';
-import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/side_menu.dart';
 import 'package:provider/provider.dart';
 
 class ModificaSimulazioneScreen extends StatefulWidget {
@@ -54,7 +54,7 @@ class _ModificaSimulazioneScreenState extends State<ModificaSimulazioneScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Modifica Simulazione'),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
         actions: [
           IconButton(
@@ -74,7 +74,7 @@ class _ModificaSimulazioneScreenState extends State<ModificaSimulazioneScreen> {
           ),
         ],
       ),
-      drawer: SideMenu(),
+      drawer: SideMenuCommittente(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
@@ -109,7 +109,7 @@ class _ModificaSimulazioneScreenState extends State<ModificaSimulazioneScreen> {
                     },
                     child: Text('Aggiorna Simulazione'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
+                      backgroundColor: Colors.orange,
                       foregroundColor: Colors.white,
                       padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                     ),

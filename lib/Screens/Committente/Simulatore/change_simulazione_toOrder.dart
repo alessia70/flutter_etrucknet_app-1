@@ -1,27 +1,8 @@
 import 'package:flutter/material.dart';
-
-class Simulazione {
-  String tipoImballo;
-  String descrizione;
-  String quantita;
-  String peso;
-  String lunghezza;
-  String larghezza;
-  String altezza;
-
-  Simulazione({
-    required this.tipoImballo,
-    required this.descrizione,
-    required this.quantita,
-    required this.peso,
-    required this.lunghezza,
-    required this.larghezza,
-    required this.altezza,
-  });
-}
+import 'package:flutter_etrucknet_new/Models/stima_model.dart';
 
 class ChangeSimulazioneToOrder extends StatefulWidget {
-  final List<Simulazione> simulazioneList;
+  final List<Item> simulazioneList;
   final String simulazioneTransportType;
 
   const ChangeSimulazioneToOrder({
@@ -37,6 +18,9 @@ class ChangeSimulazioneToOrder extends StatefulWidget {
 
 class _ChangeSimulazioneToOrderState extends State<ChangeSimulazioneToOrder> {
   late String? _selectedTransportType;
+  String _formatDate(DateTime date) {
+    return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
+  }
   final List<String> _transportTypes = [
     'Seleziona...',
     'Trasporto Aereo',
@@ -60,7 +44,7 @@ class _ChangeSimulazioneToOrderState extends State<ChangeSimulazioneToOrder> {
   final TextEditingController _widthController = TextEditingController();
   final TextEditingController _heightController = TextEditingController();
 
-  List<Simulazione> simulazioneList = [];
+  List<Item> simulazioneList = [];
   DateTime? _pickupDate;
   DateTime? _deliveryDate;
 
@@ -95,20 +79,25 @@ class _ChangeSimulazioneToOrderState extends State<ChangeSimulazioneToOrder> {
   @override
   void initState() {
     super.initState();
-    _selectedTransportType = widget.simulazioneTransportType;
+    if (_transportTypes.contains(widget.simulazioneTransportType)) {
+      _selectedTransportType = widget.simulazioneTransportType;
+    } else {
+      _selectedTransportType = _transportTypes[0];
+    }
     simulazioneList = widget.simulazioneList;
-    _selectedPackagingType = 'Seleziona...';
+    _selectedPackagingType = _packagingTypes[0];
   }
 
   void _addSimulazione() {
-    final newSimulazione = Simulazione(
-      tipoImballo: _selectedPackagingType,
-      descrizione: _descriptionController.text,
-      quantita: _quantityController.text,
-      peso: _weightController.text,
-      lunghezza: _lengthController.text,
-      larghezza: _widthController.text,
-      altezza: _heightController.text,
+    final newSimulazione = Item(
+      packagingType: _selectedPackagingType,
+      description: _descriptionController.text,
+      quantity: int.tryParse(_quantityController.text) ?? 0,
+      weight: double.tryParse(_weightController.text) ?? 0.0,
+      length: double.tryParse(_lengthController.text) ?? 0.0,
+      width: double.tryParse(_widthController.text) ?? 0.0,
+      height: double.tryParse(_heightController.text) ?? 0.0,
+      specifications: '',
     );
 
     setState(() {
@@ -142,18 +131,19 @@ class _ChangeSimulazioneToOrderState extends State<ChangeSimulazioneToOrder> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Modifica Simulazione'),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
-                  Icon(Icons.local_shipping, color: Colors.blue, size: 24),
+                  Icon(Icons.local_shipping, color: Colors.orange, size: 24),
                   SizedBox(width: 8),
                   Text(
                     'Seleziona Tipologia Trasporto',
@@ -173,7 +163,9 @@ class _ChangeSimulazioneToOrderState extends State<ChangeSimulazioneToOrder> {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: DropdownButton<String>(
-                  value: _selectedTransportType,
+                  value: _transportTypes.contains(_selectedTransportType)
+                    ? _selectedTransportType
+                    : _transportTypes[0],
                   isExpanded: true,
                   underline: SizedBox(),
                   items: _transportTypes.map((String type) {
@@ -190,17 +182,14 @@ class _ChangeSimulazioneToOrderState extends State<ChangeSimulazioneToOrder> {
                 ),
               ),
               SizedBox(height: 20),
-
               Divider(color: Colors.grey, thickness: 1),
               SizedBox(height: 20),
-
-              // Simulazione Details (like items, description, packaging, etc)
               Row(
                 children: [
-                  Icon(Icons.archive, color: Colors.blue, size: 24),
+                  Icon(Icons.archive, color: Colors.orange, size: 24),
                   SizedBox(width: 8),
                   Text(
-                    'Tipo Imballo',
+                    'Allestimenti',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -234,7 +223,6 @@ class _ChangeSimulazioneToOrderState extends State<ChangeSimulazioneToOrder> {
                 ),
               ),
               SizedBox(height: 20),
-
               TextField(
                 controller: _descriptionController,
                 maxLines: 3,
@@ -246,9 +234,22 @@ class _ChangeSimulazioneToOrderState extends State<ChangeSimulazioneToOrder> {
                   ),
                 ),
               ),
-
               SizedBox(height: 20),
-
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Icon(Icons.fmd_good_outlined, color: Colors.orange, size: 24),
+                  SizedBox(width: 8),
+                  Text(
+                    'Dettagli Merce',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ]
+              ),
+              SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -279,9 +280,7 @@ class _ChangeSimulazioneToOrderState extends State<ChangeSimulazioneToOrder> {
                   ),
                 ],
               ),
-
               SizedBox(height: 10),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -312,9 +311,7 @@ class _ChangeSimulazioneToOrderState extends State<ChangeSimulazioneToOrder> {
                   ),
                 ],
               ),
-
               SizedBox(height: 10),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -332,50 +329,77 @@ class _ChangeSimulazioneToOrderState extends State<ChangeSimulazioneToOrder> {
                   ),
                 ],
               ),
-
               SizedBox(height: 20),
-
               ElevatedButton(
                 onPressed: _addSimulazione,
                 child: Text('Aggiungi Simulazione'),
+                style: TextButton.styleFrom(
+                      foregroundColor: Colors.orange,
+                    ),
               ),
-
               Divider(color: Colors.grey, thickness: 1),
               SizedBox(height: 20),
-
-              // List of added simulazione
               for (int i = 0; i < simulazioneList.length; i++)
                 ListTile(
-                  title: Text(simulazioneList[i].descrizione),
+                  title: Text(simulazioneList[i].description),
                   subtitle: Text(
-                    'Quantità: ${simulazioneList[i].quantita}, Peso: ${simulazioneList[i].peso} kg',
+                    'Quantità: ${simulazioneList[i].quantity}, Peso: ${simulazioneList[i].weight} kg',
                   ),
                   trailing: IconButton(
                     icon: Icon(Icons.delete),
                     onPressed: () => _removeSimulazione(i),
                   ),
                 ),
-
               SizedBox(height: 20),
-
-              // Datepickers for delivery/pickup
               Row(
                 children: [
-                  TextButton(
-                    onPressed: () => _selectPickupDate(context),
-                    child: Text(
-                      _pickupDate == null
-                          ? 'Seleziona data ritiro'
-                          : 'Ritiro: ${_pickupDate!.toLocal()}',
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => _selectPickupDate(context),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.calendar_today, color: Colors.orange),
+                            SizedBox(width: 8),
+                            Text(
+                              _pickupDate == null
+                                  ? 'Seleziona data ritiro'
+                                  : 'Ritiro: ${_formatDate(_pickupDate!)}',
+                              style: TextStyle(fontSize: 14),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                   SizedBox(width: 20),
-                  TextButton(
-                    onPressed: () => _selectDeliveryDate(context),
-                    child: Text(
-                      _deliveryDate == null
-                          ? 'Seleziona data consegna'
-                          : 'Consegna: ${_deliveryDate!.toLocal()}',
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => _selectDeliveryDate(context),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.calendar_today, color: Colors.orange),
+                            SizedBox(width: 8),
+                            Text(
+                              _deliveryDate == null
+                                  ? 'Seleziona data consegna'
+                                  : 'Consegna: ${_formatDate(_deliveryDate!)}',
+                              style: TextStyle(fontSize: 14),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -383,23 +407,28 @@ class _ChangeSimulazioneToOrderState extends State<ChangeSimulazioneToOrder> {
             ],
           ),
         ),
+        )
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Row(
-          children: [
-            ElevatedButton(
-              onPressed: _saveSimulazione,
-              child: Text('Salva'),
-            ),
-            SizedBox(width: 20),
-            ElevatedButton(
-              onPressed: _cancelSimulazione,
-              child: Text('Annulla'),
-            ),
-          ],
-        ),
-      ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: _saveSimulazione,
+                child: Text('Salva'),
+                style: ElevatedButton.styleFrom(foregroundColor: Colors.orange),
+              ),
+              SizedBox(width: 20),
+              ElevatedButton(
+                onPressed: _cancelSimulazione,
+                child: Text('Annulla'),
+                style: ElevatedButton.styleFrom(foregroundColor: Colors.orange),
+              ),
+            ],
+          ),
+        )
+
     );
   }
 }

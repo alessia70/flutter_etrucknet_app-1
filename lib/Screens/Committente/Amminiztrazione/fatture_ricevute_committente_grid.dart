@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:flutter_etrucknet_new/Models/ddt_model.dart';
+import 'package:flutter_etrucknet_new/Widgets/generate_ddt.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Models/fatture_ricevute_model.dart';
@@ -6,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class GridFattureRicevuteCommittente extends StatefulWidget {
   final int trasportatoreId;
+  final int numeroDdt;
   final DateTime startDate;
   final DateTime endDate;
   final int stato;
@@ -13,6 +16,7 @@ class GridFattureRicevuteCommittente extends StatefulWidget {
   GridFattureRicevuteCommittente({
     Key? key,
     required this.trasportatoreId,
+    required this.numeroDdt,
     required this.startDate,
     required this.endDate,
     required this.stato,
@@ -24,6 +28,8 @@ class GridFattureRicevuteCommittente extends StatefulWidget {
 
 class _GridFattureRicevuteCommittenteState extends State<GridFattureRicevuteCommittente> {
   late Future<List<FatturaRicevuta>> futureFatture;
+
+  late DDTModel ddt;
 
   @override
   void initState() {
@@ -177,7 +183,7 @@ class _GridFattureRicevuteCommittenteState extends State<GridFattureRicevuteComm
                                 IconButton(
                                   icon: Icon(Icons.send_and_archive_outlined, color: Colors.grey),
                                   onPressed: () {
-                                  
+                                    generateDDT(ddt);
                                   },
                                   tooltip: 'Mostra DDT',
                                 ),

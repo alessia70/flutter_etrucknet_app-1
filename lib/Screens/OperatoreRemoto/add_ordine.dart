@@ -622,7 +622,7 @@ Future<int> _getTipoCarico(int idOrdine) async {
                       'Tipo Imballo: ${merce.tipoImballo}, Quantità: ${merce.quantita}, Peso: ${merce.peso}, Dimensioni: ${merce.lunghezza} x ${merce.larghezza} x ${merce.altezza} cm',
                     ),
                     trailing: IconButton(
-                      icon: Icon(Icons.delete, color: Colors.red),
+                      icon: Icon(Icons.delete, color: Colors.grey),
                       onPressed: () => _removeMerce(index),
                     ),
                   ),

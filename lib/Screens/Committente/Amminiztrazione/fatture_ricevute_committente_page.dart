@@ -16,6 +16,7 @@ class _FattureRicevuteCommittentePageState extends State<FattureRicevuteCommitte
   DateTime? endDate;
   int stato = 1;
   int trasportatoreId = 0;
+  int numeroDdt = 0;
   final List<String> statoRicevuteOptions = ['Tutte', 'Scadute', 'Non Scadute', 'Acconto', 'Saldate'];
 
   @override
@@ -70,6 +71,7 @@ class _FattureRicevuteCommittentePageState extends State<FattureRicevuteCommitte
                   Expanded(
                     child: GridFattureRicevuteCommittente(
                       trasportatoreId: trasportatoreId,
+                      numeroDdt: numeroDdt,
                       startDate: startDate!,
                       endDate: endDate!,
                       stato: stato,
