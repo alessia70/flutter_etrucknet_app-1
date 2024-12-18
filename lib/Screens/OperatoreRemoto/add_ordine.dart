@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Models/allestimento_model.dart';
+import 'package:flutter_etrucknet_new/Models/mezzo_allestimento_model.dart';
 import 'package:flutter_etrucknet_new/Models/order_model.dart';
+import 'package:flutter_etrucknet_new/Models/tipoTrasporto_model.dart';
+import 'package:flutter_etrucknet_new/Services/mezzo_allestimento_service.dart';
 import 'package:flutter_etrucknet_new/Services/tipoAllestimento_services.dart';
+import 'package:flutter_etrucknet_new/Services/tipo_trasporto_service.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -33,8 +37,13 @@ class AddOrdineScreen extends StatefulWidget {
 }
 
 class _AddOrdineScreenState extends State<AddOrdineScreen> {
-  String _selectedTransportType = 'Seleziona...';
+  final TipoTrasportoService _service = TipoTrasportoService();
+  List<TipoTrasporto> tipiTrasporto = [];
+  int? _selectedTrasportoId;
 
+  final TipoMezzoAllestimentoService _serviceMA = TipoMezzoAllestimentoService();
+  List<TipoMezzoAllestimento> tipiMezzoAllestimento = [];
+  int? _selectedMezzoAllestimentoId;
 
   String _selectedPackagingType = 'Seleziona...';
   final List<String> _packagingTypes = [
@@ -59,26 +68,47 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
   final TextEditingController _altreInfoController = TextEditingController();
 
   List<Merce> merceList = [];
-
+  List<Allestimento> allestimenti = [];
    // ignore: unused_field
-   final Map<String, dynamic> _orderData = {
+  final Map<String, dynamic> _orderData = {
     'altreInfo': '',
   };
-  List<Allestimento> allestimenti = [];
-  int? selectedAllestimentoId;
 
   @override
   void initState() {
     super.initState();
     _loadAllestimenti();
+    _fetchTipiTrasporto();
+    _fetchTipiMezzoAllestimento();
   }
 
-   Future<void> _loadAllestimenti() async {
+  void _fetchTipiMezzoAllestimento() async {
+    List<TipoMezzoAllestimento> fetchedTipi = await _serviceMA.fetchTipiMezzoAllestimento();
+    setState(() {
+      tipiMezzoAllestimento = fetchedTipi;
+    });
+  }
+  Future<void> _fetchTipiTrasporto() async {
+    try {
+      final fetchedTipiTrasporto = await _service.fetchTipiTrasporto();
+      setState(() {
+        tipiTrasporto = fetchedTipiTrasporto;
+        if (tipiTrasporto.isNotEmpty) {
+          _selectedTrasportoId = tipiTrasporto.first.id;
+        }
+      });
+    } catch (e) {
+      print('Errore nel recupero dei tipi di trasporto: $e');
+    }
+  }
+
+  Future<void> _loadAllestimenti() async {
     try {
       final allestimentiData = await tipoAllestimentoService.fetchTipoAllestimenti();
       setState(() {
         allestimenti = allestimentiData;
       });
+      print(allestimenti);
     } catch (e) {
       print("Errore nel recupero degli allestimenti: $e");
     }
@@ -103,7 +133,7 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2020),
-      lastDate: DateTime(2030),
+      lastDate: DateTime(2050),
     );
     if (picked != null && picked != _deliveryDate) {
       setState(() {
@@ -142,62 +172,70 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
   }
 
   void _saveOrder() async {
-  int orderId = DateTime.now().millisecondsSinceEpoch;
-  int tipoCarico = await _getTipoCarico(orderId);
+    int orderId = DateTime.now().millisecondsSinceEpoch;
 
-  // ignore: unused_local_variable
-  final newOrder = Order(
-    id: orderId,
-    customerName: 'Customer Name',
-    customerContact: 'Customer Contact',
-    date: DateTime.now(),
-    companyName: 'Company Name',
-    loadingDate: _pickupDate?.toIso8601String() ?? '',
-    loadingLocation: 'Loading Location',
-    loadingProvince: 'Province',
-    loadingCountry: 'Country',
-    isLoadingMandatory: true,
-    isUnloadingMandatory: false,
-    unloadingDate: _deliveryDate?.toIso8601String() ?? '',
-    unloadingLocation: 'Unloading Location',
-    unloadingProvince: 'Province',
-    unloadingCountry: 'Country',
-    offerAmount: 0.0,
-    activeOffers: 0,
-    expiredOffers: 0,
-    correspondenceCount: 0,
-    estimatedBudget: 0.0,
-    isCompleted: false,
-    isCanceled: false,
-  );
+    final newOrder = Order(
+      id: orderId,
+      customerName: 'Customer Name',
+      customerContact: 'Customer Contact',
+      date: DateTime.now(),
+      companyName: 'Company Name',
+      loadingDate: _pickupDate?.toIso8601String() ?? '',
+      loadingLocation: 'Loading Location',
+      loadingProvince: 'Province',
+      loadingCountry: 'Country',
+      isLoadingMandatory: true,
+      isUnloadingMandatory: false,
+      unloadingDate: _deliveryDate?.toIso8601String() ?? '',
+      unloadingLocation: 'Unloading Location',
+      unloadingProvince: 'Province',
+      unloadingCountry: 'Country',
+      offerAmount: 0.0,
+      activeOffers: 0,
+      expiredOffers: 0,
+      correspondenceCount: 0,
+      estimatedBudget: 0.0,
+      isCompleted: false,
+      isCanceled: false,
+      vehicleType: null,
+      additionalSpecs: null,
+      isSideLoadingRequired: false,
+      isCashOnDelivery: false,
+      hasRoadAccessibilityIssues: false,
+      packagingType: null,
+      description: null,
+      quantity: null,
+      totalWeight: null,
+      length: null,
+      width: null,
+      height: null,
+    );
 
-  print("Order created with tipoCarico: $tipoCarico");
-  Navigator.of(context).pop();
-}
+    Navigator.of(context).pop();
+  }
 
-Future<int> _getTipoCarico(int idOrdine) async {
-  const String apiUrl = 'https://etrucknetapi.azurewebsites.net/v1/GetTipoCarico';
+  Future<int> _getTipoCarico(int idOrdine) async {
+    const String apiUrl = 'https://etrucknetapi.azurewebsites.net/v1/GetTipoCarico';
 
-  try {
-    final response = await http.get(Uri.parse('$apiUrl/$idOrdine'));
+    try {
+      final response = await http.get(Uri.parse('$apiUrl/$idOrdine'));
 
-    if (response.statusCode == 200) {
-      final result = json.decode(response.body);
-      return result;
-    } else {
-      print("Errore durante la chiamata API: ${response.statusCode}");
+      if (response.statusCode == 200) {
+        final result = json.decode(response.body);
+        return result;
+      } else {
+        print("Errore durante la chiamata API: ${response.statusCode}");
+        return 0;
+      }
+    } catch (e) {
+      print("Errore: $e");
       return 0;
     }
-  } catch (e) {
-    print("Errore: $e");
-    return 0;
   }
-}
 
   void _cancelOrder() {
     Navigator.of(context).pop();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -227,7 +265,6 @@ Future<int> _getTipoCarico(int idOrdine) async {
                 ],
               ),
               SizedBox(height: 10),
-
               SizedBox(
                 height: 40,
                 child: TextField(
@@ -263,22 +300,21 @@ Future<int> _getTipoCarico(int idOrdine) async {
                   border: Border.all(color: Colors.grey),
                   borderRadius: BorderRadius.circular(10),
                 ),
-               /* child: DropdownButton<String>(
-                  value: _selectedTransportType,
+                child: DropdownButton<int>(
+                  value: _selectedTrasportoId,
                   isExpanded: true,
-                  underline: SizedBox(),
-                  items: allestimenti.map((String type) {
-                    return DropdownMenuItem<String>(
-                      value: allestimento.idtipoAllestimento,
-                        child: Text(allestimento),
+                  items: tipiTrasporto.map((trasporto) {
+                    return DropdownMenuItem<int>(
+                      value: trasporto.id,
+                      child: Text(trasporto.name),
                     );
                   }).toList(),
                   onChanged: (newValue) {
                     setState(() {
-                      _selectedTransportType = newValue!;
+                      _selectedTrasportoId = newValue;
                     });
                   },
-                ),*/
+                ),
               ),
               SizedBox(height: 20),
               Divider(
@@ -439,9 +475,98 @@ Future<int> _getTipoCarico(int idOrdine) async {
                   ),
                 ],
               ),
-
               SizedBox(height: 20), 
-
+              Divider(
+                color: Colors.grey,
+                thickness: 1
+              ),
+              SizedBox(height: 20), 
+              Row(
+                children: [
+                  Icon(Icons.archive, color: Colors.orange, size: 24), 
+                  SizedBox(width: 8),
+                  Text(
+                    'Tipo Mezzo/Allestimenti',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 10),
+              Container(
+                height: 40,
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: DropdownButton<int>(
+                      value: _selectedMezzoAllestimentoId,
+                      isExpanded: true,
+                      underline: SizedBox(),
+                      items: tipiMezzoAllestimento.map((allestimento) {
+                              return DropdownMenuItem<int>(
+                                value: allestimento.id,
+                                child: Text(allestimento.name),
+                              );
+                            }).toList(),
+                      onChanged: (newValue) {
+                        setState(() {
+                          _selectedMezzoAllestimentoId = newValue;
+                        });
+                      },
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    _selectedMezzoAllestimentoId != null
+                        ? 'Selezionato: ${tipiMezzoAllestimento.firstWhere((element) => element.id == _selectedMezzoAllestimentoId!).name}'
+                        : 'Nessun allestimento selezionato',
+                  ),
+                ],
+              ),
+              SizedBox(height: 20),
+              Row(
+                children: [
+                  Icon(Icons.archive, color: Colors.orange, size: 24), 
+                  SizedBox(width: 8),
+                  Text(
+                    'Ulteriori Specifiche',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 10),
+              Container(
+                height: 40,
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: DropdownButton<String>(
+                  value: _selectedPackagingType,
+                  isExpanded: true,
+                  underline: SizedBox(),
+                  items: _packagingTypes.map((String type) {
+                    return DropdownMenuItem<String>(
+                      value: type,
+                      child: Text(type),
+                    );
+                  }).toList(),
+                  onChanged: (newValue) {
+                    setState(() {
+                      _selectedPackagingType = newValue!;
+                    });
+                  },
+                ),
+              ),
+              SizedBox(height: 20),
               Divider(
                 color: Colors.grey,
                 thickness: 1
@@ -456,7 +581,6 @@ Future<int> _getTipoCarico(int idOrdine) async {
                 ),
               ),
               SizedBox(height: 10),
-
               Row(
                 children: [
                   Icon(Icons.archive, color: Colors.orange, size: 24), 
@@ -495,9 +619,7 @@ Future<int> _getTipoCarico(int idOrdine) async {
                   },
                 ),
               ),
-
               SizedBox(height: 20),
-
               SizedBox(
                 height: 60,
                 child: TextField(
@@ -512,9 +634,7 @@ Future<int> _getTipoCarico(int idOrdine) async {
                   ),
                 ),
               ),
-
               SizedBox(height: 20),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -545,9 +665,7 @@ Future<int> _getTipoCarico(int idOrdine) async {
                   ),
                 ],
               ),
-
               SizedBox(height: 10),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -578,9 +696,7 @@ Future<int> _getTipoCarico(int idOrdine) async {
                   ),
                 ],
               ),
-
               SizedBox(height: 10),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -597,97 +713,40 @@ Future<int> _getTipoCarico(int idOrdine) async {
                     ),
                   ),
                   SizedBox(width: 10),
-
                   IconButton(
                     icon: Icon(Icons.add, color: Colors.orange),
                     onPressed: _addMerce, 
                   ),
                 ],
               ),
-
               SizedBox(height: 20),
-
               Divider(
                 color: Colors.grey,
                 thickness: 1, 
               ),
-
               SizedBox(height: 20),
-              Text(
-                'Merci Aggiunte:',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.orange,
-                ),
-              ),
-              SizedBox(height: 10),
-              ...merceList.map((merce) {
-                final index = merceList.indexOf(merce);
-                return Card(
-                  margin: EdgeInsets.symmetric(vertical: 5),
-                  child: ListTile(
-                    title: Text(merce.descrizione),
-                    subtitle: Text(
-                      'Tipo Imballo: ${merce.tipoImballo}, Quantità: ${merce.quantita}, Peso: ${merce.peso}, Dimensioni: ${merce.lunghezza} x ${merce.larghezza} x ${merce.altezza} cm',
-                    ),
-                    trailing: IconButton(
-                      icon: Icon(Icons.delete, color: Colors.grey),
-                      onPressed: () => _removeMerce(index),
-                    ),
-                  ),
-                );
-              }),
-
-              SizedBox(height: 20),
-
-              Divider(
-                color: Colors.grey,
-                thickness: 1, 
-              ),
-
-              SizedBox(height: 20),
-
-               Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextField(
-                    controller: _altreInfoController,
-                    maxLines: 5,
-                    decoration: InputDecoration.collapsed(
-                      hintText: 'Inserisci ulteriori informazioni...',
-                    ),
-                  ),
-                ),
-              ),
-            ],
           ),
         ),
-      ),
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          FloatingActionButton(
-            onPressed: _saveOrder,
-            backgroundColor: Colors.orange,
-            foregroundColor: Colors.white,
-            tooltip: 'Salva Ordine',
-            child: Icon(Icons.save, size: 30),
-          ),
-          SizedBox(width: 10), 
-          FloatingActionButton(
-            onPressed: _cancelOrder,
-            backgroundColor: Colors.red,
-            foregroundColor: Colors.white,
-            tooltip: 'Annulla',
-            child: Icon(Icons.close, size: 30),
-          ),
-        ],
-      ),
-    );
+        floatingActionButton: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            FloatingActionButton(
+              onPressed: _saveOrder,
+              backgroundColor: Colors.orange,
+              foregroundColor: Colors.white,
+              tooltip: 'Salva Ordine',
+              child: Icon(Icons.save, size: 30),
+            ),
+            SizedBox(width: 10), 
+            FloatingActionButton(
+              onPressed: _cancelOrder,
+              backgroundColor: Colors.grey,
+              foregroundColor: Colors.white,
+              tooltip: 'Annulla',
+              child: Icon(Icons.close, size: 30),
+            ),
+          ],
+        ),
+      );
   }
 }

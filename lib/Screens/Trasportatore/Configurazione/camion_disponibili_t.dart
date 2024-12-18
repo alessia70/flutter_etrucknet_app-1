@@ -222,7 +222,7 @@ class _CamionDisponibiliTPageState extends State<CamionDisponibiliTPage> {
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                camion.tipoMezzo ?? 'Tipo Mezzo Non Specificato',
+                camion.tipoMezzo, // ?? 'Tipo Mezzo Non Specificato',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -283,11 +283,9 @@ class _CamionDisponibiliTPageState extends State<CamionDisponibiliTPage> {
       ),
     );
   }
-
-
   DataRow _buildDataRow(Camion camion) {
     return DataRow(cells: [
-      DataCell(Text(camion.tipoMezzo ?? '')),
+      DataCell(Text(camion.tipoMezzo /*?? ''*/)),
       DataCell(Text(camion.spazioDisponibile.toString() ?? '0')),
       DataCell(Text(camion.localitaCarico ?? 'Non specificato')),
       DataCell(Text(camion.dataRitiro != null ?'${camion.dataRitiro.day}/${camion.dataRitiro.month}/${camion.dataRitiro.year}' : 'N/A')),

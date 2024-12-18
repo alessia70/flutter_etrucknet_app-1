@@ -21,13 +21,11 @@ class Order {
   final double estimatedBudget;
   final String? vehicleType;
   final String? additionalSpecs;
-
   final bool isSideLoadingRequired;
   final bool isCashOnDelivery;
   final bool hasRoadAccessibilityIssues;
   bool? isCompleted;
-  bool? isCanceled; 
-
+  bool? isCanceled;
   final String? packagingType;
   final String? description;
   final int? quantity;
@@ -108,7 +106,7 @@ class Order {
       totalWeight: json['totalWeight']?.toDouble(),
       length: json['length']?.toDouble(),
       width: json['width']?.toDouble(),
-      height: json['height']?.toDouble(),
+      height: json['height']?.toDouble(), 
     );
   }
 }

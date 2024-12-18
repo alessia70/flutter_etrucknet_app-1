@@ -1,5 +1,5 @@
 class Allestimento {
-  final int idtipo_allestimento;
+  final int? idtipo_allestimento;
   final String? descrizione;
   final String? descrizioneEnglish;
   final String? descrizioneRumeno;
@@ -27,7 +27,7 @@ class Allestimento {
 
   factory Allestimento.fromJson(Map<String, dynamic> json) {
     return Allestimento(
-      idtipo_allestimento: json['idtipo_allestimento'],
+      idtipo_allestimento: json['id'],
       descrizione: json['descrizione'],
       descrizioneEnglish: json['descrizione_en'],
       descrizioneRumeno: json['descrizione_ro'],

@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Models/mezzo_allestimento_model.dart';
+import 'package:flutter_etrucknet_new/Models/tipoTrasporto_model.dart';
+import 'package:flutter_etrucknet_new/Models/tipo_mezzo_specifiche_model.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/profile_info_operatore_screen.dart';
+import 'package:flutter_etrucknet_new/Services/mezzo_allestimento_service.dart';
+import 'package:flutter_etrucknet_new/Services/tipo_mezzo_specifiche.dart';
+import 'package:flutter_etrucknet_new/Services/tipo_trasporto_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_etrucknet_new/Provider/estimates_provider.dart';
 
@@ -11,11 +17,12 @@ class NuovaStimaScreen extends StatefulWidget {
 }
 
 class _NuovaStimaScreenState extends State<NuovaStimaScreen> {
-  String? _selectedTipologia;
+  final TipoTrasportoService _service = TipoTrasportoService();
+  List<TipoTrasporto> tipiTrasporto = [];
+  int? _selectedTrasportoId;
+  
   String? _ritiro;
   String? _consegna;
-  String? _mezzo;
-  String? _specifiche;
   String? _selectedImballo;
   // ignore: unused_field
   String _altreInfo = '';
@@ -29,6 +36,60 @@ class _NuovaStimaScreenState extends State<NuovaStimaScreen> {
   final TextEditingController _lunghezzaController = TextEditingController();
   final TextEditingController _larghezzaController = TextEditingController();
   final TextEditingController _altezzaController = TextEditingController();
+
+   List<TipoMezzoSpecifiche> _specificheList = [];
+  String? _specifiche;
+  bool _isLoading = true;
+
+  final TipoMezzoAllestimentoService _serviceMA = TipoMezzoAllestimentoService();
+  List<TipoMezzoAllestimento> tipiMezzoAllestimento = [];
+  int? _selectedMezzoAllestimentoId;
+
+  @override
+  void initState() {
+    super.initState();
+  //  _loadAllestimenti();
+    _fetchTipiTrasporto();
+    _loadSpecifiche();
+    _fetchTipiMezzoAllestimento();
+  }
+
+  void _fetchTipiMezzoAllestimento() async {
+    List<TipoMezzoAllestimento> fetchedTipi = await _serviceMA.fetchTipiMezzoAllestimento();
+    setState(() {
+      tipiMezzoAllestimento = fetchedTipi;
+    });
+  }
+  Future<void> _fetchTipiTrasporto() async {
+    try {
+      final fetchedTipiTrasporto = await _service.fetchTipiTrasporto();
+      setState(() {
+        tipiTrasporto = fetchedTipiTrasporto;
+        if (tipiTrasporto.isNotEmpty) {
+          _selectedTrasportoId = tipiTrasporto.first.id;
+        }
+      });
+    } catch (e) {
+      print('Errore nel recupero dei tipi di trasporto: $e');
+    }
+  }
+
+   Future<void> _loadSpecifiche() async {
+    try {
+      var service = TipoMezzoSpecificheService();
+      List<TipoMezzoSpecifiche> fetchedSpecifiche = await service.fetchTipiMezzoSpecifiche();
+      setState(() {
+        _specificheList = fetchedSpecifiche;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      // Gestire eventuali errori
+      print('Errore nel recupero delle specifiche: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -106,42 +167,37 @@ class _NuovaStimaScreenState extends State<NuovaStimaScreen> {
       children: [
         Row(
           children: [
-            Icon(Icons.local_shipping, color: Colors.grey),
+            Icon(Icons.directions_car, color: Colors.orange, size: 24),
             SizedBox(width: 8),
             Text(
-              'Tipologia trasporto',
-              style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w300),
+              'Seleziona Tipologia Trasporto',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ],
         ),
-        SizedBox(height: 8),
+        SizedBox(height: 10),
         Container(
-          height: 56,
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+          height: 40,
+          padding: EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.circular(4),
+            border: Border.all(color: Colors.grey),
+            borderRadius: BorderRadius.circular(10),
           ),
-          child: DropdownButton<String>(
-            value: _selectedTipologia,
-            hint: Text('Seleziona tipologia'),
+          child: DropdownButton<int>(
+            value: _selectedTrasportoId,
             isExpanded: true,
-            underline: SizedBox(),
-            isDense: true,
-            items: <String>[
-              'Trasporto Stradale',
-              'Trasporto Marittimo',
-              'Trasporto Aereo'
-            ].map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
+            items: tipiTrasporto.map((trasporto) {
+              return DropdownMenuItem<int>(
+                value: trasporto.id,
+                child: Text(trasporto.name),
               );
             }).toList(),
-            onChanged: (String? newValue) {
+            onChanged: (newValue) {
               setState(() {
-                _selectedTipologia = newValue;
+                _selectedTrasportoId = newValue;
               });
             },
           ),
@@ -201,32 +257,25 @@ class _NuovaStimaScreenState extends State<NuovaStimaScreen> {
         ),
         SizedBox(height: 8),
         Container(
-          height: 56,
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.circular(4),
-          ),
-          child: DropdownButton<String>(
-            value: _mezzo,
-            hint: Text('Seleziona mezzo/allestimenti'),
+      height: 40,
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: DropdownButton<int>(
+            value: _selectedMezzoAllestimentoId,
             isExpanded: true,
             underline: SizedBox(),
-            isDense: true,
-            items: <String>[
-              'Furgone',
-              'Camion',
-              'Auto'
-            ].map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-            onChanged: (String? newValue) {
+            items: tipiMezzoAllestimento.map((allestimento) {
+                    return DropdownMenuItem<int>(
+                      value: allestimento.id,
+                      child: Text(allestimento.name),
+                    );
+                  }).toList(),
+            onChanged: (newValue) {
               setState(() {
-                _mezzo = newValue;
+                _selectedMezzoAllestimentoId = newValue;
               });
             },
           ),
@@ -258,28 +307,26 @@ class _NuovaStimaScreenState extends State<NuovaStimaScreen> {
             border: Border.all(color: Colors.grey.shade300),
             borderRadius: BorderRadius.circular(4),
           ),
-          child: DropdownButton<String>(
-            value: _specifiche,
-            hint: Text('Seleziona specifiche'),
-            isExpanded: true,
-            underline: SizedBox(),
-            isDense: true,
-            items: <String>[
-              'Nessuna',
-              'Fragile',
-              'Pericoloso'
-            ].map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-            onChanged: (String? newValue) {
-              setState(() {
-                _specifiche = newValue;
-              });
-            },
-          ),
+          child: _isLoading
+              ? Center(child: CircularProgressIndicator())
+              : DropdownButton<String>(
+                  value: _specifiche,
+                  hint: Text('Seleziona specifiche'),
+                  isExpanded: true,
+                  underline: SizedBox(),
+                  isDense: true,
+                  items: _specificheList.map<DropdownMenuItem<String>>((TipoMezzoSpecifiche specifiche) {
+                    return DropdownMenuItem<String>(
+                      value: specifiche.descrizione,
+                      child: Text(specifiche.descrizione),
+                    );
+                  }).toList(),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _specifiche = newValue;
+                    });
+                  },
+                ),
         ),
       ],
     );
@@ -323,7 +370,7 @@ class _NuovaStimaScreenState extends State<NuovaStimaScreen> {
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: Colors.orange, // Cambiato il colore attivo a arancione
+            activeColor: Colors.orange,
           ),
         ],
       ),
