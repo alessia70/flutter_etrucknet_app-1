@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_etrucknet_new/Models/tipo_mezzo_specifiche_model.dart';
 
 class TipoMezzoSpecificheService {
-  final String apiUrl = "https://etrucknetapi.azurewebsites.net/v1/Configuration/tipispecifiche";
+  final String apiUrl = "https://etrucknetapi.azurewebsites.net/v1/configuration/tipispecifiche";
 
   Future<List<TipoMezzoSpecifiche>> fetchTipiMezzoSpecifiche() async {
     try {

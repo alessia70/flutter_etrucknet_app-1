@@ -36,19 +36,20 @@ class _NuovaStimaScreenState extends State<NuovaStimaScreen> {
   final TextEditingController _lunghezzaController = TextEditingController();
   final TextEditingController _larghezzaController = TextEditingController();
   final TextEditingController _altezzaController = TextEditingController();
-
-   List<TipoMezzoSpecifiche> _specificheList = [];
-  String? _specifiche;
-  bool _isLoading = true;
+  final TipoMezzoSpecificheService tipoSpecificheService = TipoMezzoSpecificheService();
 
   final TipoMezzoAllestimentoService _serviceMA = TipoMezzoAllestimentoService();
   List<TipoMezzoAllestimento> tipiMezzoAllestimento = [];
   int? _selectedMezzoAllestimentoId;
 
+  List<TipoMezzoSpecifiche> tipiMezzoSpecifiche = [];
+  List<TipoMezzoSpecifiche> specifiche = [];
+  TipoMezzoSpecifiche? selectedSpecifica;
+
   @override
   void initState() {
     super.initState();
-  //  _loadAllestimenti();
+  //_loadAllestimenti();
     _fetchTipiTrasporto();
     _loadSpecifiche();
     _fetchTipiMezzoAllestimento();
@@ -74,20 +75,14 @@ class _NuovaStimaScreenState extends State<NuovaStimaScreen> {
     }
   }
 
-   Future<void> _loadSpecifiche() async {
+  Future<void> _loadSpecifiche() async {
     try {
-      var service = TipoMezzoSpecificheService();
-      List<TipoMezzoSpecifiche> fetchedSpecifiche = await service.fetchTipiMezzoSpecifiche();
+      final specificheData = await tipoSpecificheService.fetchTipiMezzoSpecifiche();
       setState(() {
-        _specificheList = fetchedSpecifiche;
-        _isLoading = false;
+        specifiche = specificheData;
       });
     } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
-      // Gestire eventuali errori
-      print('Errore nel recupero delle specifiche: $e');
+      print("Errore nel recupero degli allestimenti: $e");
     }
   }
 
@@ -300,33 +295,31 @@ class _NuovaStimaScreenState extends State<NuovaStimaScreen> {
         ),
         SizedBox(height: 8),
         Container(
-          height: 56,
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+          height: 40,
+          padding: EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.circular(4),
+            border: Border.all(color: Colors.grey),
+            borderRadius: BorderRadius.circular(10),
           ),
-          child: _isLoading
-              ? Center(child: CircularProgressIndicator())
-              : DropdownButton<String>(
-                  value: _specifiche,
-                  hint: Text('Seleziona specifiche'),
-                  isExpanded: true,
-                  underline: SizedBox(),
-                  isDense: true,
-                  items: _specificheList.map<DropdownMenuItem<String>>((TipoMezzoSpecifiche specifiche) {
-                    return DropdownMenuItem<String>(
-                      value: specifiche.descrizione,
-                      child: Text(specifiche.descrizione),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _specifiche = newValue;
-                    });
-                  },
-                ),
+          child: DropdownButton<TipoMezzoSpecifiche>(
+            value: selectedSpecifica,
+            isExpanded: true,
+            underline: SizedBox(),
+            hint: Text('Seleziona una specifica'),
+            items: specifiche.map((TipoMezzoSpecifiche specifica) {
+              return DropdownMenuItem<TipoMezzoSpecifiche>(
+                value: specifica,
+                child: Text(specifica.descrizione),
+              );
+            }).toList(),
+            onChanged: (TipoMezzoSpecifiche? nuovaSpecifica) {
+              setState(() {
+                selectedSpecifica = nuovaSpecifica;
+              });
+              print('Specifica selezionata: ${nuovaSpecifica?.descrizione}');
+            },
+            icon: Icon(Icons.arrow_drop_down),
+          ),
         ),
       ],
     );

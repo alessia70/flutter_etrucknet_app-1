@@ -26,6 +26,8 @@ class _TrasportiGridState extends State<TrasportiGrid> {
   int? tolleranza;
   String? allestimento;
 
+  List<Map<String, String>> veicoliFiltrati = [];
+
   @override
   void initState() {
     super.initState();
@@ -86,6 +88,7 @@ class _TrasportiGridState extends State<TrasportiGrid> {
 
         setState(() {
           transports = transportsData.map((item) => Transport.fromJson(item)).toList();
+          veicoliFiltrati = List.from(transports);
         });
       } else {
         print('Errore nell\'API: ${response.statusCode}');
@@ -169,7 +172,7 @@ class _TrasportiGridState extends State<TrasportiGrid> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              /*Expanded(
+              Expanded(
               child: GridView.builder(
                 padding: const EdgeInsets.all(8.0),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -261,7 +264,7 @@ class _TrasportiGridState extends State<TrasportiGrid> {
                   );
                 },
               ),
-            ),*/
+            ),
               Expanded(
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
@@ -290,6 +293,77 @@ class _TrasportiGridState extends State<TrasportiGrid> {
     );
   }
 
+  void _showEditTruckDialog(BuildContext context, Map<String, String> veicolo) {
+    TextEditingController nameController = TextEditingController(text: veicolo['name'] ?? '');
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Modifica Veicolo"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameController,
+                decoration: InputDecoration(
+                  labelText: "Nome Veicolo",
+                  hintText: "Inserisci il nuovo nome",
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("Annulla"),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  veicolo['name'] = nameController.text;
+                });
+                Navigator.of(context).pop();
+              },
+              child: Text("Salva"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showDeleteConfirmationDialog(BuildContext context, Map<String, String> veicolo) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Conferma'),
+          content: Text('Sei sicuro di voler eliminare questo veicolo?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  transports.remove(veicolo);
+                  veicoliFiltrati = List.from(transports);
+                });
+                Navigator.of(context).pop();
+              },
+              child: Text('Sì'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Annulla'),
+            ),
+          ],
+        );
+      },
+    );
+  }
   DataRow _buildDataRow(Transport transport) {
     return DataRow(cells: [
       DataCell(Text(transport.ordineId.toString())),
@@ -298,7 +372,7 @@ class _TrasportiGridState extends State<TrasportiGrid> {
       DataCell(Text(DateFormat.yMd().format(transport.dataCarico))),
       DataCell(Text(transport.scarico)),
       DataCell(Text(DateFormat.yMd().format(transport.dataScarico))),
-      DataCell(Text(getEsitoString(transport.esito ?? 0))),
+      DataCell(Text(getEsitoString(transport.esito))),
       DataCell(Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [

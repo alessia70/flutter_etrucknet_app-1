@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Models/allestimento_model.dart';
+import 'package:flutter_etrucknet_new/Models/mezzo_allestimento_model.dart';
+import 'package:flutter_etrucknet_new/Models/tipoTrasporto_model.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/profile_menu_t_screen.dart';
+import 'package:flutter_etrucknet_new/Services/mezzo_allestimento_service.dart';
+import 'package:flutter_etrucknet_new/Services/tipoAllestimento_services.dart';
+import 'package:flutter_etrucknet_new/Services/tipo_trasporto_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_etrucknet_new/Provider/estimates_provider.dart';
 
@@ -11,10 +17,8 @@ class NuovaRichiestaSubvezioneScreen extends StatefulWidget {
 }
 
 class _NuovaRichiestaSubvezioneScreenState extends State<NuovaRichiestaSubvezioneScreen> {
-  String? _selectedTipologia;
   String? _ritiro;
   String? _consegna;
-  String? _mezzo;
   String? _specifiche;
   String? _selectedImballo;
   // ignore: unused_field
@@ -25,11 +29,63 @@ class _NuovaRichiestaSubvezioneScreenState extends State<NuovaRichiestaSubvezion
   bool _pagataContrassegno = false;
   bool _problemiViabilita = false;
 
+  final TipoTrasportoService _service = TipoTrasportoService();
+  List<TipoTrasporto> tipiTrasporto = [];
+  int? _selectedTrasportoId;
+
+  final TipoMezzoAllestimentoService _serviceMA = TipoMezzoAllestimentoService();
+  List<TipoMezzoAllestimento> tipiMezzoAllestimento = [];
+  int? _selectedMezzoAllestimentoId;
+
   final TextEditingController _quantitaController = TextEditingController();
   final TextEditingController _pesoController = TextEditingController();
   final TextEditingController _lunghezzaController = TextEditingController();
   final TextEditingController _larghezzaController = TextEditingController();
   final TextEditingController _altezzaController = TextEditingController();
+  final TipoAllestimentoService tipoAllestimentoService = TipoAllestimentoService();
+
+  List<Allestimento> allestimenti = [];
+
+  Future<void> _fetchTipiTrasporto() async {
+    try {
+      final fetchedTipiTrasporto = await _service.fetchTipiTrasporto();
+      setState(() {
+        tipiTrasporto = fetchedTipiTrasporto;
+        if (tipiTrasporto.isNotEmpty) {
+          _selectedTrasportoId = tipiTrasporto.first.id;
+        }
+      });
+    } catch (e) {
+      print('Errore nel recupero dei tipi di trasporto: $e');
+    }
+  }
+
+  void _fetchTipiMezzoAllestimento() async {
+    List<TipoMezzoAllestimento> fetchedTipi = await _serviceMA.fetchTipiMezzoAllestimento();
+    setState(() {
+      tipiMezzoAllestimento = fetchedTipi;
+    });
+  }
+
+  Future<void> _loadAllestimenti() async {
+    try {
+      final allestimentiData = await tipoAllestimentoService.fetchTipoAllestimenti();
+      setState(() {
+        allestimenti = allestimentiData;
+      });
+      print(allestimenti);
+    } catch (e) {
+      print("Errore nel recupero degli allestimenti: $e");
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAllestimenti();
+    _fetchTipiTrasporto();
+    //_fetchTipiMezzoAllestimento();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -119,32 +175,24 @@ class _NuovaRichiestaSubvezioneScreenState extends State<NuovaRichiestaSubvezion
         ),
         SizedBox(height: 8),
         Container(
-          height: 56,
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+          height: 40,
+          padding: EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.circular(4),
+            border: Border.all(color: Colors.grey),
+            borderRadius: BorderRadius.circular(10),
           ),
-          child: DropdownButton<String>(
-            value: _selectedTipologia,
-            hint: Text('Seleziona tipologia'),
+          child: DropdownButton<int>(
+            value: _selectedTrasportoId,
             isExpanded: true,
-            underline: SizedBox(),
-            isDense: true,
-            items: <String>[
-              'Trasporto Stradale',
-              'Trasporto Marittimo',
-              'Trasporto Aereo'
-            ].map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
+            items: tipiTrasporto.map((trasporto) {
+              return DropdownMenuItem<int>(
+                value: trasporto.id,
+                child: Text(trasporto.name),
               );
             }).toList(),
-            onChanged: (String? newValue) {
+            onChanged: (newValue) {
               setState(() {
-                _selectedTipologia = newValue;
+                _selectedTrasportoId = newValue;
               });
             },
           ),
@@ -204,32 +252,25 @@ class _NuovaRichiestaSubvezioneScreenState extends State<NuovaRichiestaSubvezion
         ),
         SizedBox(height: 8),
         Container(
-          height: 56,
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+          height: 40,
+          padding: EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.circular(4),
+            border: Border.all(color: Colors.grey),
+            borderRadius: BorderRadius.circular(10),
           ),
-          child: DropdownButton<String>(
-            value: _mezzo,
-            hint: Text('Seleziona mezzo/allestimenti'),
+          child: DropdownButton<int>(
+            value: _selectedMezzoAllestimentoId,
             isExpanded: true,
             underline: SizedBox(),
-            isDense: true,
-            items: <String>[
-              'Furgone',
-              'Camion',
-              'Auto'
-            ].map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
+            items: tipiMezzoAllestimento.map((allestimento) {
+              return DropdownMenuItem<int>(
+                value: allestimento.id,
+                child: Text(allestimento.name),
               );
             }).toList(),
-            onChanged: (String? newValue) {
+            onChanged: (newValue) {
               setState(() {
-                _mezzo = newValue;
+                _selectedMezzoAllestimentoId = newValue!;
               });
             },
           ),

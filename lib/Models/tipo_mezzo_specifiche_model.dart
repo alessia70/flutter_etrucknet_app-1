@@ -5,8 +5,8 @@ class TipoMezzoSpecifiche {
   final double valoreMax;
   final double valoreMin;
   final int step;
-  final String descrizioneEn;
-  final String descrizioneRo;
+  final String? descrizioneEn;
+  final String? descrizioneRo;
   final List<dynamic> specificheOrdini;
   final List<dynamic> automezzoSpecifiche;
 
@@ -36,20 +36,5 @@ class TipoMezzoSpecifiche {
       specificheOrdini: List<dynamic>.from(json['specificheOrdini'] ?? []),
       automezzoSpecifiche: List<dynamic>.from(json['automezzoSpecifiche'] ?? []),
     );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'descrizione': descrizione,
-      'tipoGrandezzaId': tipoGrandezzaId,
-      'valoreMax': valoreMax,
-      'valoreMin': valoreMin,
-      'step': step,
-      'descrizioneEn': descrizioneEn,
-      'descrizioneRo': descrizioneRo,
-      'specificheOrdini': specificheOrdini,
-      'automezzoSpecifiche': automezzoSpecifiche,
-    };
   }
 }

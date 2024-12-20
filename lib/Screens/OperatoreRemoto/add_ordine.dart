@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_etrucknet_new/Models/allestimento_model.dart';
 import 'package:flutter_etrucknet_new/Models/mezzo_allestimento_model.dart';
 import 'package:flutter_etrucknet_new/Models/order_model.dart';
 import 'package:flutter_etrucknet_new/Models/tipoTrasporto_model.dart';
+import 'package:flutter_etrucknet_new/Models/tipo_mezzo_specifiche_model.dart';
 import 'package:flutter_etrucknet_new/Services/mezzo_allestimento_service.dart';
 import 'package:flutter_etrucknet_new/Services/tipoAllestimento_services.dart';
+import 'package:flutter_etrucknet_new/Services/tipo_mezzo_specifiche.dart';
 import 'package:flutter_etrucknet_new/Services/tipo_trasporto_service.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -45,14 +48,9 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
   List<TipoMezzoAllestimento> tipiMezzoAllestimento = [];
   int? _selectedMezzoAllestimentoId;
 
+  List<TipoMezzoSpecifiche> tipiMezzoSpecifiche = [];
+
   String _selectedPackagingType = 'Seleziona...';
-  final List<String> _packagingTypes = [
-    'Seleziona...',
-    'Cartone',
-    'Plastica',
-    'Legno',
-    'Metallo'
-  ];
 
   DateTime? _pickupDate;
   DateTime? _deliveryDate;
@@ -64,15 +62,21 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
   final TextEditingController _widthController = TextEditingController();
   final TextEditingController _heightController = TextEditingController();
   final TipoAllestimentoService tipoAllestimentoService = TipoAllestimentoService();
-
-  final TextEditingController _altreInfoController = TextEditingController();
+  final TipoMezzoSpecificheService tipoSpecificheService = TipoMezzoSpecificheService();
 
   List<Merce> merceList = [];
   List<Allestimento> allestimenti = [];
-   // ignore: unused_field
-  final Map<String, dynamic> _orderData = {
-    'altreInfo': '',
-  };
+  List<TipoMezzoSpecifiche> specifiche = [];
+  TipoMezzoSpecifiche? selectedSpecifica;
+
+
+  /*final OrderLogic _orderLogic = OrderLogic();
+  String? _selectedTransportType;
+  double? _selectedTemperature;*/
+  
+  bool _caricataLateralmente = false;
+  bool _pagataContrassegno = false;
+  bool _problemiViabilita = false;
 
   @override
   void initState() {
@@ -80,6 +84,7 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
     _loadAllestimenti();
     _fetchTipiTrasporto();
     _fetchTipiMezzoAllestimento();
+    _loadSpecifiche();
   }
 
   void _fetchTipiMezzoAllestimento() async {
@@ -114,6 +119,17 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
     }
   }
 
+  Future<void> _loadSpecifiche() async {
+    try {
+      final specificheData = await tipoSpecificheService.fetchTipiMezzoSpecifiche();
+      setState(() {
+        specifiche = specificheData;
+      });
+      print(specifiche);
+    } catch (e) {
+      print("Errore nel recupero degli allestimenti: $e");
+    }
+  }
   Future<void> _selectPickupDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -174,6 +190,7 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
   void _saveOrder() async {
     int orderId = DateTime.now().millisecondsSinceEpoch;
 
+    // ignore: unused_local_variable
     final newOrder = Order(
       id: orderId,
       customerName: 'Customer Name',
@@ -202,17 +219,17 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
       isSideLoadingRequired: false,
       isCashOnDelivery: false,
       hasRoadAccessibilityIssues: false,
-      packagingType: null,
-      description: null,
-      quantity: null,
-      totalWeight: null,
-      length: null,
-      width: null,
-      height: null,
+      packagingType: _selectedPackagingType,
+      description: _descriptionController.text.isNotEmpty ? _descriptionController.text : null,
+      quantity: int.tryParse(_quantityController.text),
+      totalWeight: double.tryParse(_weightController.text),
+      length: double.tryParse(_lengthController.text),
+      width: double.tryParse(_widthController.text),
+      height: double.tryParse(_heightController.text),
     );
-
     Navigator.of(context).pop();
   }
+
 
   Future<int> _getTipoCarico(int idOrdine) async {
     const String apiUrl = 'https://etrucknetapi.azurewebsites.net/v1/GetTipoCarico';
@@ -247,506 +264,665 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
+        child: Stack(
+          children: [
+            SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.local_shipping, color: Colors.orange, size: 24),
-                  SizedBox(width: 8),
-                  Text(
-                    'Seleziona Shipper',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                  Row(
+                    children: [
+                      Icon(Icons.local_shipping, color: Colors.orange, size: 24),
+                      SizedBox(width: 8),
+                      Text(
+                        'Seleziona Shipper',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  SizedBox(
+                    height: 40,
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Inserisci nome shipper...',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(color: Colors.grey),
+                        ),
+                        prefixIcon: Icon(Icons.search),
+                      ),
                     ),
                   ),
-                ],
-              ),
-              SizedBox(height: 10),
-              SizedBox(
-                height: 40,
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Inserisci nome shipper...',
-                    border: OutlineInputBorder(
+                  SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Icon(Icons.directions_car, color: Colors.orange, size: 24),
+                      SizedBox(width: 8),
+                      Text(
+                        'Seleziona Tipologia Trasporto',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Container(
+                    height: 40,
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Colors.grey),
                     ),
-                    prefixIcon: Icon(Icons.search),
-                  ),
-                ),
-              ),
-              SizedBox(height: 20),
-              Row(
-                children: [
-                  Icon(Icons.directions_car, color: Colors.orange, size: 24),
-                  SizedBox(width: 8),
-                  Text(
-                    'Seleziona Tipologia Trasporto',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 10),
-              Container(
-                height: 40,
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: DropdownButton<int>(
-                  value: _selectedTrasportoId,
-                  isExpanded: true,
-                  items: tipiTrasporto.map((trasporto) {
-                    return DropdownMenuItem<int>(
-                      value: trasporto.id,
-                      child: Text(trasporto.name),
-                    );
-                  }).toList(),
-                  onChanged: (newValue) {
-                    setState(() {
-                      _selectedTrasportoId = newValue;
-                    });
-                  },
-                ),
-              ),
-              SizedBox(height: 20),
-              Divider(
-                color: Colors.grey,
-                thickness: 1,
-              ),
-              SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.storefront, color: Colors.orange, size: 24),
-                            SizedBox(width: 8),
-                            Text(
-                              'Ritiro',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 10),
-                        SizedBox(
-                          height: 40,
-                          child: TextField(
-                            decoration: InputDecoration(
-                              hintText: 'Luogo di ritiro...',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: BorderSide(color: Colors.grey),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(width: 20),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.home_outlined, color: Colors.orange, size: 24),
-                            SizedBox(width: 8),
-                            Text(
-                              'Consegna',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 10),
-                        SizedBox(
-                          height: 40,
-                          child: TextField(
-                            decoration: InputDecoration(
-                              hintText: 'Luogo di consegna...',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: BorderSide(color: Colors.grey),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.date_range, color: Colors.orange, size: 24),
-                            SizedBox(width: 8),
-                            Text(
-                              'Data Ritiro',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 10),
-                        SizedBox(
-                          height: 40,
-                          child: TextField(
-                            readOnly: true,
-                            decoration: InputDecoration(
-                              hintText: _pickupDate == null
-                                  ? 'Seleziona data...'
-                                  : _pickupDate!.toLocal().toString().split(' ')[0],
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: BorderSide(color: Colors.grey),
-                              ),
-                              prefixIcon: Icon(Icons.calendar_today, color: Colors.orange),
-                            ),
-                            onTap: () => _selectPickupDate(context),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(width: 20),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.date_range, color: Colors.orange, size: 24),
-                            SizedBox(width: 8),
-                            Text(
-                              'Data Consegna',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 10),
-                        SizedBox(
-                          height: 40,
-                          child: TextField(
-                            readOnly: true,
-                            decoration: InputDecoration(
-                              hintText: _deliveryDate == null
-                                  ? 'Seleziona data...'
-                                  : _deliveryDate!.toLocal().toString().split(' ')[0],
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: BorderSide(color: Colors.grey),
-                              ),
-                              prefixIcon: Icon(Icons.calendar_today, color: Colors.orange),
-                            ),
-                            onTap: () => _selectDeliveryDate(context),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 20), 
-              Divider(
-                color: Colors.grey,
-                thickness: 1
-              ),
-              SizedBox(height: 20), 
-              Row(
-                children: [
-                  Icon(Icons.archive, color: Colors.orange, size: 24), 
-                  SizedBox(width: 8),
-                  Text(
-                    'Tipo Mezzo/Allestimenti',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 10),
-              Container(
-                height: 40,
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: DropdownButton<int>(
-                      value: _selectedMezzoAllestimentoId,
+                    child: DropdownButton<int>(
+                      value: _selectedTrasportoId,
                       isExpanded: true,
-                      underline: SizedBox(),
-                      items: tipiMezzoAllestimento.map((allestimento) {
-                              return DropdownMenuItem<int>(
-                                value: allestimento.id,
-                                child: Text(allestimento.name),
-                              );
-                            }).toList(),
+                      items: tipiTrasporto.map((trasporto) {
+                        return DropdownMenuItem<int>(
+                          value: trasporto.id,
+                          child: Text(trasporto.name),
+                        );
+                      }).toList(),
                       onChanged: (newValue) {
                         setState(() {
-                          _selectedMezzoAllestimentoId = newValue;
+                          _selectedTrasportoId = newValue;
                         });
                       },
                     ),
                   ),
                   SizedBox(height: 20),
-                  Text(
-                    _selectedMezzoAllestimentoId != null
-                        ? 'Selezionato: ${tipiMezzoAllestimento.firstWhere((element) => element.id == _selectedMezzoAllestimentoId!).name}'
-                        : 'Nessun allestimento selezionato',
+                  Divider(color: Colors.grey, thickness: 1),
+                  SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(Icons.storefront, color: Colors.orange, size: 24),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Ritiro',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 10),
+                            SizedBox(
+                              height: 40,
+                              child: TextField(
+                                decoration: InputDecoration(
+                                  hintText: 'Luogo di ritiro...',
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: 20),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(Icons.home_outlined, color: Colors.orange, size: 24),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Consegna',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 10),
+                            SizedBox(
+                              height: 40,
+                              child: TextField(
+                                decoration: InputDecoration(
+                                  hintText: 'Luogo di consegna...',
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              SizedBox(height: 20),
-              Row(
-                children: [
-                  Icon(Icons.archive, color: Colors.orange, size: 24), 
-                  SizedBox(width: 8),
-                  Text(
-                    'Ulteriori Specifiche',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(Icons.date_range, color: Colors.orange, size: 24),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Data Ritiro',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 10),
+                            SizedBox(
+                              height: 40,
+                              child: TextField(
+                                readOnly: true,
+                                decoration: InputDecoration(
+                                  hintText: _pickupDate == null
+                                      ? 'Seleziona data...'
+                                      : _pickupDate!.toLocal().toString().split(' ')[0],
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                  prefixIcon: Icon(Icons.calendar_today, color: Colors.orange),
+                                ),
+                                onTap: () => _selectPickupDate(context),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: 20),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(Icons.date_range, color: Colors.orange, size: 24),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Data Consegna',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 10),
+                            SizedBox(
+                              height: 40,
+                              child: TextField(
+                                readOnly: true,
+                                decoration: InputDecoration(
+                                  hintText: _deliveryDate == null
+                                      ? 'Seleziona data...'
+                                      : _deliveryDate!.toLocal().toString().split(' ')[0],
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                  prefixIcon: Icon(Icons.calendar_today, color: Colors.orange),
+                                ),
+                                onTap: () => _selectDeliveryDate(context),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              SizedBox(height: 10),
-              Container(
-                height: 40,
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: DropdownButton<String>(
-                  value: _selectedPackagingType,
-                  isExpanded: true,
-                  underline: SizedBox(),
-                  items: _packagingTypes.map((String type) {
-                    return DropdownMenuItem<String>(
-                      value: type,
-                      child: Text(type),
-                    );
-                  }).toList(),
-                  onChanged: (newValue) {
-                    setState(() {
-                      _selectedPackagingType = newValue!;
-                    });
-                  },
-                ),
-              ),
-              SizedBox(height: 20),
-              Divider(
-                color: Colors.grey,
-                thickness: 1
-              ),
-              SizedBox(height: 20),
-              Text(
-                'Dettagli Merce',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.orange,
-                ),
-              ),
-              SizedBox(height: 10),
-              Row(
-                children: [
-                  Icon(Icons.archive, color: Colors.orange, size: 24), 
-                  SizedBox(width: 8),
-                  Text(
-                    'Tipo Imballo',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  SizedBox(height: 20),
+                  Divider(color: Colors.grey, thickness: 1),
+                  SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Icon(Icons.archive, color: Colors.orange, size: 24),
+                      SizedBox(width: 8),
+                      Text(
+                        'Tipo Mezzo/Allestimenti',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              SizedBox(height: 10),
-              Container(
-                height: 40,
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: DropdownButton<String>(
-                  value: _selectedPackagingType,
-                  isExpanded: true,
-                  underline: SizedBox(),
-                  items: _packagingTypes.map((String type) {
-                    return DropdownMenuItem<String>(
-                      value: type,
-                      child: Text(type),
-                    );
-                  }).toList(),
-                  onChanged: (newValue) {
-                    setState(() {
-                      _selectedPackagingType = newValue!;
-                    });
-                  },
-                ),
-              ),
-              SizedBox(height: 20),
-              SizedBox(
-                height: 60,
-                child: TextField(
-                  controller: _descriptionController,
-                  maxLines: 3,
-                  decoration: InputDecoration(
-                    hintText: 'Descrizione della merce...',
-                    border: OutlineInputBorder(
+                  SizedBox(height: 10),
+                  Container(
+                    height: 40,
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Colors.grey),
+                    ),
+                    child: DropdownButton<int>(
+                      value: _selectedMezzoAllestimentoId,
+                      isExpanded: true,
+                      underline: SizedBox(),
+                      items: tipiMezzoAllestimento.map((allestimento) {
+                        return DropdownMenuItem<int>(
+                          value: allestimento.id,
+                          child: Text(allestimento.name),
+                        );
+                      }).toList(),
+                      onChanged: (newValue) {
+                        setState(() {
+                          _selectedMezzoAllestimentoId = newValue!;
+                        });
+                      },
                     ),
                   ),
+                  SizedBox(height: 20),
+                  Divider(color: Colors.grey, thickness: 1),
+                  SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Icon(Icons.archive, color: Colors.orange, size: 24),
+                      SizedBox(width: 8),
+                      Text(
+                        'Ulteriori Specifiche',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Container(
+                    height: 40,
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: DropdownButton<TipoMezzoSpecifiche>(
+                      value: selectedSpecifica,
+                      isExpanded: true,
+                      underline: SizedBox(),
+                      hint: Text('Seleziona una specifica'),
+                      items: specifiche.map((TipoMezzoSpecifiche specifica) {
+                        return DropdownMenuItem<TipoMezzoSpecifiche>(
+                          value: specifica,
+                          child: Text(specifica.descrizione),
+                        );
+                      }).toList(),
+                      onChanged: (TipoMezzoSpecifiche? nuovaSpecifica) {
+                        setState(() {
+                          selectedSpecifica = nuovaSpecifica;
+                        });
+                        print('Specifica selezionata: ${nuovaSpecifica?.descrizione}');
+                      },
+                      icon: Icon(Icons.arrow_drop_down),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _buildSwitchOption('Merce caricata lateralmente', _caricataLateralmente, (value) {
+                        setState(() {
+                          _caricataLateralmente = value;
+                        });
+                      }),
+                      _buildSwitchOption('Merce pagata in contrassegno', _pagataContrassegno, (value) {
+                        setState(() {
+                          _pagataContrassegno = value;
+                        });
+                      }),
+                      _buildSwitchOption('Problemi di viabilità', _problemiViabilita, (value) {
+                        setState(() {
+                          _problemiViabilita = value;
+                        });
+                      }),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  Divider(color: Colors.grey, thickness: 1),
+                  SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Icon(Icons.shopping_basket, color: Colors.orange, size: 24),
+                      SizedBox(width: 8),
+                      Text(
+                        'Dettagli Merce',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Tipo Imballo*',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            SizedBox(
+                              height: 40,
+                              child: TextField(
+                                decoration: InputDecoration(
+                                  hintText: 'Inserisci tipo imballo...',
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Descrizione*',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            SizedBox(
+                              height: 40,
+                              child: TextField(
+                                decoration: InputDecoration(
+                                  hintText: 'Inserisci descrizione...',
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Quantità (nr)*',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            SizedBox(
+                              height: 40,
+                              child: TextField(
+                                keyboardType: TextInputType.number,
+                                decoration: InputDecoration(
+                                  hintText: 'Inserisci quantità...',
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                   Row(
+                  children: [
+                    // Quantità
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Quantità (nr)*',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          SizedBox(
+                            height: 40,
+                            child: TextField(
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(RegExp(r'^[0-9]*\.?[0-9]*$')),
+                              ],
+                              decoration: InputDecoration(
+                                hintText: 'Inserisci quantità...',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(color: Colors.grey),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    // Peso Totale
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Peso Totale (kg)*',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          SizedBox(
+                            height: 40,
+                            child: TextField(
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(RegExp(r'^[0-9]*\.?[0-9]*$')),
+                              ],
+                              decoration: InputDecoration(
+                                hintText: 'Inserisci peso...',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(color: Colors.grey),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _quantityController,
-                      decoration: InputDecoration(
-                        hintText: 'Quantità (nr)',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide(color: Colors.grey),
-                        ),
+                SizedBox(height: 10),
+                Row(
+                  children: [
+                    // Lunghezza
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Lunghezza (cm)*',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          SizedBox(
+                            height: 40,
+                            child: TextField(
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(RegExp(r'^[0-9]*\.?[0-9]*$')),
+                              ],
+                              decoration: InputDecoration(
+                                hintText: 'Inserisci lunghezza...',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(color: Colors.grey),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: TextField(
-                      controller: _weightController,
-                      decoration: InputDecoration(
-                        hintText: 'Peso totale (kg)',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide(color: Colors.grey),
-                        ),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Larghezza (cm)*',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          SizedBox(
+                            height: 40,
+                            child: TextField(
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(RegExp(r'^[0-9]*\.?[0-9]*$')),
+                              ],
+                              decoration: InputDecoration(
+                                hintText: 'Inserisci larghezza...',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(color: Colors.grey),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _lengthController,
-                      decoration: InputDecoration(
-                        hintText: 'Lunghezza (cm)',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide(color: Colors.grey),
-                        ),
+                  ],
+                ),
+                SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Altezza (cm)*',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          SizedBox(
+                            height: 40,
+                            child: TextField(
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(RegExp(r'^[0-9]*\.?[0-9]*$')),
+                              ],
+                              decoration: InputDecoration(
+                                hintText: 'Inserisci altezza...',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(color: Colors.grey),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: TextField(
-                      controller: _widthController,
-                      decoration: InputDecoration(
-                        hintText: 'Larghezza (cm)',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide(color: Colors.grey),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _heightController,
-                      decoration: InputDecoration(
-                        hintText: 'Altezza (cm)',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide(color: Colors.grey),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 10),
-                  IconButton(
-                    icon: Icon(Icons.add, color: Colors.orange),
-                    onPressed: _addMerce, 
-                  ),
-                ],
-              ),
-              SizedBox(height: 20),
-              Divider(
-                color: Colors.grey,
-                thickness: 1, 
-              ),
-              SizedBox(height: 20),
-          ),
-        ),
-        floatingActionButton: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            FloatingActionButton(
-              onPressed: _saveOrder,
-              backgroundColor: Colors.orange,
-              foregroundColor: Colors.white,
-              tooltip: 'Salva Ordine',
-              child: Icon(Icons.save, size: 30),
+                  ],
+                ),
+                SizedBox(height: 20),
+              ],
             ),
-            SizedBox(width: 10), 
-            FloatingActionButton(
-              onPressed: _cancelOrder,
-              backgroundColor: Colors.grey,
-              foregroundColor: Colors.white,
-              tooltip: 'Annulla',
-              child: Icon(Icons.close, size: 30),
+          ),
+            Positioned(
+              bottom: 20,
+              right: 20,
+              child: FloatingActionButton(
+                onPressed: _saveOrder,
+                backgroundColor: Colors.orange,
+                child: Icon(Icons.check, color: Colors.white),
+              ),
             ),
           ],
         ),
-      );
+      ),
+    );
+  }
+  Widget _buildSwitchOption(String title, bool value, Function(bool) onChanged) {
+    return Expanded(
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 8.0),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            Switch(
+              value: value,
+              onChanged: onChanged,
+              activeColor: Colors.orange,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
