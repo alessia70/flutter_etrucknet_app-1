@@ -62,10 +62,10 @@ class _FlottaScreenState extends State<FlottaScreen> {
           veicoli = data.map((veicolo) {
             return {
               'id' : veicolo['id']?.toString() ?? '',
-              'tipo': veicolo['tipoAutomezzoString'] as String ?? '',
-              'allestimento': veicolo['tipoAllestimentoString'] as String ?? '',
-              'specifiche': veicolo['specificheString'] as String ?? '',
-              'descrizione': veicolo['descrizioneCompletaString'] as String ?? '',
+              'tipo': veicolo['tipoAutomezzoString'] as String,
+              'allestimento': veicolo['tipoAllestimentoString'] as String,
+              'specifiche': veicolo['specificheString'] as String,
+              'descrizione': veicolo['descrizioneCompletaString'] as String,
             };
           }).toList();
           veicoliFiltrati = List.from(veicoli); 
@@ -319,9 +319,9 @@ class _FlottaScreenState extends State<FlottaScreen> {
         setState(() {
           veicoli.add({
             'id': nuovoVeicolo['id'].toString(),
-            'tipo': nuovoVeicolo['tipoAutomezzoString'] as String ?? '',
-            'allestimento': nuovoVeicolo['tipoAllestimentoString'] as String ?? '',
-            'specifiche': nuovoVeicolo['specificheString'] as String ?? '',
+            'tipo': nuovoVeicolo['tipoAutomezzoString'] as String,
+            'allestimento': nuovoVeicolo['tipoAllestimentoString'] as String,
+            'specifiche': nuovoVeicolo['specificheString'] as String,
           });
           veicoliFiltrati = List.from(veicoli);
         });

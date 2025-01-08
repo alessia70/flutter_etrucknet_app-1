@@ -246,7 +246,7 @@ class _CamionDisponibiliTPageState extends State<CamionDisponibiliTPage> {
               style: TextStyle(fontSize: 16),
             ),
             Text(
-              'Data di Ritiro: ${camion.dataRitiro != null ? '${camion.dataRitiro!.day}/${camion.dataRitiro!.month}/${camion.dataRitiro!.year}' : 'N/A'}',
+              'Data di Ritiro: ${camion.dataRitiro != " " ? '${camion.dataRitiro.day}/${camion.dataRitiro.month}/${camion.dataRitiro.year}' : 'N/A'}',
               style: TextStyle(fontSize: 16),
             ),
             Text(
@@ -285,10 +285,10 @@ class _CamionDisponibiliTPageState extends State<CamionDisponibiliTPage> {
   }
   DataRow _buildDataRow(Camion camion) {
     return DataRow(cells: [
-      DataCell(Text(camion.tipoMezzo /*?? ''*/)),
-      DataCell(Text(camion.spazioDisponibile.toString() ?? '0')),
+      DataCell(Text(camion.tipoMezzo)),
+      DataCell(Text(camion.spazioDisponibile.toString())),
       DataCell(Text(camion.localitaCarico ?? 'Non specificato')),
-      DataCell(Text(camion.dataRitiro != null ?'${camion.dataRitiro.day}/${camion.dataRitiro.month}/${camion.dataRitiro.year}' : 'N/A')),
+      DataCell(Text(camion.dataRitiro != " " ? '${camion.dataRitiro.day}/${camion.dataRitiro.month}/${camion.dataRitiro.year}' : 'N/A')),
       DataCell(Text(camion.localitaScarico ?? 'Non specificato')),
       DataCell(Row(
         children: [

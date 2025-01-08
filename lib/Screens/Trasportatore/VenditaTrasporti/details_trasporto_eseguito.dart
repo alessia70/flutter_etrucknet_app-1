@@ -10,10 +10,10 @@ class TransportoEseguitioDetailPage extends StatelessWidget {
   final String dataRitiro;
   final String localitaConsegna;
   final String dataConsegna;
-  final List<Map<String, String>> dettagliTrasporto;
+  final List<Map<String, dynamic>> dettagliTrasporto;
   final String mezziAllestimenti;
   final String ulterioriSpecifiche;
-  final List<Map<String, String>> dettagliMerce;
+  final List<Map<String, dynamic>> dettagliMerce;
 
 
   TransportoEseguitioDetailPage({

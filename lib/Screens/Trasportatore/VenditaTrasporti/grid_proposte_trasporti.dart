@@ -26,7 +26,7 @@ class _TrasportiGridState extends State<TrasportiGrid> {
   int? tolleranza;
   String? allestimento;
 
-  List<Map<String, String>> veicoliFiltrati = [];
+  List<Map<String, dynamic>> veicoliFiltrati = [];
 
   @override
   void initState() {
@@ -293,7 +293,7 @@ class _TrasportiGridState extends State<TrasportiGrid> {
     );
   }
 
-  void _showEditTruckDialog(BuildContext context, Map<String, String> veicolo) {
+  void _showEditTruckDialog(BuildContext context, Map<String, dynamic> veicolo) {
     TextEditingController nameController = TextEditingController(text: veicolo['name'] ?? '');
 
     showDialog(
@@ -335,7 +335,7 @@ class _TrasportiGridState extends State<TrasportiGrid> {
     );
   }
 
-  void _showDeleteConfirmationDialog(BuildContext context, Map<String, String> veicolo) {
+  void _showDeleteConfirmationDialog(BuildContext context, Map<String, dynamic> veicolo) {
     showDialog(
       context: context,
       builder: (BuildContext context) {

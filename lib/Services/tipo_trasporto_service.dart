@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Models/tipoTrasporto_model.dart';
 
 class TipoTrasportoService {
@@ -31,5 +32,160 @@ class TipoTrasportoService {
       TipoTrasporto(id: 26, name: "Cisternati alimenti"),
       TipoTrasporto(id: 27, name: "Opere d'arte"),
     ];
+  }
+  void showTipoTrasportoDialog(BuildContext context, TipoTrasporto tipoTrasporto) {
+    String dialogMessage = "";
+
+    bool isChecked = false;
+    double selectedTemperature = 0;
+
+    List<String> allestimenti = ["Bancali", "Containers", "Altro"];
+    String selectedAllestimento = "Allestimento 1";
+
+    TextEditingController certificazioneController = TextEditingController();
+
+    switch (tipoTrasporto.id) {
+      case 2:
+        dialogMessage = "Hai selezionato: Temperatura positiva.";
+        break;
+      case 3:
+        dialogMessage = "Hai selezionato: Temperatura negativa.";
+        break;
+      case 4:
+        dialogMessage = "Hai selezionato: Trasporto auto.";
+        break;
+      case 5:
+        dialogMessage = "Hai selezionato: ADR merce pericolosa.";
+        break;
+      case 9:
+        dialogMessage = "Hai selezionato: Rifiuti.";
+        break;
+      case 10:
+        dialogMessage = "Hai selezionato: Via mare.";
+        break;
+      case 24:
+        dialogMessage = "Hai selezionato: Cisternati Chimici.";
+        break;
+      default:
+        dialogMessage = "Hai selezionato: ${tipoTrasporto.name}. Non sono disponibili dettagli aggiuntivi.";
+    }
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Tipo Trasporto: ${tipoTrasporto.name}'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(dialogMessage),
+              SizedBox(height: 10),
+              if (tipoTrasporto.id == 2) ...[
+                Text("Seleziona la temperatura:"),
+                Slider(
+                  value: selectedTemperature,
+                  min: 0,
+                  max: 15,
+                  divisions: 15,
+                  label: "${selectedTemperature.toStringAsFixed(0)}°C",
+                  onChanged: (double newValue) {
+                    selectedTemperature = newValue;
+                  },
+                ),
+                Text("Temperatura selezionata: ${selectedTemperature.toStringAsFixed(0)}°C"),
+              ],
+              if (tipoTrasporto.id == 3) ...[
+                Text("Seleziona la temperatura:"),
+                Slider(
+                  value: selectedTemperature,
+                  min: -24,
+                  max: -1,
+                  divisions: 15,
+                  label: "${selectedTemperature.toStringAsFixed(0)}°C",
+                  onChanged: (double newValue) {
+                    selectedTemperature = newValue;
+                  },
+                ),
+                Text("Temperatura selezionata: ${selectedTemperature.toStringAsFixed(0)}°C"),
+              ],
+              if (tipoTrasporto.id == 4) ...[
+                 Text("Seleziona l'allestimento:"),
+                DropdownButton<String>(
+                  value: selectedAllestimento,
+                  onChanged: null,
+                  items: allestimenti.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+                Text(
+                  "Per la tipologia di trasporto indicata non è possibile selezionare allestimenti differenti.",
+                  style: TextStyle(
+                    color: Colors.orange,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ],
+              if (tipoTrasporto.id == 5) ...[
+                Row(
+                  children: [
+                    Checkbox(
+                      value: isChecked,
+                      onChanged: (bool? value) {
+                        isChecked = value!;
+                      },
+                    ),
+                    Text("Accetto i termini e condizioni per trasporto pericoloso"),
+                  ],
+                ),
+              ],
+              if (tipoTrasporto.id == 9) ...[
+                 Text(
+                  "Indicare la certificazione valida per il trasporto selezionato:",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                TextField(
+                  controller: certificazioneController,
+                  decoration: InputDecoration(
+                    hintText: "Es. Certificazione rifiuti 2025",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ],
+              if (tipoTrasporto.id == 10 || tipoTrasporto.id == 24) ...[
+                 Text("Seleziona l'allestimento:"),
+                DropdownButton<String>(
+                  value: selectedAllestimento,
+                  onChanged: null,
+                  items: allestimenti.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+                Text(
+                  "Per la tipologia di trasporto indicata non è possibile selezionare allestimenti differenti.",
+                  style: TextStyle(
+                    color: Colors.orange,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ],
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Chiudi'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

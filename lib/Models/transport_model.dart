@@ -90,9 +90,9 @@ class Transport {
       distanza: json['distanza'],
       tempo: json['tempo'],
       localitaRitiro: json['localitaRitiro'],
-      dataRitiro: json['dataRitiro'] != null ? DateTime.parse(json['dataRitiro']) : null,
+      dataRitiro: json['dataRitiro'] != null ? DateTime.parse(json['dataRitiro']!) : null,
       localitaConsegna: json['localitaConsegna'],
-      dataConsegna: json['dataConsegna'] != null ? DateTime.parse(json['dataConsegna']) : null,
+      dataConsegna: json['dataConsegna'] != null ? DateTime.parse(json['dataConsegna']!) : null,
       mezziAllestimenti: json['mezziAllestimenti'],
       ulterioriSpecifiche: json['ulterioriSpecifiche'],
       dettagliTrasporto: (json['dettagliTrasporto'] as List<dynamic>?)

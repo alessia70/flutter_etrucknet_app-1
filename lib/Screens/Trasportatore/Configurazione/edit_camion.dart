@@ -15,8 +15,7 @@ class EditCamionDialog extends StatefulWidget {
 
 class _EditCamionDialogState extends State<EditCamionDialog> {
   final _formKey = GlobalKey<FormState>();
-
-  // Controller per i campi
+  
   late TextEditingController tipoMezzoController;
   late TextEditingController spazioController;
   late TextEditingController luogoRitiroController;
@@ -28,7 +27,7 @@ class _EditCamionDialogState extends State<EditCamionDialog> {
     super.initState();
     tipoMezzoController = TextEditingController(text: widget.camion.tipoMezzo);
     spazioController = TextEditingController(
-        text: widget.camion.spazioDisponibile.toString() ?? '');
+        text: widget.camion.spazioDisponibile.toString());
     luogoRitiroController =
         TextEditingController(text: widget.camion.localitaCarico);
     luogoConsegnaController =

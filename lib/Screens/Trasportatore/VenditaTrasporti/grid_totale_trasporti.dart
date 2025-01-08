@@ -44,7 +44,6 @@ class _TotaleTrasportiGridState extends State<TotaleTrasportiGrid> {
         print('Errore: userId o token non trovato');
         return;
       }
-
       setState(() {
         this.trasportatoreId = trasportatoreId;
       });
@@ -70,28 +69,24 @@ class _TotaleTrasportiGridState extends State<TotaleTrasportiGrid> {
   Future<void> _fetchTransports(String token) async {
     try {
       final trasportatoreId = this.trasportatoreId;
-      final startDate = DateTime(2000, 1, 1);
-
-      DateTime endDate = DateTime(2080, 1, 1);
-      endDate = DateTime(endDate.year, endDate.month + 1, 1);
-
       final url = Uri.parse(
-         'https://etrucknetapi.azurewebsites.net/v1/Proposte/$trasportatoreId'
-      );
+          'https://etrucknetapi.azurewebsites.net/v1/Proposte/$trasportatoreId');
 
       final response = await http.get(
         url,
         headers: {'Authorization': 'Bearer $token'},
       );
-
       if (response.statusCode == 200) {
         final Map<String, dynamic> jsonResponse = json.decode(response.body);
-
+        
         if (jsonResponse['data'] != null && jsonResponse['data'] is List) {
           List<dynamic> data = jsonResponse['data'];
 
           setState(() {
-            rdtEseguiti = data.map((item) => Transport.fromJson(item)).toList();
+            rdtEseguiti = data.map((item) {
+              print(item); 
+              return Transport.fromJson(item as Map<String, dynamic>);
+            }).toList();
           });
         } else {
           print('Nessun trasporto trovato.');
@@ -111,14 +106,11 @@ class _TotaleTrasportiGridState extends State<TotaleTrasportiGrid> {
         print('Errore: token non trovato');
         return;
       }
-
       final url = Uri.parse('https://etrucknetapi.azurewebsites.net/v1/Proposte/$trasportatoreId/$transportId');
-
       final response = await http.delete(
         url,
         headers: {'Authorization': 'Bearer $token'},
       );
-
       if (response.statusCode == 204) {
         print('Trasporto eliminato con successo');
         _fetchTransports(token);
@@ -162,7 +154,7 @@ class _TotaleTrasportiGridState extends State<TotaleTrasportiGrid> {
                         DataColumn(label: Text('Status')),
                         DataColumn(label: Text('Azioni')),
                       ],
-                      rows: widget.totTrasporti.map((transport) {
+                      rows: rdtEseguiti.map((transport) {
                         return DataRow(cells: [
                           DataCell(Text(transport.ordineId.toString())),
                           DataCell(Column(

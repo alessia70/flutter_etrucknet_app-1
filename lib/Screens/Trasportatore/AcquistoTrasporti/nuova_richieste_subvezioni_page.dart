@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Models/allestimento_model.dart';
 import 'package:flutter_etrucknet_new/Models/mezzo_allestimento_model.dart';
+import 'package:flutter_etrucknet_new/Models/specifiche_model.dart';
 import 'package:flutter_etrucknet_new/Models/tipoTrasporto_model.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/profile_menu_t_screen.dart';
 import 'package:flutter_etrucknet_new/Services/mezzo_allestimento_service.dart';
+import 'package:flutter_etrucknet_new/Services/tipiSpecifiche_services.dart';
 import 'package:flutter_etrucknet_new/Services/tipoAllestimento_services.dart';
 import 'package:flutter_etrucknet_new/Services/tipo_trasporto_service.dart';
 import 'package:provider/provider.dart';
@@ -19,7 +21,6 @@ class NuovaRichiestaSubvezioneScreen extends StatefulWidget {
 class _NuovaRichiestaSubvezioneScreenState extends State<NuovaRichiestaSubvezioneScreen> {
   String? _ritiro;
   String? _consegna;
-  String? _specifiche;
   String? _selectedImballo;
   // ignore: unused_field
   String _altreInfo = '';
@@ -43,8 +44,11 @@ class _NuovaRichiestaSubvezioneScreenState extends State<NuovaRichiestaSubvezion
   final TextEditingController _larghezzaController = TextEditingController();
   final TextEditingController _altezzaController = TextEditingController();
   final TipoAllestimentoService tipoAllestimentoService = TipoAllestimentoService();
+  final TipiSpecificheService tipoSpecificaService = TipiSpecificheService();
 
   List<Allestimento> allestimenti = [];
+  List<Specifica> specifiche = [];
+  int? _selectedSpecificheId; 
 
   Future<void> _fetchTipiTrasporto() async {
     try {
@@ -73,18 +77,30 @@ class _NuovaRichiestaSubvezioneScreenState extends State<NuovaRichiestaSubvezion
       setState(() {
         allestimenti = allestimentiData;
       });
-      print(allestimenti);
     } catch (e) {
       print("Errore nel recupero degli allestimenti: $e");
     }
   }
 
+  Future<void> _loadSpecifiche() async {
+    try {
+      final specificheData = await tipoSpecificaService.fetchSpecifiche();
+      setState(() {
+        specifiche = specificheData;
+      });
+    } catch (e) {
+      print("Errore nel recupero degli allestimenti: $e");
+    }
+  }
+
+  
   @override
   void initState() {
     super.initState();
     _loadAllestimenti();
     _fetchTipiTrasporto();
-    //_fetchTipiMezzoAllestimento();
+    _fetchTipiMezzoAllestimento();
+    _loadSpecifiche();
   }
 
   @override
@@ -280,7 +296,7 @@ class _NuovaRichiestaSubvezioneScreenState extends State<NuovaRichiestaSubvezion
   }
 
   Widget _buildSpecificheField() {
-    return Column(
+     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
@@ -295,32 +311,32 @@ class _NuovaRichiestaSubvezioneScreenState extends State<NuovaRichiestaSubvezion
         ),
         SizedBox(height: 8),
         Container(
-          height: 56,
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+          height: 40,
+          padding: EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.circular(4),
+            border: Border.all(color: Colors.grey),
+            borderRadius: BorderRadius.circular(10),
           ),
-          child: DropdownButton<String>(
-            value: _specifiche,
-            hint: Text('Seleziona specifiche'),
+          child: DropdownButton<int>(
+            value: _selectedSpecificheId,
             isExpanded: true,
             underline: SizedBox(),
-            isDense: true,
-            items: <String>[
-              'Nessuna',
-              'Fragile',
-              'Pericoloso'
-            ].map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-            onChanged: (String? newValue) {
+            items: specifiche.isEmpty
+                ? [
+                    DropdownMenuItem<int>(
+                      value: null,
+                      child: Text('Caricamento...'),
+                    )
+                  ]
+                : specifiche.map((specifica) {
+                    return DropdownMenuItem<int>(
+                      value: specifica.idtipo_specifica,
+                      child: Text(specifica.descrizione),
+                    );
+                  }).toList(),
+            onChanged: (newValue) {
               setState(() {
-                _specifiche = newValue;
+                _selectedSpecificheId = newValue;
               });
             },
           ),
@@ -367,7 +383,7 @@ class _NuovaRichiestaSubvezioneScreenState extends State<NuovaRichiestaSubvezion
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: Colors.orange, // Cambiato il colore attivo a arancione
+            activeColor: Colors.orange,
           ),
         ],
       ),
@@ -432,9 +448,9 @@ class _NuovaRichiestaSubvezioneScreenState extends State<NuovaRichiestaSubvezion
             underline: SizedBox(),
             isDense: true,
             items: <String>[
-              'Cartone',
-              'Plastica',
-              'Legno',
+              'Bancali',
+              'Containers',
+              'Altro',
             ].map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
                 value: value,
