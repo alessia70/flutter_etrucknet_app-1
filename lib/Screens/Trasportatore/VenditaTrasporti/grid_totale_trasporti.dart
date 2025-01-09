@@ -15,7 +15,6 @@ class TotaleTrasportiGrid extends StatefulWidget {
 }
 
 class _TotaleTrasportiGridState extends State<TotaleTrasportiGrid> {
-  int _selectedStar = 0;
   int trasportatoreId = 0;
   late List<Transport> rdtEseguiti = [];
 
@@ -81,10 +80,8 @@ class _TotaleTrasportiGridState extends State<TotaleTrasportiGrid> {
         
         if (jsonResponse['data'] != null && jsonResponse['data'] is List) {
           List<dynamic> data = jsonResponse['data'];
-
           setState(() {
             rdtEseguiti = data.map((item) {
-              print(item); 
               return Transport.fromJson(item as Map<String, dynamic>);
             }).toList();
           });
@@ -160,18 +157,18 @@ class _TotaleTrasportiGridState extends State<TotaleTrasportiGrid> {
                           DataCell(Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(transport.carico ?? ''),
+                              Text(transport.carico),
                               Text(DateFormat('dd/MM/yyyy').format(transport.dataInizio)),
                             ],
                           )),
                           DataCell(Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(transport.scarico ?? ''),
+                              Text(transport.scarico),
                               Text(DateFormat('dd/MM/yyyy').format(transport.dataFine)),
                             ],
                           )),
-                          DataCell(Text(getEsitoString(transport.esito ?? 0))),
+                          DataCell(Text(getEsitoString(transport.esito))),
                           DataCell(Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [

@@ -55,6 +55,9 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
   DateTime? _pickupDate;
   DateTime? _deliveryDate;
 
+  double selectedTemperature = 0.0;
+  double selectedTemperatureN = -24.0;
+
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
   final TextEditingController _weightController = TextEditingController();
@@ -69,7 +72,7 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
   List<TipoMezzoSpecifiche> specifiche = [];
   TipoMezzoSpecifiche? selectedSpecifica;
 
-
+  String? _selectedImballo;
   /*final OrderLogic _orderLogic = OrderLogic();
   String? _selectedTransportType;
   double? _selectedTemperature;*/
@@ -113,7 +116,6 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
       setState(() {
         allestimenti = allestimentiData;
       });
-      print(allestimenti);
     } catch (e) {
       print("Errore nel recupero degli allestimenti: $e");
     }
@@ -125,7 +127,6 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
       setState(() {
         specifiche = specificheData;
       });
-      print(specifiche);
     } catch (e) {
       print("Errore nel recupero degli allestimenti: $e");
     }
@@ -256,6 +257,9 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
 
   @override
   Widget build(BuildContext context) {
+    TipoTrasporto tipoTrasporto = TipoTrasporto(id: -1, name: 'Sconosciuto');
+    List<int> transportBlockedIds = [4, 10, 24];
+    bool isTransportBlocked = transportBlockedIds.contains(tipoTrasporto.id);
     return Scaffold(
       appBar: AppBar(
         title: Text('Aggiungi Ordine'),
@@ -332,6 +336,26 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
                         setState(() {
                           _selectedTrasportoId = newValue;
                         });
+                        TipoTrasporto? selectedTrasporto = tipiTrasporto.firstWhere(
+                          (trasporto) => trasporto.id == newValue,
+                          orElse: () => TipoTrasporto(id: -1, name: 'Trasporto sconosciuto'),
+                        );
+                        TipoTrasportoService().showTipoTrasportoDialog(
+                          context,
+                          selectedTrasporto,
+                          selectedTemperature,
+                          selectedTemperatureN,
+                          (double newTemperature) {
+                            setState(() {
+                              selectedTemperature = newTemperature;
+                            });
+                          },
+                          (double newTemperatureN) {
+                            setState(() {
+                              selectedTemperatureN = newTemperatureN;
+                            });
+                          },
+                        );
                       },
                     ),
                   ),
@@ -525,11 +549,28 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
                           child: Text(allestimento.name),
                         );
                       }).toList(),
-                      onChanged: (newValue) {
-                        setState(() {
-                          _selectedMezzoAllestimentoId = newValue!;
-                        });
-                      },
+                    onChanged: isTransportBlocked
+                            ? null
+                            : (newValue) {
+                                setState(() {
+                                  _selectedMezzoAllestimentoId = newValue!;
+                                });
+                              },
+                      ),
+                    ),
+                    if (isTransportBlocked)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          "Per la tipologia di trasporto indicata non è possibile selezionare allestimenti differenti.",
+                          style: TextStyle(
+                            color: Colors.orange,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                      ),
+                      ]
+              )
                     ),
                   ),
                   SizedBox(height: 20),
@@ -629,14 +670,25 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
                             SizedBox(height: 8),
                             SizedBox(
                               height: 40,
-                              child: TextField(
-                                decoration: InputDecoration(
-                                  hintText: 'Inserisci tipo imballo...',
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    borderSide: BorderSide(color: Colors.grey),
-                                  ),
-                                ),
+                              child: DropdownButton<String>(
+                                value: _selectedImballo,
+                                hint: Text('Seleziona tipo di imballo'),
+                                isExpanded: true,
+                                underline: SizedBox(),
+                                isDense: true,
+                                items: <String>[
+                                  'Bancali',
+                                  'Containers',
+                                  'Altro',
+                                ].map<DropdownMenuItem<String>>((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                                onChanged: (String? newValue) {
+                                  _selectedImballo = newValue;
+                                },
                               ),
                             ),
                           ],

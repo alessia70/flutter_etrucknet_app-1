@@ -31,6 +31,9 @@ class _NuovaStimaScreenState extends State<NuovaStimaScreen> {
   bool _pagataContrassegno = false;
   bool _problemiViabilita = false;
 
+  double selectedTemperature = 0.0;
+  double selectedTemperatureN = -24.0;
+
   final TextEditingController _quantitaController = TextEditingController();
   final TextEditingController _pesoController = TextEditingController();
   final TextEditingController _lunghezzaController = TextEditingController();
@@ -194,6 +197,26 @@ class _NuovaStimaScreenState extends State<NuovaStimaScreen> {
               setState(() {
                 _selectedTrasportoId = newValue;
               });
+              TipoTrasporto? selectedTrasporto = tipiTrasporto.firstWhere(
+                (trasporto) => trasporto.id == newValue,
+                orElse: () => TipoTrasporto(id: -1, name: 'Trasporto sconosciuto'),
+              );
+              TipoTrasportoService().showTipoTrasportoDialog(
+                context,
+                selectedTrasporto,
+                selectedTemperature,
+                selectedTemperatureN,
+                (double newTemperature) {
+                  setState(() {
+                    selectedTemperature = newTemperature;
+                  });
+                },
+                (double newTemperatureN) {
+                  setState(() {
+                    selectedTemperatureN = newTemperatureN;
+                  });
+                },
+              );
             },
           ),
         ),
@@ -428,9 +451,9 @@ class _NuovaStimaScreenState extends State<NuovaStimaScreen> {
             underline: SizedBox(),
             isDense: true,
             items: <String>[
-              'Cartone',
-              'Plastica',
-              'Legno',
+              'Bancali',
+              'Containers',
+              'Altro',
             ].map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
                 value: value,

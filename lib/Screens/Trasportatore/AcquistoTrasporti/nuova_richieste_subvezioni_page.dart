@@ -26,6 +26,9 @@ class _NuovaRichiestaSubvezioneScreenState extends State<NuovaRichiestaSubvezion
   String _altreInfo = '';
   late final String token;
 
+  double selectedTemperature = 0.0;
+  double selectedTemperatureN = -24.0;
+
   bool _caricataLateralmente = false;
   bool _pagataContrassegno = false;
   bool _problemiViabilita = false;
@@ -148,7 +151,7 @@ class _NuovaRichiestaSubvezioneScreenState extends State<NuovaRichiestaSubvezion
                   });
                 }),
                 SizedBox(height: 20),
-                _buildMezzoField(),
+                _buildMezzoField(tipiTrasporto.firstWhere((tipo) => tipo.id == _selectedTrasportoId)),
                 SizedBox(height: 20),
                 _buildSpecificheField(),
                 SizedBox(height: 20),
@@ -210,6 +213,26 @@ class _NuovaRichiestaSubvezioneScreenState extends State<NuovaRichiestaSubvezion
               setState(() {
                 _selectedTrasportoId = newValue;
               });
+              TipoTrasporto? selectedTrasporto = tipiTrasporto.firstWhere(
+                (trasporto) => trasporto.id == newValue,
+                orElse: () => TipoTrasporto(id: -1, name: 'Trasporto sconosciuto'),
+              );
+              TipoTrasportoService().showTipoTrasportoDialog(
+                context,
+                selectedTrasporto,
+                selectedTemperature,
+                selectedTemperatureN,
+                (double newTemperature) {
+                  setState(() {
+                    selectedTemperature = newTemperature;
+                  });
+                },
+                (double newTemperatureN) {
+                  setState(() {
+                    selectedTemperatureN = newTemperatureN;
+                  });
+                },
+              );
             },
           ),
         ),
@@ -252,7 +275,9 @@ class _NuovaRichiestaSubvezioneScreenState extends State<NuovaRichiestaSubvezion
     );
   }
 
-  Widget _buildMezzoField() {
+  Widget _buildMezzoField(TipoTrasporto tipoTrasporto) {
+    List<int> transportBlockedIds = [4, 10, 24];
+    bool isTransportBlocked = transportBlockedIds.contains(tipoTrasporto.id);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -284,11 +309,24 @@ class _NuovaRichiestaSubvezioneScreenState extends State<NuovaRichiestaSubvezion
                 child: Text(allestimento.name),
               );
             }).toList(),
-            onChanged: (newValue) {
-              setState(() {
-                _selectedMezzoAllestimentoId = newValue!;
-              });
-            },
+            onChanged: isTransportBlocked
+              ? null
+              : (newValue) {
+                  setState(() {
+                    _selectedMezzoAllestimentoId = newValue!;
+                  });
+                },
+        ),
+      ),
+      if (isTransportBlocked)
+        Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: Text(
+            "Per la tipologia di trasporto indicata non è possibile selezionare allestimenti differenti.",
+            style: TextStyle(
+              color: Colors.orange,
+              fontStyle: FontStyle.italic,
+            ),
           ),
         ),
       ],
