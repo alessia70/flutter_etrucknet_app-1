@@ -549,188 +549,218 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
                           child: Text(allestimento.name),
                         );
                       }).toList(),
-                    onChanged: isTransportBlocked
-                            ? null
-                            : (newValue) {
-                                setState(() {
-                                  _selectedMezzoAllestimentoId = newValue!;
-                                });
-                              },
+                      onChanged: isTransportBlocked
+                          ? null
+                          : (newValue) {
+                              setState(() {
+                                _selectedMezzoAllestimentoId = newValue!;
+                              });
+                            },
+                    ),
+                  ),
+                  if (isTransportBlocked)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        "Per la tipologia di trasporto indicata non è possibile selezionare allestimenti differenti.",
+                        style: TextStyle(
+                          color: Colors.orange,
+                          fontStyle: FontStyle.italic,
+                        ),
                       ),
                     ),
-                    if (isTransportBlocked)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: Text(
-                          "Per la tipologia di trasporto indicata non è possibile selezionare allestimenti differenti.",
+                    SizedBox(height: 20),
+                    Divider(color: Colors.grey, thickness: 1),
+                    SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Icon(Icons.archive, color: Colors.orange, size: 24),
+                        SizedBox(width: 8),
+                        Text(
+                          'Ulteriori Specifiche',
                           style: TextStyle(
-                            color: Colors.orange,
-                            fontStyle: FontStyle.italic,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                      ),
-                      ]
-              )
+                      ],
                     ),
-                  ),
-                  SizedBox(height: 20),
-                  Divider(color: Colors.grey, thickness: 1),
-                  SizedBox(height: 20),
-                  Row(
-                    children: [
-                      Icon(Icons.archive, color: Colors.orange, size: 24),
-                      SizedBox(width: 8),
-                      Text(
-                        'Ulteriori Specifiche',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    SizedBox(height: 10),
+                    Container(
+                      height: 40,
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  Container(
-                    height: 40,
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(10),
+                      child: DropdownButton<TipoMezzoSpecifiche>(
+                        value: selectedSpecifica,
+                        isExpanded: true,
+                        underline: SizedBox(),
+                        hint: Text('Seleziona una specifica'),
+                        items: specifiche.map((TipoMezzoSpecifiche specifica) {
+                          return DropdownMenuItem<TipoMezzoSpecifiche>(
+                            value: specifica,
+                            child: Text(specifica.descrizione),
+                          );
+                        }).toList(),
+                        onChanged: (TipoMezzoSpecifiche? nuovaSpecifica) {
+                          setState(() {
+                            selectedSpecifica = nuovaSpecifica;
+                          });
+                          print('Specifica selezionata: ${nuovaSpecifica?.descrizione}');
+                        },
+                        icon: Icon(Icons.arrow_drop_down),
+                      ),
                     ),
-                    child: DropdownButton<TipoMezzoSpecifiche>(
-                      value: selectedSpecifica,
-                      isExpanded: true,
-                      underline: SizedBox(),
-                      hint: Text('Seleziona una specifica'),
-                      items: specifiche.map((TipoMezzoSpecifiche specifica) {
-                        return DropdownMenuItem<TipoMezzoSpecifiche>(
-                          value: specifica,
-                          child: Text(specifica.descrizione),
-                        );
-                      }).toList(),
-                      onChanged: (TipoMezzoSpecifiche? nuovaSpecifica) {
-                        setState(() {
-                          selectedSpecifica = nuovaSpecifica;
-                        });
-                        print('Specifica selezionata: ${nuovaSpecifica?.descrizione}');
-                      },
-                      icon: Icon(Icons.arrow_drop_down),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _buildSwitchOption('Merce caricata lateralmente', _caricataLateralmente, (value) {
+                          setState(() {
+                            _caricataLateralmente = value;
+                          });
+                        }),
+                        _buildSwitchOption('Merce pagata in contrassegno', _pagataContrassegno, (value) {
+                          setState(() {
+                            _pagataContrassegno = value;
+                          });
+                        }),
+                        _buildSwitchOption('Problemi di viabilità', _problemiViabilita, (value) {
+                          setState(() {
+                            _problemiViabilita = value;
+                          });
+                        }),
+                      ],
                     ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _buildSwitchOption('Merce caricata lateralmente', _caricataLateralmente, (value) {
-                        setState(() {
-                          _caricataLateralmente = value;
-                        });
-                      }),
-                      _buildSwitchOption('Merce pagata in contrassegno', _pagataContrassegno, (value) {
-                        setState(() {
-                          _pagataContrassegno = value;
-                        });
-                      }),
-                      _buildSwitchOption('Problemi di viabilità', _problemiViabilita, (value) {
-                        setState(() {
-                          _problemiViabilita = value;
-                        });
-                      }),
-                    ],
-                  ),
-                  SizedBox(height: 20),
-                  Divider(color: Colors.grey, thickness: 1),
-                  SizedBox(height: 20),
-                  Row(
-                    children: [
-                      Icon(Icons.shopping_basket, color: Colors.orange, size: 24),
-                      SizedBox(width: 8),
-                      Text(
-                        'Dettagli Merce',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                    SizedBox(height: 20),
+                    Divider(color: Colors.grey, thickness: 1),
+                    SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Icon(Icons.shopping_basket, color: Colors.orange, size: 24),
+                        SizedBox(width: 8),
+                        Text(
+                          'Dettagli Merce',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Tipo Imballo*',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
+                      ],
+                    ),
+                    SizedBox(height: 10),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Tipo Imballo*',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                            SizedBox(height: 8),
-                            SizedBox(
-                              height: 40,
-                              child: DropdownButton<String>(
-                                value: _selectedImballo,
-                                hint: Text('Seleziona tipo di imballo'),
-                                isExpanded: true,
-                                underline: SizedBox(),
-                                isDense: true,
-                                items: <String>[
-                                  'Bancali',
-                                  'Containers',
-                                  'Altro',
-                                ].map<DropdownMenuItem<String>>((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),
-                                onChanged: (String? newValue) {
-                                  _selectedImballo = newValue;
-                                },
+                              SizedBox(height: 8),
+                              SizedBox(
+                                height: 40,
+                                child: DropdownButton<String>(
+                                  value: _selectedImballo,
+                                  hint: Text('Seleziona tipo di imballo'),
+                                  isExpanded: true,
+                                  underline: SizedBox(),
+                                  isDense: true,
+                                  items: <String>[
+                                    'Bancali',
+                                    'Containers',
+                                    'Altro',
+                                  ].map<DropdownMenuItem<String>>((String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(value),
+                                    );
+                                  }).toList(),
+                                  onChanged: (String? newValue) {
+                                    _selectedImballo = newValue;
+                                  },
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Descrizione*',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
+                      ],
+                    ),
+                    SizedBox(height: 10),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Descrizione*',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                            SizedBox(height: 8),
-                            SizedBox(
-                              height: 40,
-                              child: TextField(
-                                decoration: InputDecoration(
-                                  hintText: 'Inserisci descrizione...',
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    borderSide: BorderSide(color: Colors.grey),
+                              SizedBox(height: 8),
+                              SizedBox(
+                                height: 40,
+                                child: TextField(
+                                  decoration: InputDecoration(
+                                    hintText: 'Inserisci descrizione...',
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: BorderSide(color: Colors.grey),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  Row(
+                      ],
+                    ),
+                    SizedBox(height: 10),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Quantità (nr)*',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              SizedBox(
+                                height: 40,
+                                child: TextField(
+                                  keyboardType: TextInputType.number,
+                                  decoration: InputDecoration(
+                                    hintText: 'Inserisci quantità...',
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: BorderSide(color: Colors.grey),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 10),
+                    Row(
                     children: [
+                      // Quantità
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -746,9 +776,45 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
                             SizedBox(
                               height: 40,
                               child: TextField(
-                                keyboardType: TextInputType.number,
+                                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(RegExp(r'^[0-9]*\.?[0-9]*$')),
+                                ],
                                 decoration: InputDecoration(
                                   hintText: 'Inserisci quantità...',
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: 10),
+                      // Peso Totale
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Peso Totale (kg)*',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            SizedBox(
+                              height: 40,
+                              child: TextField(
+                                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(RegExp(r'^[0-9]*\.?[0-9]*$')),
+                                ],
+                                decoration: InputDecoration(
+                                  hintText: 'Inserisci peso...',
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                     borderSide: BorderSide(color: Colors.grey),
@@ -762,184 +828,114 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
                     ],
                   ),
                   SizedBox(height: 10),
-                   Row(
-                  children: [
-                    // Quantità
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Quantità (nr)*',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
+                  Row(
+                    children: [
+                      // Lunghezza
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Lunghezza (cm)*',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          SizedBox(height: 8),
-                          SizedBox(
-                            height: 40,
-                            child: TextField(
-                              keyboardType: TextInputType.numberWithOptions(decimal: true),
-                              inputFormatters: [
-                                FilteringTextInputFormatter.allow(RegExp(r'^[0-9]*\.?[0-9]*$')),
-                              ],
-                              decoration: InputDecoration(
-                                hintText: 'Inserisci quantità...',
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(color: Colors.grey),
+                            SizedBox(height: 8),
+                            SizedBox(
+                              height: 40,
+                              child: TextField(
+                                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(RegExp(r'^[0-9]*\.?[0-9]*$')),
+                                ],
+                                decoration: InputDecoration(
+                                  hintText: 'Inserisci lunghezza...',
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    SizedBox(width: 10),
-                    // Peso Totale
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Peso Totale (kg)*',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Larghezza (cm)*',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          SizedBox(height: 8),
-                          SizedBox(
-                            height: 40,
-                            child: TextField(
-                              keyboardType: TextInputType.numberWithOptions(decimal: true),
-                              inputFormatters: [
-                                FilteringTextInputFormatter.allow(RegExp(r'^[0-9]*\.?[0-9]*$')),
-                              ],
-                              decoration: InputDecoration(
-                                hintText: 'Inserisci peso...',
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(color: Colors.grey),
+                            SizedBox(height: 8),
+                            SizedBox(
+                              height: 40,
+                              child: TextField(
+                                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(RegExp(r'^[0-9]*\.?[0-9]*$')),
+                                ],
+                                decoration: InputDecoration(
+                                  hintText: 'Inserisci larghezza...',
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 10),
-                Row(
-                  children: [
-                    // Lunghezza
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Lunghezza (cm)*',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Altezza (cm)*',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          SizedBox(height: 8),
-                          SizedBox(
-                            height: 40,
-                            child: TextField(
-                              keyboardType: TextInputType.numberWithOptions(decimal: true),
-                              inputFormatters: [
-                                FilteringTextInputFormatter.allow(RegExp(r'^[0-9]*\.?[0-9]*$')),
-                              ],
-                              decoration: InputDecoration(
-                                hintText: 'Inserisci lunghezza...',
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(color: Colors.grey),
+                            SizedBox(height: 8),
+                            SizedBox(
+                              height: 40,
+                              child: TextField(
+                                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(RegExp(r'^[0-9]*\.?[0-9]*$')),
+                                ],
+                                decoration: InputDecoration(
+                                  hintText: 'Inserisci altezza...',
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Larghezza (cm)*',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 8),
-                          SizedBox(
-                            height: 40,
-                            child: TextField(
-                              keyboardType: TextInputType.numberWithOptions(decimal: true),
-                              inputFormatters: [
-                                FilteringTextInputFormatter.allow(RegExp(r'^[0-9]*\.?[0-9]*$')),
-                              ],
-                              decoration: InputDecoration(
-                                hintText: 'Inserisci larghezza...',
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(color: Colors.grey),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 10),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Altezza (cm)*',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 8),
-                          SizedBox(
-                            height: 40,
-                            child: TextField(
-                              keyboardType: TextInputType.numberWithOptions(decimal: true),
-                              inputFormatters: [
-                                FilteringTextInputFormatter.allow(RegExp(r'^[0-9]*\.?[0-9]*$')),
-                              ],
-                              decoration: InputDecoration(
-                                hintText: 'Inserisci altezza...',
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(color: Colors.grey),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 20),
-              ],
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                ],
+              ),
             ),
-          ),
             Positioned(
               bottom: 20,
               right: 20,
@@ -954,6 +950,7 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
       ),
     );
   }
+
   Widget _buildSwitchOption(String title, bool value, Function(bool) onChanged) {
     return Expanded(
       child: Container(

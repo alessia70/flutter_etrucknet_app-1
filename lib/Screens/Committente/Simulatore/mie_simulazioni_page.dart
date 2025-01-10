@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Screens/Committente/Simulatore/confronta_simulazioni_page.dart';
 import 'package:flutter_etrucknet_new/Screens/Committente/Simulatore/data_grid_simulazioni.dart';
-import 'package:flutter_etrucknet_new/Screens/Committente/Simulatore/nuova_simulazione_page.dart';
+import 'package:flutter_etrucknet_new/Screens/Committente/Simulatore/simula_costo_page.dart';
 import 'package:flutter_etrucknet_new/Screens/Committente/profile_menu_committente.dart';
 import 'package:flutter_etrucknet_new/Screens/Committente/side_menu_committente.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/data_grid_stime.dart';
@@ -53,7 +53,7 @@ class _MieSimulazioniPageState extends State<MieSimulazioniPage> {
   void _handleNewEstimate() {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (BuildContext context) => NuovaSimulazioneScreen(estimate: {},),
+        builder: (BuildContext context) => StimaCostoScreen(),
       ),
     );
   }

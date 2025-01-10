@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Models/allestimento_model.dart';
 import 'package:flutter_etrucknet_new/Models/mezzo_allestimento_model.dart';
@@ -8,8 +10,8 @@ import 'package:flutter_etrucknet_new/Services/mezzo_allestimento_service.dart';
 import 'package:flutter_etrucknet_new/Services/tipiSpecifiche_services.dart';
 import 'package:flutter_etrucknet_new/Services/tipoAllestimento_services.dart';
 import 'package:flutter_etrucknet_new/Services/tipo_trasporto_service.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter_etrucknet_new/Provider/estimates_provider.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NuovaRichiestaSubvezioneScreen extends StatefulWidget {
   const NuovaRichiestaSubvezioneScreen({super.key});
@@ -52,6 +54,16 @@ class _NuovaRichiestaSubvezioneScreenState extends State<NuovaRichiestaSubvezion
   List<Allestimento> allestimenti = [];
   List<Specifica> specifiche = [];
   int? _selectedSpecificheId; 
+
+  Future<String?> getSavedToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('access_token');
+  }
+
+  Future<int?> getSavedUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt('trasportatore_id');
+  }
 
   Future<void> _fetchTipiTrasporto() async {
     try {
@@ -636,7 +648,8 @@ class _NuovaRichiestaSubvezioneScreenState extends State<NuovaRichiestaSubvezion
       ],
     );
   }
-  void _salvaStima() {
+  void _salvaStima() async {
+    final trasportatoreId = await getSavedUserId();
     if (_ritiro == null || _consegna == null || _quantitaController.text.isEmpty || _pesoController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Compila tutti i campi obbligatori.')),
@@ -649,18 +662,39 @@ class _NuovaRichiestaSubvezioneScreenState extends State<NuovaRichiestaSubvezion
       'utente': 'Utente A',
       'carico': _ritiro ?? 'N/A',
       'scarico': _consegna ?? 'N/A',
-      'quantita': int.tryParse(_quantitaController.text) ?? 0, 
-      'peso': double.tryParse(_pesoController.text) ?? 0.0, 
-      'lunghezza': double.tryParse(_lunghezzaController.text) ?? 0.0, 
-      'larghezza': double.tryParse(_larghezzaController.text) ?? 0.0, 
-      'altezza': double.tryParse(_altezzaController.text) ?? 0.0, 
+      'quantita': int.tryParse(_quantitaController.text) ?? 0,
+      'peso': double.tryParse(_pesoController.text) ?? 0.0,
+      'lunghezza': double.tryParse(_lunghezzaController.text) ?? 0.0,
+      'larghezza': double.tryParse(_larghezzaController.text) ?? 0.0,
+      'altezza': double.tryParse(_altezzaController.text) ?? 0.0,
       'stimato': '1000 USD',
     };
 
-    print(newEstimate);
+    final String apiUrl = 'https://etrucknetapi.azurewebsites.net/v1/offerte/$trasportatoreId/456';
+    
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(newEstimate),
+      );
 
-    Provider.of<EstimatesProvider>(context, listen: false).addEstimate(newEstimate);
-    Navigator.pop(context); 
+      if (response.statusCode == 200) {
+        print('Offerta inviata correttamente');
+        Navigator.pop(context);
+      } else {
+        print('Errore durante l\'invio dell\'offerta: ${response.statusCode}');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Errore durante l\'invio dell\'offerta')),
+        );
+      }
+    } catch (e) {
+      print('Errore: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Errore di rete: $e')),
+      );
+    }
   }
-
 }

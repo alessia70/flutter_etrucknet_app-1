@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Models/allestimento_model.dart';
+import 'package:flutter_etrucknet_new/Models/ddt_model.dart';
+import 'package:flutter_etrucknet_new/Models/mezzo_allestimento_model.dart';
+import 'package:flutter_etrucknet_new/Models/tipoTrasporto_model.dart';
+import 'package:flutter_etrucknet_new/Models/tipo_mezzo_specifiche_model.dart';
 import 'package:flutter_etrucknet_new/Screens/Committente/profile_menu_committente.dart';
 import 'package:flutter_etrucknet_new/Screens/Committente/side_menu_committente.dart';
+import 'package:flutter_etrucknet_new/Services/mezzo_allestimento_service.dart';
+import 'package:flutter_etrucknet_new/Services/tipoAllestimento_services.dart';
+import 'package:flutter_etrucknet_new/Services/tipo_mezzo_specifiche.dart';
+import 'package:flutter_etrucknet_new/Services/tipo_trasporto_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_etrucknet_new/Provider/estimates_provider.dart';
 
@@ -13,12 +22,8 @@ class RichiediPreventivoPage extends StatefulWidget {
 
 class _RichiediPreventivoPageState extends State<RichiediPreventivoPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
-  String? _selectedTipologia;
   String? _ritiro;
   String? _consegna;
-  String? _mezzo;
-  String? _specifiche;
   String? _selectedImballo;
   // ignore: unused_field
   String _altreInfo = '';
@@ -27,11 +32,95 @@ class _RichiediPreventivoPageState extends State<RichiediPreventivoPage> {
   bool _pagataContrassegno = false;
   bool _problemiViabilita = false;
 
+  double selectedTemperature = 0.0;
+  double selectedTemperatureN = -24.0;
+
+  final TipoTrasportoService _service = TipoTrasportoService();
+  List<TipoTrasporto> tipiTrasporto = [];
+  // ignore: unused_field
+  int? _selectedTrasportoId;
+
   final TextEditingController _quantitaController = TextEditingController();
   final TextEditingController _pesoController = TextEditingController();
   final TextEditingController _lunghezzaController = TextEditingController();
   final TextEditingController _larghezzaController = TextEditingController();
   final TextEditingController _altezzaController = TextEditingController();
+
+  final TipoMezzoAllestimentoService _serviceMA = TipoMezzoAllestimentoService();
+  List<TipoMezzoAllestimento> tipiMezzoAllestimento = [];
+  // ignore: unused_field
+  int? _selectedMezzoAllestimentoId;
+
+  final TipoAllestimentoService tipoAllestimentoService = TipoAllestimentoService();
+  final TipoMezzoSpecificheService tipoSpecificheService = TipoMezzoSpecificheService();
+  
+  List<Merce> merceList = [];
+  List<Allestimento> allestimenti = [];
+  List<TipoMezzoSpecifiche> specifiche = [];
+  TipoMezzoSpecifiche? selectedSpecifica;
+  DateTime? _pickupDate;
+  @override
+  void initState() {
+    super.initState();
+    _loadAllestimenti();
+    _fetchTipiTrasporto();
+    _fetchTipiMezzoAllestimento();
+    _loadSpecifiche();
+  }
+  void _fetchTipiMezzoAllestimento() async {
+    List<TipoMezzoAllestimento> fetchedTipi = await _serviceMA.fetchTipiMezzoAllestimento();
+    setState(() {
+      tipiMezzoAllestimento = fetchedTipi;
+    });
+  }
+  Future<void> _fetchTipiTrasporto() async {
+    try {
+      final fetchedTipiTrasporto = await _service.fetchTipiTrasporto();
+      setState(() {
+        tipiTrasporto = fetchedTipiTrasporto;
+        if (tipiTrasporto.isNotEmpty) {
+          _selectedTrasportoId = tipiTrasporto.first.id;
+        }
+      });
+    } catch (e) {
+      print('Errore nel recupero dei tipi di trasporto: $e');
+    }
+  }
+
+  Future<void> _loadAllestimenti() async {
+    try {
+      final allestimentiData = await tipoAllestimentoService.fetchTipoAllestimenti();
+      setState(() {
+        allestimenti = allestimentiData;
+      });
+    } catch (e) {
+      print("Errore nel recupero degli allestimenti: $e");
+    }
+  }
+
+  Future<void> _loadSpecifiche() async {
+    try {
+      final specificheData = await tipoSpecificheService.fetchTipiMezzoSpecifiche();
+      setState(() {
+        specifiche = specificheData;
+      });
+    } catch (e) {
+      print("Errore nel recupero degli allestimenti: $e");
+    }
+  }
+  Future<void> _selectPickupDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2030),
+    );
+    if (picked != null && picked != _pickupDate) {
+      setState(() {
+        _pickupDate = picked;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,8 +174,6 @@ class _RichiediPreventivoPageState extends State<RichiediPreventivoPage> {
                 SizedBox(height: 20),
                 _buildSpecificheField(),
                 SizedBox(height: 20),
-                _buildAdditionalOptions(),
-                SizedBox(height: 20),
                 _buildDettagliMerce(),
                 SizedBox(height: 20),
               _buildAltreInformazioni(),
@@ -109,6 +196,10 @@ class _RichiediPreventivoPageState extends State<RichiediPreventivoPage> {
   }
 
   Widget _buildTipologiaTrasportoField() {
+    TipoTrasporto tipoTrasporto = TipoTrasporto(id: -1, name: 'Sconosciuto');
+    List<int> transportBlockedIds = [4, 10, 24];
+    // ignore: unused_local_variable
+    bool isTransportBlocked = transportBlockedIds.contains(tipoTrasporto.id);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -124,33 +215,45 @@ class _RichiediPreventivoPageState extends State<RichiediPreventivoPage> {
         ),
         SizedBox(height: 8),
         Container(
-          height: 56,
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+          height: 40,
+          padding: EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.circular(4),
+            border: Border.all(color: Colors.grey),
+            borderRadius: BorderRadius.circular(10),
           ),
-          child: DropdownButton<String>(
-            value: _selectedTipologia,
-            hint: Text('Seleziona tipologia'),
+          child: DropdownButton<int>(
+            value: _selectedTrasportoId,
             isExpanded: true,
-            underline: SizedBox(),
-            isDense: true,
-            items: <String>[
-              'Trasporto Stradale',
-              'Trasporto Marittimo',
-              'Trasporto Aereo'
-            ].map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
+            items: tipiTrasporto.map((trasporto) {
+              return DropdownMenuItem<int>(
+                value: trasporto.id,
+                child: Text(trasporto.name),
               );
             }).toList(),
-            onChanged: (String? newValue) {
+            onChanged: (newValue) {
               setState(() {
-                _selectedTipologia = newValue;
+                _selectedTrasportoId = newValue;
               });
+              TipoTrasporto? selectedTrasporto = tipiTrasporto.firstWhere(
+                (trasporto) => trasporto.id == newValue,
+                orElse: () => TipoTrasporto(id: -1, name: 'Trasporto sconosciuto'),
+              );
+              TipoTrasportoService().showTipoTrasportoDialog(
+                context,
+                selectedTrasporto,
+                selectedTemperature,
+                selectedTemperatureN,
+                (double newTemperature) {
+                  setState(() {
+                    selectedTemperature = newTemperature;
+                  });
+                },
+                (double newTemperatureN) {
+                  setState(() {
+                    selectedTemperatureN = newTemperatureN;
+                  });
+                },
+              );
             },
           ),
         ),
@@ -194,6 +297,9 @@ class _RichiediPreventivoPageState extends State<RichiediPreventivoPage> {
   }
 
   Widget _buildMezzoField() {
+    TipoTrasporto tipoTrasporto = TipoTrasporto(id: -1, name: 'Sconosciuto');
+    List<int> transportBlockedIds = [4, 10, 24];
+    bool isTransportBlocked = transportBlockedIds.contains(tipoTrasporto.id);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -209,34 +315,40 @@ class _RichiediPreventivoPageState extends State<RichiediPreventivoPage> {
         ),
         SizedBox(height: 8),
         Container(
-          height: 56,
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.circular(4),
-          ),
-          child: DropdownButton<String>(
-            value: _mezzo,
-            hint: Text('Seleziona mezzo/allestimenti'),
-            isExpanded: true,
-            underline: SizedBox(),
-            isDense: true,
-            items: <String>[
-              'Furgone',
-              'Camion',
-              'Auto'
-            ].map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-            onChanged: (String? newValue) {
-              setState(() {
-                _mezzo = newValue;
-              });
-            },
+        height: 40,
+        padding: EdgeInsets.symmetric(horizontal: 10),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: DropdownButton<int>(
+          value: _selectedMezzoAllestimentoId,
+          isExpanded: true,
+          underline: SizedBox(),
+          items: tipiMezzoAllestimento.map((allestimento) {
+            return DropdownMenuItem<int>(
+              value: allestimento.id,
+              child: Text(allestimento.name),
+            );
+          }).toList(),
+          onChanged: isTransportBlocked
+              ? null
+              : (newValue) {
+                  setState(() {
+                    _selectedMezzoAllestimentoId = newValue!;
+                  });
+                },
+        ),
+      ),
+      if (isTransportBlocked)
+        Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: Text(
+            "Per la tipologia di trasporto indicata non è possibile selezionare allestimenti differenti.",
+            style: TextStyle(
+              color: Colors.orange,
+              fontStyle: FontStyle.italic,
+            ),
           ),
         ),
       ],
@@ -259,59 +371,52 @@ class _RichiediPreventivoPageState extends State<RichiediPreventivoPage> {
         ),
         SizedBox(height: 8),
         Container(
-          height: 56,
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+          height: 40,
+          padding: EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.circular(4),
+            border: Border.all(color: Colors.grey),
+            borderRadius: BorderRadius.circular(10),
           ),
-          child: DropdownButton<String>(
-            value: _specifiche,
-            hint: Text('Seleziona specifiche'),
+          child: DropdownButton<TipoMezzoSpecifiche>(
+            value: selectedSpecifica,
             isExpanded: true,
             underline: SizedBox(),
-            isDense: true,
-            items: <String>[
-              'Nessuna',
-              'Fragile',
-              'Pericoloso'
-            ].map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
+            hint: Text('Seleziona una specifica'),
+            items: specifiche.map((TipoMezzoSpecifiche specifica) {
+              return DropdownMenuItem<TipoMezzoSpecifiche>(
+                value: specifica,
+                child: Text(specifica.descrizione),
               );
             }).toList(),
-            onChanged: (String? newValue) {
+            onChanged: (TipoMezzoSpecifiche? nuovaSpecifica) {
               setState(() {
-                _specifiche = newValue;
+                selectedSpecifica = nuovaSpecifica;
               });
+              print('Specifica selezionata: ${nuovaSpecifica?.descrizione}');
             },
+            icon: Icon(Icons.arrow_drop_down),
           ),
         ),
-      ],
-    );
-  }
-
-  Widget _buildAdditionalOptions() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSwitchOption('Merce caricata lateralmente', _caricataLateralmente, (value) {
-          setState(() {
-            _caricataLateralmente = value;
-          });
-        }),
-        _buildSwitchOption('Merce pagata in contrassegno', _pagataContrassegno, (value) {
-          setState(() {
-            _pagataContrassegno = value;
-          });
-        }),
-        _buildSwitchOption('Problemi di viabilità', _problemiViabilita, (value) {
-          setState(() {
-            _problemiViabilita = value;
-          });
-        }),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _buildSwitchOption('Merce caricata lateralmente', _caricataLateralmente, (value) {
+              setState(() {
+                _caricataLateralmente = value;
+              });
+            }),
+            _buildSwitchOption('Merce pagata in contrassegno', _pagataContrassegno, (value) {
+              setState(() {
+                _pagataContrassegno = value;
+              });
+            }),
+            _buildSwitchOption('Problemi di viabilità', _problemiViabilita, (value) {
+              setState(() {
+                _problemiViabilita = value;
+              });
+            }),
+          ],
+        ),
       ],
     );
   }
@@ -320,9 +425,10 @@ class _RichiediPreventivoPageState extends State<RichiediPreventivoPage> {
     return Container(
       padding: EdgeInsets.only(bottom: 8.0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Expanded(
+          Flexible(
+            fit: FlexFit.loose,
             child: Text(
               title,
               style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
@@ -396,9 +502,9 @@ class _RichiediPreventivoPageState extends State<RichiediPreventivoPage> {
             underline: SizedBox(),
             isDense: true,
             items: <String>[
-              'Cartone',
-              'Plastica',
-              'Legno',
+              'Bancali',
+              'Containers',
+              'Altro',
             ].map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
                 value: value,
