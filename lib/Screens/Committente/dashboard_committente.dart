@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Models/rdtEseguiti_model.dart';
 import 'package:flutter_etrucknet_new/Screens/Committente/Trasporti/preventivi_richiesti_page.dart';
 import 'package:flutter_etrucknet_new/Screens/Committente/side_menu_committente.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/profile_info_operatore_screen.dart';
-import 'package:flutter_etrucknet_new/Screens/Trasportatore/add_camion_disponibile_t.dart';
 
 class CommittenteDashboardScreen extends StatelessWidget {
   @override
@@ -39,7 +39,7 @@ class CommittenteDashboardScreen extends StatelessWidget {
                 mainAxisSpacing: 16,
                 children: [
                   _buildSquareCard(context, 'Richiedi targa e autista', Icons.request_quote_outlined, () {
-                    _showAddTruckDialog(context);
+                    _showTargaDialog(context, RdtEseguiti as RdtEseguiti);
                   }),
                   _buildSquareCard(context, 'Trasporti Non Assegnati', Icons.assignment_ind, () {
                     Navigator.push(
@@ -66,12 +66,90 @@ class CommittenteDashboardScreen extends StatelessWidget {
     );
   }
 
-  void _showAddTruckDialog(BuildContext context) {
+  void _showTargaDialog(BuildContext context, RdtEseguiti rdtEseguiti) {
+    final ordineId = rdtEseguiti.id;
+    final dataCarico = rdtEseguiti.dataCarico;
+    final luogoCarico = rdtEseguiti.luogoCarico;
+    final luogoScarico = rdtEseguiti.luogoScarico; 
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AddCamionDialog();
+        return AlertDialog(
+          title: const Text(
+            'Richiedi Targa',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Table(
+                  columnWidths: const {
+                    0: FlexColumnWidth(2),
+                    1: FlexColumnWidth(3),
+                  },
+                  border: TableBorder.all(color: Colors.grey),
+                  children: [
+                    TableRow(
+                      decoration: BoxDecoration(color: Colors.grey[300]),
+                      children: const [
+                        Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            'Campo',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            'Valore',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
+                    ),
+                    _buildTableRow('ID Ordine', ordineId.toString()),
+                    _buildTableRow('Data Carico', dataCarico as String),
+                    _buildTableRow('Carico', luogoCarico!),
+                    _buildTableRow('Scarico', luogoScarico!),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Chiudi'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Conferma'),
+            ),
+          ],
+        );
       },
+    );
+  }
+
+  TableRow _buildTableRow(String campo, String valore) {
+    return TableRow(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            campo,
+            style: const TextStyle(fontWeight: FontWeight.w500),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(valore),
+        ),
+      ],
     );
   }
 

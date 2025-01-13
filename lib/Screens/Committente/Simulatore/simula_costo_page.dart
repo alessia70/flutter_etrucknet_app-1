@@ -185,14 +185,31 @@ class _StimaCostoScreenState extends State<StimaCostoScreen> {
                 SizedBox(height: 20),
                 _buildAltreInformazioni(),
                 SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: _salvaStima,
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 32.0),
-                    textStyle: TextStyle(fontSize: 18),
-                  ),
-                  child: Text('Invia'),
-                ),
+                Row(
+                  children: [
+                    ElevatedButton(
+                      onPressed: _salvaStima,
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 32.0),
+                        textStyle: TextStyle(fontSize: 18),
+                        backgroundColor: Colors.orange,
+                        foregroundColor: Colors.white,
+                      ),
+                      child: Text('Invia'),
+                    ),
+                    SizedBox(width: 20),
+                    ElevatedButton(
+                      onPressed: _indietro,
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 32.0),
+                        textStyle: TextStyle(fontSize: 18),
+                        backgroundColor: Colors.grey,
+                        foregroundColor: Colors.white,
+                      ),
+                      child: Text('Indietro'),
+                    ),
+                  ]
+                )
               ],
             ),
           ),
@@ -692,5 +709,7 @@ class _StimaCostoScreenState extends State<StimaCostoScreen> {
     Provider.of<EstimatesProvider>(context, listen: false).addEstimate(newEstimate);
     Navigator.pop(context); 
   }
-
+  void _indietro() {
+    Navigator.pop(context);
+  }
 }

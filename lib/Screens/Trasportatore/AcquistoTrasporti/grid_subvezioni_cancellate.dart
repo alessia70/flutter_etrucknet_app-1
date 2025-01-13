@@ -64,7 +64,7 @@ class _GridSubvezioniCancellateState extends State<GridSubvezioniCancellate> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => TransportoEseguitioDetailPage(
-                                    id: transport['id'] ?? '',
+                                    id: int.tryParse(transport['id'] ?? '0') ?? 0,
                                     tipoTrasporto: transport['tipo'] ?? '',
                                     distanza: transport['distanza'] ?? '',
                                     tempo: transport['tempo'] ?? '',
