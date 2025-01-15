@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Models/merce_pericolosa_model.dart';
 import 'package:flutter_etrucknet_new/Models/tipoTrasporto_model.dart';
 
 class TipoTrasportoService {
@@ -36,7 +37,8 @@ class TipoTrasportoService {
   void showTipoTrasportoDialog(BuildContext context, TipoTrasporto tipoTrasporto, double selectedTemperature, double selectedTemperatureN, Function(double) updateTemperature, Function(double) updateTemperatureN) {
     String dialogMessage = "";
 
-    bool isChecked = false;
+    MercePericolosa? selectedMercePericolosa;
+
     List<String> allestimenti = ["Bancali", "Containers", "Altro"];
     String selectedAllestimento = "Bancali";
 
@@ -141,19 +143,27 @@ class TipoTrasportoService {
                   ),
                 ],
                 if (tipoTrasporto.id == 5) ...[
-                  Row(
-                    children: [
-                      Checkbox(
-                        value: isChecked,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            isChecked = value!;
-                          });
-                        },
-                      ),
-                      Text("Accetto i termini e condizioni per trasporto pericoloso"),
-                    ],
+                  Text("Seleziona la tipologia di merce pericolosa:"),
+                  DropdownButton<MercePericolosa>(
+                    hint: Text("Seleziona una merce pericolosa"),
+                    value: selectedMercePericolosa,
+                    onChanged: (MercePericolosa? newValue) {
+                      setState(() {
+                        selectedMercePericolosa = newValue;
+                      });
+                    },
+                    items: MercePericolosa.mercePericolosaList.map((merce) {
+                      return DropdownMenuItem<MercePericolosa>(
+                        value: merce,
+                        child: Text(merce.descrizioneIt),
+                      );
+                    }).toList(),
                   ),
+                  if (selectedMercePericolosa != null)
+                    Text(
+                      "Hai selezionato: ${selectedMercePericolosa!.descrizioneIt}",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                 ],
                 if (tipoTrasporto.id == 9) ...[
                   Text(

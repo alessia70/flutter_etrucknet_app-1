@@ -35,6 +35,8 @@ class _RichiediPreventivoPageState extends State<RichiediPreventivoPage> {
   double selectedTemperature = 0.0;
   double selectedTemperatureN = -24.0;
 
+  String selectedMercePericolosa = "";
+
   final TipoTrasportoService _service = TipoTrasportoService();
   List<TipoTrasporto> tipiTrasporto = [];
   // ignore: unused_field
@@ -273,6 +275,54 @@ class _RichiediPreventivoPageState extends State<RichiediPreventivoPage> {
             },
           ),
         ),
+        SizedBox(height: 16),
+        if (_selectedTrasportoId == 2 || _selectedTrasportoId == 3 || _selectedTrasportoId == 5)
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.grey[100],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (_selectedTrasportoId == 2)
+                  Row(
+                    children: [
+                      Icon(Icons.thermostat, color: Colors.orange),
+                      SizedBox(width: 8),
+                      Text(
+                        'Temperatura positiva selezionata: ${selectedTemperature.toStringAsFixed(1)} °C',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                    ],
+                  ),
+                if (_selectedTrasportoId == 3)
+                  Row(
+                    children: [
+                      Icon(Icons.thermostat, color: Colors.orange),
+                      SizedBox(width: 8),
+                      Text(
+                        'Temperatura negativa selezionata: ${selectedTemperatureN.toStringAsFixed(1)} °C',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                    ],
+                  ),
+                if(_selectedTrasportoId == 5)
+                  Row(
+                    children: [
+                      Icon(Icons.warning, color: Colors.orange),
+                      SizedBox(width: 8),
+                      Text(
+                        'Tipologia di merce pericolosa selezionata: ${selectedMercePericolosa}',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                    ],
+                  )
+              ],
+            ),
+          ),
       ],
     );
   }

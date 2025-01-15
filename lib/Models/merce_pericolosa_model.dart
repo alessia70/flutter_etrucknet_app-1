@@ -20,7 +20,7 @@ class MercePericolosa {
     );
   }
 
-  List<MercePericolosa> mercePericolosaList = [
+  static List<MercePericolosa> mercePericolosaList = [
     MercePericolosa(id: 1, descrizioneIt: 'Materie ed oggetti esplosivi', descrizioneEn: 'Explosives', descrizioneRo: 'Materiale si substante explozive'),
     MercePericolosa(id: 2, descrizioneIt: 'Gas', descrizioneEn: 'Gas', descrizioneRo: 'Gaz'),
     MercePericolosa(id: 3, descrizioneIt: 'Materie liquide infiammabili', descrizioneEn: 'Flammable liquids', descrizioneRo: 'Lichide inflamabile'),

@@ -421,7 +421,6 @@ class _StimaCostoScreenState extends State<StimaCostoScreen> {
               setState(() {
                 selectedSpecifica = nuovaSpecifica;
               });
-              print('Specifica selezionata: ${nuovaSpecifica?.descrizione}');
             },
             icon: Icon(Icons.arrow_drop_down),
           ),
