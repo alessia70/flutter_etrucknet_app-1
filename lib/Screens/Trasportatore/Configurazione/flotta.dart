@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/profile_menu_t_screen.dart';
 import 'package:flutter_etrucknet_new/res/app_urls.dart';
@@ -39,7 +40,7 @@ class _FlottaScreenState extends State<FlottaScreen> {
     final trasportatoreId = await getSavedUserId();
     final token = await getSavedToken();
     if (trasportatoreId == null || token == null) {
-      print('Errore: userId o token non trovato');
+      log('Errore: userId o token non trovato');
       return;
     }
     setState(() {
@@ -76,7 +77,6 @@ class _FlottaScreenState extends State<FlottaScreen> {
         );
       }
     } catch (e) {
-      print('Errore di connessione: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Errore di connessione: $e')),
       );
@@ -146,7 +146,7 @@ class _FlottaScreenState extends State<FlottaScreen> {
         );
       }
     } catch (e) {
-      print('Errore di connessione: $e');
+      log('Errore di connessione: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Errore di connessione: $e')),
       );
@@ -334,7 +334,7 @@ class _FlottaScreenState extends State<FlottaScreen> {
         );
       }
     } catch (e) {
-      print('Errore di connessione: $e');
+      log('Errore di connessione: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Errore di connessione: $e')),
       );

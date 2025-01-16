@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter_etrucknet_new/Models/ddt_model.dart';
 import 'package:flutter_etrucknet_new/Widgets/generate_ddt.dart';
 import 'package:http/http.dart' as http;
@@ -13,14 +14,14 @@ class GridFattureRicevuteCommittente extends StatefulWidget {
   final DateTime endDate;
   final int stato;
 
-  GridFattureRicevuteCommittente({
-    Key? key,
+  const GridFattureRicevuteCommittente({
+    super.key,
     required this.trasportatoreId,
     required this.numeroDdt,
     required this.startDate,
     required this.endDate,
     required this.stato,
-  }) : super(key: key);
+  });
 
   @override
   _GridFattureRicevuteCommittenteState createState() => _GridFattureRicevuteCommittenteState();
@@ -81,8 +82,8 @@ class _GridFattureRicevuteCommittenteState extends State<GridFattureRicevuteComm
       List<dynamic> data = json.decode(response.body);
       return data.map((json) => FatturaRicevuta.fromJson(json)).toList();
     } else {
-      print('Errore: ${response.statusCode}');
-      print('Dettaglio risposta: ${response.body}');
+      log('Errore: ${response.statusCode}');
+      log('Dettaglio risposta: ${response.body}');
       throw Exception('Failed to load fatture ricevute');
     }
   }

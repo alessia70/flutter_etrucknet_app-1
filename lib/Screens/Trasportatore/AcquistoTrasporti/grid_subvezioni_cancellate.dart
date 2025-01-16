@@ -3,7 +3,7 @@ import 'package:flutter_etrucknet_new/Screens/Trasportatore/VenditaTrasporti/det
 
 class GridSubvezioniCancellate extends StatefulWidget {
   final List<dynamic> completedTransports;
-  GridSubvezioniCancellate({Key? key, required this.completedTransports}) : super(key: key);
+  const GridSubvezioniCancellate({super.key, required this.completedTransports});
 
   @override
   _GridSubvezioniCancellateState createState() => _GridSubvezioniCancellateState();

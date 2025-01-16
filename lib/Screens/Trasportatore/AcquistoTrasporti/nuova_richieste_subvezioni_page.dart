@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Models/allestimento_model.dart';
@@ -77,7 +78,7 @@ class _NuovaRichiestaSubvezioneScreenState extends State<NuovaRichiestaSubvezion
         }
       });
     } catch (e) {
-      print('Errore nel recupero dei tipi di trasporto: $e');
+      log('Errore nel recupero dei tipi di trasporto: $e');
     }
   }
 
@@ -95,7 +96,7 @@ class _NuovaRichiestaSubvezioneScreenState extends State<NuovaRichiestaSubvezion
         allestimenti = allestimentiData;
       });
     } catch (e) {
-      print("Errore nel recupero degli allestimenti: $e");
+      log("Errore nel recupero degli allestimenti: $e");
     }
   }
 
@@ -106,7 +107,7 @@ class _NuovaRichiestaSubvezioneScreenState extends State<NuovaRichiestaSubvezion
         specifiche = specificheData;
       });
     } catch (e) {
-      print("Errore nel recupero degli allestimenti: $e");
+      log("Errore nel recupero degli allestimenti: $e");
     }
   }
 
@@ -290,7 +291,7 @@ class _NuovaRichiestaSubvezioneScreenState extends State<NuovaRichiestaSubvezion
                       Icon(Icons.warning, color: Colors.orange),
                       SizedBox(width: 8),
                       Text(
-                        'Tipologia di merce pericolosa selezionata: ${selectedMercePericolosa}',
+                        'Tipologia di merce pericolosa selezionata: $selectedMercePericolosa',
                         style: TextStyle(fontSize: 14),
                       ),
                     ],
@@ -732,16 +733,16 @@ class _NuovaRichiestaSubvezioneScreenState extends State<NuovaRichiestaSubvezion
       );
 
       if (response.statusCode == 200) {
-        print('Offerta inviata correttamente');
+        log('Offerta inviata correttamente');
         Navigator.pop(context);
       } else {
-        print('Errore durante l\'invio dell\'offerta: ${response.statusCode}');
+        log('Errore durante l\'invio dell\'offerta: ${response.statusCode}');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Errore durante l\'invio dell\'offerta')),
         );
       }
     } catch (e) {
-      print('Errore: $e');
+      log('Errore: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Errore di rete: $e')),
       );

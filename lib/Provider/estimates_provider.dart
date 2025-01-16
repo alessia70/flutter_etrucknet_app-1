@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -28,7 +30,7 @@ class EstimatesProvider with ChangeNotifier {
   }
 
   Future<void> updateSimulation(int simulationId, Map<String, dynamic> updatedSimulation) async {
-    final Database db = await openDatabase('simulations.db'); // Apri il database
+    final Database db = await openDatabase('simulations.db');
 
     try {
       await db.update(
@@ -37,10 +39,8 @@ class EstimatesProvider with ChangeNotifier {
         where: 'id = ?',
         whereArgs: [simulationId],
       );
-
-      print('Simulazione aggiornata con successo!');
     } catch (e) {
-      print('Errore durante l\'aggiornamento della simulazione: $e');
+      log('Errore durante l\'aggiornamento della simulazione: $e');
     } finally {
       await db.close();
     }

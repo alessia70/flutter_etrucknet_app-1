@@ -3,7 +3,7 @@ import 'package:flutter_etrucknet_new/Screens/Trasportatore/VenditaTrasporti/det
 
 class GridPreventiviAssegnati extends StatefulWidget {
   final List<dynamic> completedTransports;
-  GridPreventiviAssegnati({Key? key, required this.completedTransports}) : super(key: key);
+  const GridPreventiviAssegnati({super.key, required this.completedTransports});
 
   @override
   _GridPreventiviAssegnatiState createState() => _GridPreventiviAssegnatiState();

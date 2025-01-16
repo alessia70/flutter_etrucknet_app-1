@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/Configurazione/edit_camion.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/profile_menu_t_screen.dart';
@@ -9,6 +10,8 @@ import 'package:flutter_etrucknet_new/Screens/Trasportatore/add_camion_disponibi
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/side_menu_t.dart';
 
 class CamionDisponibiliTPage extends StatefulWidget {
+  const CamionDisponibiliTPage({super.key});
+
   @override
   _CamionDisponibiliTPageState createState() => _CamionDisponibiliTPageState();
 }
@@ -58,8 +61,8 @@ class _CamionDisponibiliTPageState extends State<CamionDisponibiliTPage> {
       List<dynamic> data = json.decode(response.body);
       return data.map((json) => Camion.fromJson(json)).toList();
     } else {
-      print('Errore nella richiesta: ${response.statusCode}');
-      print('Dettagli errore: ${response.body}');
+      log('Errore nella richiesta: ${response.statusCode}');
+      log('Dettagli errore: ${response.body}');
       throw Exception('Errore nel recupero dei camion: ${response.statusCode}');
     }
   }

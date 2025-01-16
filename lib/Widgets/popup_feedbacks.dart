@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class FeedbackPopup extends StatefulWidget {
+  const FeedbackPopup({super.key});
+
   @override
   _FeedbackPopupState createState() => _FeedbackPopupState();
 }
@@ -54,18 +56,11 @@ class _FeedbackPopupState extends State<FeedbackPopup> {
           },
           child: Text("Chiudi"),
         ),
-        // Bottone Salva
         TextButton(
           onPressed: () {
             if (selectedStars > 0 || feedbackController.text.isNotEmpty) {
-              // Invia il feedback o esegui altra logica
-              print("Stelle selezionate: $selectedStars");
-              print("Commento: ${feedbackController.text}");
-
-              // Chiudi il dialog dopo il salvataggio
               Navigator.of(context).pop();
             } else {
-              // Mostra un messaggio di errore se non è stato inserito nulla
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text("Per favore, aggiungi un feedback o seleziona le stelle."),
               ));

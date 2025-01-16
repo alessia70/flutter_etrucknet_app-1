@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/change_stima_to_order.dart';
@@ -10,7 +11,7 @@ import 'package:http/http.dart' as http;
 import 'package:open_filex/open_filex.dart';
 
 class DataGridStime extends StatefulWidget {
-  const DataGridStime({Key? key, required this.onUpdateVisibleEstimates}) : super(key: key);
+  const DataGridStime({super.key, required this.onUpdateVisibleEstimates});
   final Function(List<dynamic>) onUpdateVisibleEstimates;
 
   @override
@@ -47,7 +48,7 @@ class DataGridStimeState extends State<DataGridStime> {
     final trasportatoreId = await getSavedUserId();
 
     if (token == null || trasportatoreId == null) {
-      print('Token o TrasportatoreId non trovato.');
+      log('Token o TrasportatoreId non trovato.');
       return;
     }
 
@@ -67,7 +68,7 @@ class DataGridStimeState extends State<DataGridStime> {
         final responseData = json.decode(response.body);
         List<dynamic>? data = responseData['data'];
         if (data == null || data.isEmpty) {
-          print("Nessuna proposta trovata.");
+          log("Nessuna proposta trovata.");
           return;
         }
         setState(() {
@@ -83,17 +84,17 @@ class DataGridStimeState extends State<DataGridStime> {
           filteredTrucks = List.from(trucks);
         });
       } catch (e) {
-        print('Errore nel parsing dei dati: $e');
+        log('Errore nel parsing dei dati: $e');
       }
     } else {
-      print('Errore nella richiesta: ${response.statusCode}');
+      log('Errore nella richiesta: ${response.statusCode}');
     }
   }
 
   Future<void> _showPDF(int ordineId, int trasportatoreId) async {
     final token = await getSavedToken();
     if (token == null) {
-      print('Token non trovato');
+      log('Token non trovato');
       return;
     }
 
@@ -118,11 +119,11 @@ class DataGridStimeState extends State<DataGridStime> {
 
         await OpenFilex.open(filePath);
       } catch (e) {
-        print('Errore durante il salvataggio o apertura del PDF: $e');
+        log('Errore durante il salvataggio o apertura del PDF: $e');
       }
     } else {
-      print('Errore nella richiesta: ${response.statusCode}');
-      print('Messaggio: ${response.body}');
+      log('Errore nella richiesta: ${response.statusCode}');
+      log('Messaggio: ${response.body}');
     }
   }
 
@@ -148,7 +149,7 @@ class DataGridStimeState extends State<DataGridStime> {
           final estimate = trucks[index];
           return GestureDetector(
             onTap: () {
-              print('Tapped on ${estimate['carico']}');
+              log('Tapped on ${estimate['carico']}');
             },
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -204,7 +205,7 @@ class DataGridStimeState extends State<DataGridStime> {
                         if (ordineId > 0 && trasportatoreId > 0) {
                           _showPDF(ordineId, trasportatoreId);
                         } else {
-                          print("ID Stima o Shipper non valido.");
+                          log("ID Stima o Shipper non valido.");
                         }
                       },
                       tooltip: 'Mostra PDF',

@@ -5,7 +5,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class OrderDetailsPage extends StatefulWidget {
-  const OrderDetailsPage({Key? key, required int orderId}) : super(key: key);
+  const OrderDetailsPage({super.key, required int orderId});
 
   @override
   _OrderDetailsPageState createState() => _OrderDetailsPageState();
@@ -243,7 +243,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                           children: [
                             Row(
                               children: [
-                                Icon(FontAwesomeIcons.infoCircle, size: 20, color: Colors.orange),
+                                Icon(FontAwesomeIcons.circleInfo, size: 20, color: Colors.orange),
                                 const SizedBox(width: 8),
                                 const Text(
                                   'Ulteriori specifiche',

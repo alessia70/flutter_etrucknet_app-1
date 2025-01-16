@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 class CondividiStima extends StatelessWidget {
@@ -47,7 +49,7 @@ class CondividiStima extends StatelessWidget {
   }
 
   void _sendEstimateByEmail(String email, Map<String, dynamic> estimate) {
-    print('Inviando stima a: $email');
-    print('Dati della stima: ${estimate.toString()}');
+    log('Inviando stima a: $email');
+    log('Dati della stima: ${estimate.toString()}');
   }
 }

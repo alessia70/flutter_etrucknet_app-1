@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Screens/Committente/Simulatore/change_simulazione_toOrder.dart';
@@ -10,7 +11,7 @@ import 'package:http/http.dart' as http;
 import 'package:open_filex/open_filex.dart';
 
 class DataGridSimulazioni extends StatefulWidget {
-  const DataGridSimulazioni({Key? key, required this.onUpdateVisibleSimulations}) : super(key: key);
+  const DataGridSimulazioni({super.key, required this.onUpdateVisibleSimulations});
   final Function(List<dynamic>) onUpdateVisibleSimulations;
 
   @override
@@ -48,7 +49,7 @@ class DataGridSimulazioniState extends State<DataGridSimulazioni> {
     final trasportatoreId = await getSavedUserId();
 
     if (token == null || trasportatoreId == null) {
-      print('Token o CommittenteId non trovato.');
+      log('Token o CommittenteId non trovato.');
       return;
     }
 
@@ -68,7 +69,7 @@ class DataGridSimulazioniState extends State<DataGridSimulazioni> {
         final responseData = json.decode(response.body);
         List<dynamic>? data = responseData['data'];
         if (data == null || data.isEmpty) {
-          print("Nessuna simulazione trovata.");
+          log("Nessuna simulazione trovata.");
           return;
         }
         setState(() {
@@ -84,17 +85,17 @@ class DataGridSimulazioniState extends State<DataGridSimulazioni> {
           filteredTrucks = List.from(trucks);
         });
       } catch (e) {
-        print('Errore nel parsing dei dati: $e');
+        log('Errore nel parsing dei dati: $e');
       }
     } else {
-      print('Errore nella richiesta: ${response.statusCode}');
+      log('Errore nella richiesta: ${response.statusCode}');
     }
   }
 
   Future<void> _showPDF(int ordineId, int trasportatoreId) async {
     final token = await getSavedToken();
     if (token == null) {
-      print('Token non trovato');
+      log('Token non trovato');
       return;
     }
 
@@ -119,11 +120,11 @@ class DataGridSimulazioniState extends State<DataGridSimulazioni> {
 
         await OpenFilex.open(filePath);
       } catch (e) {
-        print('Errore durante il salvataggio o apertura del PDF: $e');
+        log('Errore durante il salvataggio o apertura del PDF: $e');
       }
     } else {
-      print('Errore nella richiesta: ${response.statusCode}');
-      print('Messaggio: ${response.body}');
+      log('Errore nella richiesta: ${response.statusCode}');
+      log('Messaggio: ${response.body}');
     }
   }
 
@@ -149,7 +150,7 @@ class DataGridSimulazioniState extends State<DataGridSimulazioni> {
           final simulation = trucks[index];
           return GestureDetector(
             onTap: () {
-              print('Tapped on ${simulation['carico']}');
+              log('Tapped on ${simulation['carico']}');
             },
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -205,7 +206,7 @@ class DataGridSimulazioniState extends State<DataGridSimulazioni> {
                         if (ordineId > 0 && committenteId > 0) {
                           _showPDF(ordineId, committenteId);
                         } else {
-                          print("ID Simulazione o Committente non valido.");
+                          log("ID Simulazione o Committente non valido.");
                         }
                       },
                       tooltip: 'Mostra PDF',

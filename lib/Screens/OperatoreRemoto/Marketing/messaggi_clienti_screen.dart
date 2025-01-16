@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/profile_info_operatore_screen.dart';
 import 'package:flutter_etrucknet_new/Widgets/add_new_message.dart';
@@ -95,7 +97,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                 SizedBox(width: 130),
                 ElevatedButton(
                   onPressed: () {
-                    print('Cerca per: ${_searchUserController.text} e Messaggio: ${_searchMessageController.text}');
+                    log('Cerca per: ${_searchUserController.text} e Messaggio: ${_searchMessageController.text}');
                   },
                   child: Text(
                     'Cerca',

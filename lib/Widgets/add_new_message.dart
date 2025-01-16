@@ -71,8 +71,8 @@ class _AddMessageScreenState extends State<AddMessageScreen> {
     'Animali',
   ];
 
-  final List<String?> _selectedValues = List.filled(7, null); // Selezioni iniziali
-  final Set<int> _expandedBoxes = <int>{}; // Set per gestire le box espanse
+  final List<String?> _selectedValues = List.filled(7, null);
+  final Set<int> _expandedBoxes = <int>{};
 
   final TextEditingController _partenzaController = TextEditingController();
   final TextEditingController _arrivoController = TextEditingController();
@@ -135,21 +135,16 @@ class _AddMessageScreenState extends State<AddMessageScreen> {
                         'id': DateTime.now().millisecondsSinceEpoch.toString(),
                         'date': DateTime.now().toLocal().toString().split(' ')[0],
                         'object': oggetto,
-                        'user_type': _selectedValues[0], // Assicurati di usare i valori corretti
-                        'setup_type': _selectedValues[2], // Assicurati di usare i valori corretti
-                        'country': _selectedValues[3], // Assicurati di usare i valori corretti
-                        'region': _selectedValues[4], // Assicurati di usare i valori corretti
-                        'province': _selectedValues[5], // Assicurati di usare i valori corretti
-                        'correspondences': corpo, // Puoi decidere se includere il corpo come corrispondenza
+                        'user_type': _selectedValues[0],
+                        'setup_type': _selectedValues[2],
+                        'country': _selectedValues[3],
+                        'region': _selectedValues[4],
+                        'province': _selectedValues[5],
+                        'correspondences': corpo,
                       };
-
-                      // Salva il messaggio tramite il provider
                       Provider.of<MessagesProvider>(context, listen: false).addMessage(newMessage);
-
-                      // Torna alla schermata della griglia dei messaggi
                       Navigator.pop(context, newMessage);
                     } else {
-                      // Mostra un messaggio di errore se mancano dati
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Compila tutti i campi')),
                       );
@@ -267,28 +262,28 @@ class _AddMessageScreenState extends State<AddMessageScreen> {
      List<String> options;
     switch (index) {
       case 0:
-        options = _userTypes; // Lista per "Tipologia Utente"
+        options = _userTypes;
         break;
       case 1:
-        options = _vehicleTypes; // Lista per "Tipologia Automezzo"
+        options = _vehicleTypes;
         break;
       case 2:
-        options = _setupTypes; // Lista per "Tipologia Allestimento"
+        options = _setupTypes;
         break;
       case 3:
-        options = _countries; // Lista per "Nazione di Residenza"
+        options = _countries;
         break;
       case 4:
-        options = _regions; // Lista per "Regione di Residenza"
+        options = _regions; 
         break;
       case 5:
-        options = _provinces; // Lista per "Provincia di Residenza"
+        options = _provinces;
         break;
       case 6:
-        options = _transportTypes; // Lista per "Tipo Trasporto"
+        options = _transportTypes;
         break;
       default:
-        options = []; // Default, nel caso non ci siano opzioni definite
+        options = [];
     }
     return Expanded(
       child: Column(
@@ -298,17 +293,17 @@ class _AddMessageScreenState extends State<AddMessageScreen> {
             title,
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 8), // Spazio tra titolo e dropdown
+          const SizedBox(height: 8),
           Container(
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey), // Bordo grigio per il dropdown
+              border: Border.all(color: Colors.grey),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: DropdownButtonHideUnderline( // Nasconde la riga sottostante
+            child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
                 isExpanded: true,
                 hint: Container(
-                  margin: const EdgeInsets.only(left: 8.0), // Margine a sinistra
+                  margin: const EdgeInsets.only(left: 8.0),
                   child: const Text('Seleziona...'),
                 ),
                 value: _selectedValues[index],
@@ -320,7 +315,7 @@ class _AddMessageScreenState extends State<AddMessageScreen> {
                 }).toList(),
                 onChanged: (value) {
                   setState(() {
-                    _selectedValues[index] = value; // Aggiorna il valore selezionato
+                    _selectedValues[index] = value;
                   });
                 },
               ),
@@ -340,25 +335,25 @@ class _AddMessageScreenState extends State<AddMessageScreen> {
             Expanded(
               child: _buildTextField(_partenzaController, 'Partenza'),
             ),
-            const SizedBox(width: 16), // Spazio tra i campi
+            const SizedBox(width: 16),
             Expanded(
               child: _buildTextField(_arrivoController, 'Arrivo'),
             ),
           ],
         ),
-        const SizedBox(height: 16), // Spazio tra le righe
+        const SizedBox(height: 16),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _buildDropdown('Tipo Trasporto', 6), // Cambia indice per il dropdown
-            const SizedBox(width: 16), // Spazio tra i campi
+            _buildDropdown('Tipo Trasporto', 6),
+            const SizedBox(width: 16),
             Expanded(
               child: _buildTextField(_oggettoController, 'Oggetto'),
             ),
           ],
         ),
-        const SizedBox(height: 16), // Spazio tra le righe
-        _buildMessageBody(), // Aggiunto corpo del messaggio
+        const SizedBox(height: 16),
+        _buildMessageBody(),
       ],
     );
   }
@@ -371,13 +366,13 @@ class _AddMessageScreenState extends State<AddMessageScreen> {
           title,
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 8), // Spazio tra titolo e campo di testo
+        const SizedBox(height: 8),
         TextField(
           controller: controller,
           decoration: InputDecoration(
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Colors.grey), // Bordo grigio per il campo di testo
+              borderSide: const BorderSide(color: Colors.grey),
             ),
             hintText: 'Inserisci $title',
           ),
@@ -394,7 +389,7 @@ class _AddMessageScreenState extends State<AddMessageScreen> {
           'Corpo del Messaggio',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 8), // Spazio tra titolo e campo di testo
+        const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
             border: Border.all(color: Colors.grey),
@@ -402,15 +397,15 @@ class _AddMessageScreenState extends State<AddMessageScreen> {
           ),
           child: Column(
             children: [
-              _buildFormattingToolbar(), // Aggiunto toolbar di formattazione
-              const SizedBox(height: 0), // Altezza del divider ridotta
-              const Divider(), // Divider per separare toolbar dal messaggio
+              _buildFormattingToolbar(),
+              const SizedBox(height: 0),
+              const Divider(),
               TextField(
                 controller: _corpoMessaggioController,
-                maxLines: 5, // Permette di scrivere più righe
+                maxLines: 5,
                 decoration: const InputDecoration(
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.all(12), // Padding interno
+                  contentPadding: EdgeInsets.all(12),
                   hintText: 'Scrivi il tuo messaggio...',
                 ),
               ),
@@ -429,12 +424,12 @@ class _AddMessageScreenState extends State<AddMessageScreen> {
           icon: Icon(
             Icons.format_bold,
             size: 18,
-            color: _isBold ? Colors.orange : Colors.black, // Cambia colore se attivo
+            color: _isBold ? Colors.orange : Colors.black,
           ),
           onPressed: () {
             setState(() {
-              _isBold = !_isBold; // Toggle grassetto
-              _applyFormatting(); // Applica la formattazione
+              _isBold = !_isBold;
+              _applyFormatting();
             });
           },
         ),
@@ -442,12 +437,12 @@ class _AddMessageScreenState extends State<AddMessageScreen> {
           icon: Icon(
             Icons.format_italic,
             size: 18,
-            color: _isItalic ? Colors.orange : Colors.black, // Cambia colore se attivo
+            color: _isItalic ? Colors.orange : Colors.black,
           ),
           onPressed: () {
             setState(() {
-              _isItalic = !_isItalic; // Toggle corsivo
-              _applyFormatting(); // Applica la formattazione
+              _isItalic = !_isItalic;
+              _applyFormatting();
             });
           },
         ),
@@ -455,23 +450,23 @@ class _AddMessageScreenState extends State<AddMessageScreen> {
           icon: Icon(
             Icons.format_underline,
             size: 18,
-            color: _isUnderlined ? Colors.orange : Colors.black, // Cambia colore se attivo
+            color: _isUnderlined ? Colors.orange : Colors.black,
           ),
           onPressed: () {
             setState(() {
-              _isUnderlined = !_isUnderlined; // Toggle sottolineato
-              _applyFormatting(); // Applica la formattazione
+              _isUnderlined = !_isUnderlined;
+              _applyFormatting();
             });
           },
         ),
         IconButton(
-          icon: const Icon(Icons.format_list_bulleted, size: 18), // Dimensione del bottone
+          icon: const Icon(Icons.format_list_bulleted, size: 18),
           onPressed: () {
             // Logica per le liste
           },
         ),
         IconButton(
-          icon: const Icon(Icons.format_color_text, size: 18), // Dimensione del bottone
+          icon: const Icon(Icons.format_color_text, size: 18),
           onPressed: () {
             // Logica per cambiare il colore del testo
           },

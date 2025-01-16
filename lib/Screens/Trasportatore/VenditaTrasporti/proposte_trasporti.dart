@@ -4,6 +4,8 @@ import 'package:flutter_etrucknet_new/Screens/Trasportatore/profile_menu_t_scree
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/side_menu_t.dart';
 
 class TrasportiPropostiScreen extends StatefulWidget {
+  const TrasportiPropostiScreen({super.key});
+
   @override
   _TrasportiPropostiScreenState createState() => _TrasportiPropostiScreenState();
 }

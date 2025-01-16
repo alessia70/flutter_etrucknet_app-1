@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Models/transport_model.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/VenditaTrasporti/details_trasporto_eseguito.dart';
@@ -8,7 +9,7 @@ import 'package:intl/intl.dart';
 
 class TotaleTrasportiGrid extends StatefulWidget {
   final List<Transport> totTrasporti;
-  TotaleTrasportiGrid({Key? key, required this.totTrasporti}) : super(key: key);
+  const TotaleTrasportiGrid({super.key, required this.totTrasporti});
 
   @override
   _TotaleTrasportiGridState createState() => _TotaleTrasportiGridState();
@@ -40,7 +41,7 @@ class _TotaleTrasportiGridState extends State<TotaleTrasportiGrid> {
       final token = await getSavedToken();
 
       if (trasportatoreId == null || token == null) {
-        print('Errore: userId o token non trovato');
+        log('Errore: userId o token non trovato');
         return;
       }
       setState(() {
@@ -48,7 +49,7 @@ class _TotaleTrasportiGridState extends State<TotaleTrasportiGrid> {
       });
       _fetchTransports(token);
     } catch (e) {
-      print('Errore durante il caricamento dei dati utente: $e');
+      log('Errore durante il caricamento dei dati utente: $e');
     }
   }
 
@@ -86,13 +87,13 @@ class _TotaleTrasportiGridState extends State<TotaleTrasportiGrid> {
             }).toList();
           });
         } else {
-          print('Nessun trasporto trovato.');
+          log('Nessun trasporto trovato.');
         }
       } else {
-        print('Errore nell\'API: ${response.statusCode} - ${response.body}');
+        log('Errore nell\'API: ${response.statusCode} - ${response.body}');
       }
     } catch (e) {
-      print('Errore durante la chiamata API: $e');
+      log('Errore durante la chiamata API: $e');
     }
   }
 
@@ -100,7 +101,7 @@ class _TotaleTrasportiGridState extends State<TotaleTrasportiGrid> {
     try {
       final token = await getSavedToken();
       if (token == null) {
-        print('Errore: token non trovato');
+        log('Errore: token non trovato');
         return;
       }
       final url = Uri.parse('https://etrucknetapi.azurewebsites.net/v1/Proposte/$trasportatoreId/$transportId');
@@ -109,13 +110,13 @@ class _TotaleTrasportiGridState extends State<TotaleTrasportiGrid> {
         headers: {'Authorization': 'Bearer $token'},
       );
       if (response.statusCode == 204) {
-        print('Trasporto eliminato con successo');
+        log('Trasporto eliminato con successo');
         _fetchTransports(token);
       } else {
-        print('Errore nell\'eliminazione del trasporto: ${response.statusCode}');
+        log('Errore nell\'eliminazione del trasporto: ${response.statusCode}');
       }
     } catch (e) {
-      print('Errore durante la cancellazione del trasporto: $e');
+      log('Errore durante la cancellazione del trasporto: $e');
     }
   }
 

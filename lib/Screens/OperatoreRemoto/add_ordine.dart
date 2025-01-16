@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_etrucknet_new/Models/allestimento_model.dart';
@@ -108,7 +110,7 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
         }
       });
     } catch (e) {
-      print('Errore nel recupero dei tipi di trasporto: $e');
+      log('Errore nel recupero dei tipi di trasporto: $e');
     }
   }
 
@@ -119,7 +121,7 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
         allestimenti = allestimentiData;
       });
     } catch (e) {
-      print("Errore nel recupero degli allestimenti: $e");
+      log("Errore nel recupero degli allestimenti: $e");
     }
   }
 
@@ -130,7 +132,7 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
         specifiche = specificheData;
       });
     } catch (e) {
-      print("Errore nel recupero degli allestimenti: $e");
+      log("Errore nel recupero degli allestimenti: $e");
     }
   }
   Future<void> _selectPickupDate(BuildContext context) async {
@@ -244,11 +246,11 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
         final result = json.decode(response.body);
         return result;
       } else {
-        print("Errore durante la chiamata API: ${response.statusCode}");
+        log("Errore durante la chiamata API: ${response.statusCode}");
         return 0;
       }
     } catch (e) {
-      print("Errore: $e");
+      log("Errore: $e");
       return 0;
     }
   }
@@ -658,7 +660,6 @@ class _AddOrdineScreenState extends State<AddOrdineScreen> {
                           setState(() {
                             selectedSpecifica = nuovaSpecifica;
                           });
-                          print('Specifica selezionata: ${nuovaSpecifica?.descrizione}');
                         },
                         icon: Icon(Icons.arrow_drop_down),
                       ),

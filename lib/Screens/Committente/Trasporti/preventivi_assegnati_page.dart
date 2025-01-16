@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Screens/Committente/Trasporti/data_grid_preventivi_assegnati.dart';
 import 'package:flutter_etrucknet_new/Screens/Committente/profile_menu_committente.dart';
@@ -124,11 +125,11 @@ class _PreventiviAssegnatiPageState extends State<PreventiviAssegnatiPage> {
           };
         }).toList();
       } else {
-        print('Errore: risposta non in formato lista o chiave "data" mancante');
+        log('Errore: risposta non in formato lista o chiave "data" mancante');
         return [];
       }
     } catch (e) {
-      print('Errore nel parsing dei dati: $e');
+      log('Errore nel parsing dei dati: $e');
       return [];
     }
   }

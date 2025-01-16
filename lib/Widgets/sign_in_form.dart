@@ -27,7 +27,6 @@ class _SignInFormState extends State<SignInForm> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('access_token', token);
     await prefs.setInt('trasportatore_id', trasportatoreId); 
-    print("Token salvato: $token");
   }
 
 
@@ -50,8 +49,6 @@ class _SignInFormState extends State<SignInForm> {
       headers: {"Content-Type": "application/x-www-form-urlencoded"},
       body: credentials.toForm(),
     );
-
-    print(response);
     if (response.statusCode == 200) {
       final responseData = jsonDecode(response.body);
       final tipoRuolo = responseData['user']['tipoRuolo'] ?? 'Tipo Ruolo Sconosciuto';

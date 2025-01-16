@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Screens/Committente/Trasporti/preventivi_cancellati_page.dart';
@@ -129,11 +130,11 @@ class _PreventiviRichiestiPageState extends State<PreventiviRichiestiPage> {
           };
         }).toList();
       } else {
-        print('Errore: risposta non in formato lista o chiave "data" mancante');
+        log('Errore: risposta non in formato lista o chiave "data" mancante');
         return [];
       }
     } catch (e) {
-      print('Errore nel parsing dei dati: $e');
+      log('Errore nel parsing dei dati: $e');
       return [];
     }
   }

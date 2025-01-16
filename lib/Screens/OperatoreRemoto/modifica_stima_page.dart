@@ -6,7 +6,7 @@ import 'package:flutter_etrucknet_new/Provider/estimates_provider.dart';
 
 class ModificaStimaScreen extends StatefulWidget {
   final Map<String, dynamic> estimate;
-  const ModificaStimaScreen({Key? key, required this.estimate}) : super(key: key);
+  const ModificaStimaScreen({super.key, required this.estimate});
 
   @override
   _ModificaStimaScreenState createState() => _ModificaStimaScreenState();

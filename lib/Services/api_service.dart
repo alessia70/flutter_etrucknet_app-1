@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter_etrucknet_new/DTOs/stima_dto.dart';
 import 'package:flutter_etrucknet_new/Models/user_model.dart';
 import 'package:http/http.dart' as http;
@@ -25,7 +26,7 @@ class ApiService {
   Future<UserModel?> fetchUserData(String s) async {
     String? token = await getToken();
     if (token == null) {
-      print('Token non disponibile');
+      log('Token non disponibile');
       return null;
     }
 
@@ -40,7 +41,7 @@ class ApiService {
       Map<String, dynamic> data = jsonDecode(response.body);
       return UserModel.fromForm(data);
     } else {
-      print('Errore nel caricamento dei dati utente');
+      log('Errore nel caricamento dei dati utente');
       return null;
     }
   }
@@ -59,9 +60,8 @@ class ApiService {
     if (response.statusCode == 200) {
       String token = jsonDecode(response.body)['token'];
       await saveToken(token);
-      print('Login avvenuto con successo!');
     } else {
-      print('Login fallito');
+      log('Login fallito');
     }
   }
 }

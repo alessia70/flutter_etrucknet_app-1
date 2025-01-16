@@ -6,7 +6,7 @@ import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/side_menu.dart';
 class EditOrderForm extends StatefulWidget {
   final Order order;
 
-  EditOrderForm({Key? key, required this.order}) : super(key: key);
+  const EditOrderForm({super.key, required this.order});
 
   @override
   _EditOrderFormState createState() => _EditOrderFormState();
@@ -27,8 +27,8 @@ class _EditOrderFormState extends State<EditOrderForm> {
   late TextEditingController estimatedBudgetController;
   bool isLoadingMandatory = false;
   bool isUnloadingMandatory = false;
-  late String? selectedVehicleType = null;
-  late String? selectedAdditionalSpecs = null;
+  late String? selectedVehicleType;
+  late String? selectedAdditionalSpecs;
   bool isSideLoading = false;
   bool isCashOnDelivery = false;
   bool hasTrafficRestrictions = false;
@@ -74,8 +74,8 @@ class _EditOrderFormState extends State<EditOrderForm> {
 
     isLoadingMandatory = widget.order.isLoadingMandatory;
     isUnloadingMandatory = widget.order.isUnloadingMandatory;
-    selectedVehicleType = widget.order.vehicleType ?? null;
-    selectedAdditionalSpecs = widget.order.additionalSpecs ?? null;
+    selectedVehicleType = widget.order.vehicleType;
+    selectedAdditionalSpecs = widget.order.additionalSpecs;
 
   }
 

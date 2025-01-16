@@ -7,7 +7,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 class DettaglioSimulazioneScreen extends StatefulWidget {
   final Map<String, dynamic> simulation;
 
-  const DettaglioSimulazioneScreen({Key? key, required this.simulation}) : super(key: key);
+  const DettaglioSimulazioneScreen({super.key, required this.simulation});
 
   @override
   _DettaglioSimulazioneScreenState createState() => _DettaglioSimulazioneScreenState();
@@ -87,7 +87,7 @@ class _DettaglioSimulazioneScreenState extends State<DettaglioSimulazioneScreen>
                       const SizedBox(height: 8),
                       Row(
                         children: [
-                          Icon(FontAwesomeIcons.cogs, size: 20, color: Colors.orange),
+                          Icon(FontAwesomeIcons.gears, size: 20, color: Colors.orange),
                           const SizedBox(width: 8),
                           Text(
                             'Tipo Simulazione: ${widget.simulation['tipo_simulazione'] ?? 'N/A'}',
@@ -189,7 +189,7 @@ class _DettaglioSimulazioneScreenState extends State<DettaglioSimulazioneScreen>
                     children: [
                       Row(
                         children: [
-                          Icon(FontAwesomeIcons.infoCircle, size: 20, color: Colors.orange),
+                          Icon(FontAwesomeIcons.circleInfo, size: 20, color: Colors.orange),
                           const SizedBox(width: 8),
                           const Text(
                             'Ulteriori Dettagli',
@@ -216,7 +216,7 @@ class _DettaglioSimulazioneScreenState extends State<DettaglioSimulazioneScreen>
                     children: [
                       Row(
                         children: [
-                          Icon(FontAwesomeIcons.exclamationTriangle, size: 20, color: Colors.orange),
+                          Icon(FontAwesomeIcons.triangleExclamation, size: 20, color: Colors.orange),
                           const SizedBox(width: 8),
                           const Text(
                             'Comunicazioni Importanti',

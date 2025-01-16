@@ -9,7 +9,7 @@ class FatturaDetailPage extends StatelessWidget {
   final String descrizione;
   final String infoScadenza;
 
-  FatturaDetailPage({
+  const FatturaDetailPage({
     required this.id,
     required this.data,
     required this.ricevutaDa,

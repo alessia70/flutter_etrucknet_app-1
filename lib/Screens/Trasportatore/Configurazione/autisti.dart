@@ -3,6 +3,8 @@ import 'package:flutter_etrucknet_new/Screens/Trasportatore/profile_menu_t_scree
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/side_menu_t.dart';
 
 class AutistiPage extends StatefulWidget {
+  const AutistiPage({super.key});
+
   @override
   _AutistiPageState createState() => _AutistiPageState();
 }

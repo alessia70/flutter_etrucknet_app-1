@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class AggiungiAutomezzoDialog extends StatefulWidget {
   final Function(String, String, String) onSave;
 
-  const AggiungiAutomezzoDialog({required this.onSave, Key? key}) : super(key: key);
+  const AggiungiAutomezzoDialog({required this.onSave, super.key});
 
   @override
   _AggiungiAutomezzoDialogState createState() => _AggiungiAutomezzoDialogState();

@@ -1,9 +1,13 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/VenditaTrasporti/grid_trasporti_eseguiti.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/profile_menu_t_screen.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/side_menu_t.dart';
 
 class CompletedTransportPage extends StatefulWidget {
+  const CompletedTransportPage({super.key});
+
   @override
   _CompletedTransportPageState createState() => _CompletedTransportPageState();
 }
@@ -11,6 +15,7 @@ class CompletedTransportPage extends StatefulWidget {
 class _CompletedTransportPageState extends State<CompletedTransportPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
@@ -95,7 +100,7 @@ class _CompletedTransportPageState extends State<CompletedTransportPage> {
       lastDate: DateTime(2025),
     ).then((range) {
       if (range != null) {
-        print('Filtra dal ${range.start} al ${range.end}');
+        log('Filtra dal ${range.start} al ${range.end}');
       }
     });
   }

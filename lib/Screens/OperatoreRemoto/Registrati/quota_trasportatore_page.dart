@@ -6,7 +6,7 @@ class SendQuotePage extends StatelessWidget {
   final String orderId;
   final TextEditingController shipperController = TextEditingController();
 
-  SendQuotePage({Key? key, required this.orderId}) : super(key: key);
+  SendQuotePage({super.key, required this.orderId});
 
   @override
   Widget build(BuildContext context) {

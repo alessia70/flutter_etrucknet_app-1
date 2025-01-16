@@ -16,7 +16,7 @@ class TransportoEseguitioDetailPage extends StatelessWidget {
   final List<Map<String, dynamic>> dettagliMerce;
 
 
-  TransportoEseguitioDetailPage({
+  const TransportoEseguitioDetailPage({
     required this.id,
     required this.tipoTrasporto,
     required this.distanza,
@@ -329,7 +329,7 @@ class TransportoEseguitioDetailPage extends StatelessWidget {
                 ),
               ],
             );
-          }).toList(),
+          }),
         ],
       ),
     );

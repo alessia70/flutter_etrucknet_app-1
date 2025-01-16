@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/profile_info_operatore_screen.dart';
@@ -6,7 +7,7 @@ import 'package:open_file/open_file.dart';
 //import 'package:flutter_full_pdf_viewer/flutter_full_pdf_viewer.dart';
 
 class ProcedureScreen extends StatefulWidget {
-  const ProcedureScreen({Key? key}) : super(key: key);
+  const ProcedureScreen({super.key});
   @override
   _ProcedureScreenState createState() => _ProcedureScreenState();
 }
@@ -22,11 +23,7 @@ class _ProcedureScreenState extends State<ProcedureScreen> {
 
   Future<void> _loadFiles() async {
     final procedureDir = Directory('lib/Documents/Procedure');
-
-    print('Percorso directory Procedure: ${procedureDir.path}');
-
     if (await procedureDir.exists()) {
-      print('La directory esiste, caricamento dei file...');
       final fileList = procedureDir.listSync();
       setState(() {
         files = fileList.map((file) {
@@ -41,16 +38,16 @@ class _ProcedureScreenState extends State<ProcedureScreen> {
         }).toList();
       });
       if (files.isEmpty) {
-        print('Nessun file trovato nella directory Procedure.');
+        log('Nessun file trovato nella directory Procedure.');
       }
     } else {
-      print('La directory Procedure non esiste. Assicurati che i file siano nella directory corretta.');
+      log('La directory Procedure non esiste. Assicurati che i file siano nella directory corretta.');
     }
   }
 
   void _openFile(String path) async {
     final result = await OpenFile.open(path);
-    print('Result: ${result.message}');
+    log('Result: ${result.message}');
   }
   @override
   Widget build(BuildContext context) {

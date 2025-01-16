@@ -3,7 +3,7 @@ import 'package:flutter_etrucknet_new/Screens/Trasportatore/VenditaTrasporti/det
 
 class GridRichiesteSubvezioni extends StatefulWidget {
   final List<dynamic> completedTransports;
-  GridRichiesteSubvezioni({Key? key, required this.completedTransports}) : super(key: key);
+  const GridRichiesteSubvezioni({super.key, required this.completedTransports});
 
   @override
   _GridRichiesteSubvezioniState createState() => _GridRichiesteSubvezioniState();

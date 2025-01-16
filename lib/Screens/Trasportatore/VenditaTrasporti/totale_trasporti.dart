@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Models/transport_model.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/VenditaTrasporti/grid_totale_trasporti.dart';
@@ -8,6 +9,8 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TotaleTrasportiScreen extends StatefulWidget {
+  const TotaleTrasportiScreen({super.key});
+
   @override
   _TotaleTrasportiScreenState createState() => _TotaleTrasportiScreenState();
 }
@@ -53,7 +56,7 @@ class _TotaleTrasportiScreenState extends State<TotaleTrasportiScreen> {
         token = savedToken;
       });
     } catch (e) {
-      print('Errore nel recupero dei dati utente: $e');
+      log('Errore nel recupero dei dati utente: $e');
     }
   }
 
@@ -79,13 +82,13 @@ class _TotaleTrasportiScreenState extends State<TotaleTrasportiScreen> {
             transports = data.map((item) => Transport.fromJson(item)).toList();
           });
         } else {
-          print('Errore: il formato della risposta non contiene il campo "data".');
+          log('Errore: il formato della risposta non contiene il campo "data".');
         }
       } else {
-        print('Errore nella chiamata API: ${response.statusCode}');
+        log('Errore nella chiamata API: ${response.statusCode}');
       }
     } catch (e) {
-      print('Errore nel caricamento dei trasporti: $e');
+      log('Errore nel caricamento dei trasporti: $e');
     } finally {
       setState(() {
         isLoading = false;

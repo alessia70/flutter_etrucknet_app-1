@@ -4,7 +4,7 @@ class EditCamionDialog extends StatefulWidget {
   final Map<String, String> truck;
   final Function(Map<String, String>) onSave;
 
-  const EditCamionDialog({Key? key, required this.truck, required this.onSave}) : super(key: key);
+  const EditCamionDialog({super.key, required this.truck, required this.onSave});
 
   @override
   _EditCamionDialogState createState() => _EditCamionDialogState();

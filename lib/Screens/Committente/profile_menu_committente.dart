@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Models/user_model.dart';
 import 'package:flutter_etrucknet_new/Services/api_service.dart';
@@ -5,7 +7,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileCommittentePage extends StatefulWidget {
-  const ProfileCommittentePage({Key? key}) : super(key: key);
+  const ProfileCommittentePage({super.key});
 
   @override
   _ProfileCommittentePageState createState() => _ProfileCommittentePageState();
@@ -13,7 +15,7 @@ class ProfileCommittentePage extends StatefulWidget {
 
 class _ProfileCommittentePageState extends State<ProfileCommittentePage> {
   late ApiService apiService;
-  Future<UserModel?>? _userFuture; // Variabile nullable, inizializzata quando il token è disponibile
+  Future<UserModel?>? _userFuture;
   String? token;
 
   @override
@@ -23,18 +25,15 @@ class _ProfileCommittentePageState extends State<ProfileCommittentePage> {
     _loadToken();
   }
 
-  // Metodo per caricare il token
   Future<void> _loadToken() async {
     final prefs = await SharedPreferences.getInstance();
-    token = prefs.getString('access_token'); // Carica il token dai SharedPreferences
+    token = prefs.getString('access_token');
     if (token == null) {
-      // Se non c'è un token, mostra un messaggio di errore o esegui un redirect
-      print("Token non disponibile");
-      Navigator.pushReplacementNamed(context, '/login'); // Redirige alla pagina di login
+      log("Token non disponibile");
+      Navigator.pushReplacementNamed(context, '/login');
     } else {
-      // Se c'è un token, carica i dati dell'utente
       setState(() {
-        _userFuture = apiService.fetchUserData(token!); // Inizializza _userFuture con i dati utente
+        _userFuture = apiService.fetchUserData(token!);
       });
     }
   }
@@ -57,13 +56,13 @@ class _ProfileCommittentePageState extends State<ProfileCommittentePage> {
         ],
       ),
       body: _userFuture == null
-          ? Center(child: SpinKitCircle(color: Colors.orange)) // Mostra un caricamento fino a quando _userFuture non è inizializzato
+          ? Center(child: SpinKitCircle(color: Colors.orange)) 
           : FutureBuilder<UserModel?>(
               future: _userFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(
-                    child: SpinKitCircle(color: Colors.orange), // Spinner durante il caricamento
+                    child: SpinKitCircle(color: Colors.orange),
                   );
                 } else if (snapshot.hasError) {
                   return Center(

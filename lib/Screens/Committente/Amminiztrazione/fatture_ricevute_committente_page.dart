@@ -5,6 +5,8 @@ import 'package:flutter_etrucknet_new/Screens/Committente/side_menu_committente.
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FattureRicevuteCommittentePage extends StatefulWidget {
+  const FattureRicevuteCommittentePage({super.key});
+
   @override
   _FattureRicevuteCommittentePageState createState() => _FattureRicevuteCommittentePageState();
 }

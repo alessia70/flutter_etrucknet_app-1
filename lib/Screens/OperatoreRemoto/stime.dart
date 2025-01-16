@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/confronta_stime_screen.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/data_grid_stime.dart';
@@ -6,7 +8,7 @@ import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/profile_info_opera
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/side_menu.dart';
 
 class StimeScreen extends StatefulWidget {
-  const StimeScreen({Key? key}) : super(key: key);
+  const StimeScreen({super.key});
   
   @override
   _EstimatesScreenState createState() => _EstimatesScreenState();
@@ -149,7 +151,7 @@ class _EstimatesScreenState extends State<StimeScreen> {
               child: DataGridStime(
                 key: gridKey,
                 onUpdateVisibleEstimates: (visibleEstimates) {
-                  print('Stime visibili aggiornate: $visibleEstimates');
+                  log('Stime visibili aggiornate: $visibleEstimates');
                 },
               ),
             ),

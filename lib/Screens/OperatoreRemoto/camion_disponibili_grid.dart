@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class CamionDisponibiliGrid extends StatelessWidget {
   final List<Map<String, dynamic>> camion;
 
-  const CamionDisponibiliGrid({Key? key, required this.camion}) : super(key: key);
+  const CamionDisponibiliGrid({super.key, required this.camion});
 
   @override
   Widget build(BuildContext context) {

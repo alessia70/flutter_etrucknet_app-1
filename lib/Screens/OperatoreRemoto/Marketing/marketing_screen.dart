@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/profile_info_operatore_screen.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/side_menu.dart';
@@ -8,7 +10,7 @@ import 'package:open_file/open_file.dart';
 //import 'package:url_launcher/url_launcher.dart';
 
 class MarketingFilesScreen extends StatefulWidget {
-  const MarketingFilesScreen({Key? key}) : super(key: key);
+  const MarketingFilesScreen({super.key});
 
   @override
   _MarketingFilesScreenState createState() => _MarketingFilesScreenState();
@@ -25,11 +27,7 @@ class _MarketingFilesScreenState extends State<MarketingFilesScreen> {
 
   Future<void> _loadFiles() async {
     final marketingDir = Directory('lib/Documents/Marketing');
-
-    print('Percorso directory Marketing: ${marketingDir.path}');
-
     if (await marketingDir.exists()) {
-      print('La directory esiste, caricamento dei file...');
       final fileList = marketingDir.listSync();
       setState(() {
         files = fileList.map((file) {
@@ -44,15 +42,15 @@ class _MarketingFilesScreenState extends State<MarketingFilesScreen> {
         }).toList();
       });
       if (files.isEmpty) {
-        print('Nessun file trovato nella directory Marketing.');
+        log('Nessun file trovato nella directory Marketing.');
       }
     } else {
-      print('La directory Marketing non esiste. Assicurati che i file siano nella directory corretta.');
+      log('La directory Marketing non esiste. Assicurati che i file siano nella directory corretta.');
     }
   }
   void _openFile(String path) async {
     final result = await OpenFile.open(path);
-    print('Result: ${result.message}');
+    log('Result: ${result.message}');
   }
 
   @override

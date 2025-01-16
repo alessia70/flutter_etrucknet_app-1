@@ -10,11 +10,11 @@ class PreventivoDetailsPage extends StatefulWidget {
   final String orderId;
 
   const PreventivoDetailsPage({
-    Key? key,
+    super.key,
     required this.preventivo,
     required this.orderStatus,
     required this.orderId,
-  }) : super(key: key);
+  });
 
   @override
   _PreventivoDetailsPageState createState() => _PreventivoDetailsPageState();

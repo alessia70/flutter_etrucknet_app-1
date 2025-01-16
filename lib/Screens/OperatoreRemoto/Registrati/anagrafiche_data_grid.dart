@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/Registrati/modifca_anagrafiche_screen.dart';
 
@@ -138,7 +140,7 @@ class AnagraficheDataGrid extends StatelessWidget {
   }
 
   void _contactUser(String email) {
-    print('Contattare l\'utente via email: $email');
+    log('Contattare l\'utente via email: $email');
   }
 
   void _showRatingDialog(BuildContext context) {

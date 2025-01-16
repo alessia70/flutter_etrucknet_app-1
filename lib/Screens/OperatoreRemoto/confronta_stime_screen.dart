@@ -1,7 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 void risultatoConfrontoStimeDialog(BuildContext context, List<Map<String, dynamic>> selectedEstimates) {
-  print("Stime selezionate per il confronto: $selectedEstimates");
+  log("Stime selezionate per il confronto: $selectedEstimates"); // da eliminare
   showDialog(
     context: context,
     builder: (BuildContext context) {

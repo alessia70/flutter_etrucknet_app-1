@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 
 class ModificaSimulazioneScreen extends StatefulWidget {
   final Map<String, dynamic> simulation;
-  const ModificaSimulazioneScreen({Key? key, required this.simulation}) : super(key: key);
+  const ModificaSimulazioneScreen({super.key, required this.simulation});
 
   @override
   _ModificaSimulazioneScreenState createState() => _ModificaSimulazioneScreenState();

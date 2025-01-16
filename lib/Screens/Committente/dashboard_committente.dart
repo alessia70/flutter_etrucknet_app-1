@@ -193,7 +193,7 @@ class CommittenteDashboardScreen extends StatelessWidget {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 16),
-            Container(
+            SizedBox(
               width: double.infinity,
               child: _buildScrollableDataTable(
                 columns: const [
@@ -244,7 +244,7 @@ class CommittenteDashboardScreen extends StatelessWidget {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 16),
-            Container(
+            SizedBox(
               width: double.infinity,
               child: _buildScrollableDataTable(
                 columns: const [

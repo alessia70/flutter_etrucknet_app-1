@@ -7,7 +7,7 @@ import 'package:flutter_etrucknet_new/Models/camion_model.dart';
 class EditCamionDialog extends StatefulWidget {
   final Camion camion;
 
-  const EditCamionDialog({required this.camion});
+  const EditCamionDialog({super.key, required this.camion});
 
   @override
   _EditCamionDialogState createState() => _EditCamionDialogState();

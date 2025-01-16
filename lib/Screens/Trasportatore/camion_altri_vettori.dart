@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class CamionDisponibiliAltriVettoriScreen extends StatelessWidget {
+  const CamionDisponibiliAltriVettoriScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:country_picker/country_picker.dart';
@@ -7,7 +9,7 @@ Future<List<Location>> getLocations(String address) async {
     List<Location> locations = await locationFromAddress(address);
     return locations;
   } catch (e) {
-    print("Errore durante il recupero delle località: $e");
+    log("Errore durante il recupero delle località: $e");
     return [];
   }
 }

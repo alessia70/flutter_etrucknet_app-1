@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Models/mezzo_allestimento_model.dart';
 import 'package:flutter_etrucknet_new/Models/tipoTrasporto_model.dart';
@@ -76,7 +78,7 @@ class _NuovaStimaScreenState extends State<NuovaStimaScreen> {
         }
       });
     } catch (e) {
-      print('Errore nel recupero dei tipi di trasporto: $e');
+      log('Errore nel recupero dei tipi di trasporto: $e');
     }
   }
 
@@ -87,7 +89,7 @@ class _NuovaStimaScreenState extends State<NuovaStimaScreen> {
         specifiche = specificheData;
       });
     } catch (e) {
-      print("Errore nel recupero degli allestimenti: $e");
+      log("Errore nel recupero degli allestimenti: $e");
     }
   }
 
@@ -262,7 +264,7 @@ class _NuovaStimaScreenState extends State<NuovaStimaScreen> {
                         Icon(Icons.warning, color: Colors.orange),
                         SizedBox(width: 8),
                         Text(
-                          'Tipologia di merce pericolosa selezionata: ${selectedMercePericolosa}',
+                          'Tipologia di merce pericolosa selezionata: $selectedMercePericolosa',
                           style: TextStyle(fontSize: 14),
                         ),
                       ],
@@ -389,7 +391,7 @@ class _NuovaStimaScreenState extends State<NuovaStimaScreen> {
               setState(() {
                 selectedSpecifica = nuovaSpecifica;
               });
-              print('Specifica selezionata: ${nuovaSpecifica?.descrizione}');
+              log('Specifica selezionata: ${nuovaSpecifica?.descrizione}');
             },
             icon: Icon(Icons.arrow_drop_down),
           ),
@@ -671,9 +673,6 @@ class _NuovaStimaScreenState extends State<NuovaStimaScreen> {
       'altezza': double.tryParse(_altezzaController.text) ?? 0.0, 
       'stimato': '1000 USD',
     };
-
-    print(newEstimate);
-
     Provider.of<EstimatesProvider>(context, listen: false).addEstimate(newEstimate);
     Navigator.pop(context); 
   }

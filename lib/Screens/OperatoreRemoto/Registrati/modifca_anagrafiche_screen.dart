@@ -6,15 +6,13 @@ import 'package:intl/intl.dart';
 class ModifyAnagraficaScreen extends StatefulWidget {
   final Map<String, dynamic> anagrafica;
 
-  // Accettiamo i dati dell'anagrafica come parametro
-  ModifyAnagraficaScreen({required this.anagrafica});
+  const ModifyAnagraficaScreen({super.key, required this.anagrafica});
 
   @override
   _ModifyAnagraficaScreenState createState() => _ModifyAnagraficaScreenState();
 }
 
 class _ModifyAnagraficaScreenState extends State<ModifyAnagraficaScreen> {
-  // Variabili per salvare i dati inseriti e precompilati
   late TextEditingController ragioneSocialeController;
   late TextEditingController partitaIVAController;
   late TextEditingController ratingController;
@@ -156,7 +154,7 @@ class _ModifyAnagraficaScreenState extends State<ModifyAnagraficaScreen> {
                         ),
                       ],
                     );
-                  }).toList(),
+                  }),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: ElevatedButton.icon(
@@ -254,7 +252,6 @@ class _ModifyAnagraficaScreenState extends State<ModifyAnagraficaScreen> {
                   ElevatedButton(
                     onPressed: () {
                       if (_formIsValid()) {
-                        print("Dati aggiornati");
                         Navigator.pop(context);
                       }
                     },

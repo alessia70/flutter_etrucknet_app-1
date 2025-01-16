@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Models/rdtEseguiti_model.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/VenditaTrasporti/details_trasporto_eseguito.dart';
@@ -7,6 +8,8 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TransportiEseguitiGrid extends StatefulWidget {
+  const TransportiEseguitiGrid({super.key});
+
   @override
   _TransportiEseguitiGridState createState() => _TransportiEseguitiGridState();
 }
@@ -56,7 +59,7 @@ class _TransportiEseguitiGridState extends State<TransportiEseguitiGrid> {
     final trasportatoreId = await getSavedUserId();
     final token = await getSavedToken();
     if (trasportatoreId == null || token == null) {
-      print('Errore: userId o token non trovato');
+      log('Errore: userId o token non trovato');
       return;
     }
     setState(() {
@@ -88,10 +91,10 @@ class _TransportiEseguitiGridState extends State<TransportiEseguitiGrid> {
           isLoading = false;
         });
       } else {
-        print('Errore nell\'API: ${response.statusCode} - ${response.body}');
+        log('Errore nell\'API: ${response.statusCode} - ${response.body}');
       }
     } catch (e) {
-      print('Errore durante la chiamata API: $e');
+      log('Errore durante la chiamata API: $e');
     }
   }
 
@@ -142,11 +145,13 @@ class _TransportiEseguitiGridState extends State<TransportiEseguitiGrid> {
                                   DataCell(Text(formatDate(transport.dataCarico))),
                                   DataCell(Text(transport.luogoScarico ?? '')),
                                   DataCell(Text(formatDate(transport.dataScarico))),
-                                  DataCell(Text(transport.fatturaId != null && transport.fatturaId != 0 ? transport.fatturaId.toString() : 'N/A')),
+                                  DataCell(Text(transport.fatturaId != null && transport.fatturaId != '' ? transport.fatturaId.toString() : 'N/A')),
                                   DataCell(Text('${transport.importoFattura.toStringAsFixed(2)} €')),
+                                  // ignore: unrelated_type_equality_checks
                                   DataCell(Text(transport.dataFattura != "0001-01-01T00:00:00"
                                       ? formatDate(transport.dataFattura)
                                       : 'N/A')),
+                                  // ignore: unrelated_type_equality_checks
                                   DataCell(Text(transport.dataScadenza != "0001-01-01T00:00:00"
                                       ? formatDate(transport.dataScadenza)
                                       : 'N/A')),
@@ -232,6 +237,8 @@ class _TransportiEseguitiGridState extends State<TransportiEseguitiGrid> {
 }
 
 class DdtPopup extends StatelessWidget {
+  const DdtPopup({super.key});
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(

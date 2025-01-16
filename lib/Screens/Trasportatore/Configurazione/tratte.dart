@@ -3,6 +3,8 @@ import 'package:flutter_etrucknet_new/Screens/Trasportatore/profile_menu_t_scree
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/side_menu_t.dart';
 
 class TrattePage extends StatefulWidget {
+  const TrattePage({super.key});
+
   @override
   _TrattePageState createState() => _TrattePageState();
 }
@@ -30,6 +32,7 @@ class _TrattePageState extends State<TrattePage> {
     filteredTratte = List.from(tratte);
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,

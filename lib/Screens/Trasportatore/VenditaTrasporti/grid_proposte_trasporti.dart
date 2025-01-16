@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Models/transport_model.dart';
 import 'package:flutter_etrucknet_new/Screens/Trasportatore/VenditaTrasporti/details_trasporto_proposto.dart';
@@ -7,7 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TrasportiGrid extends StatefulWidget {
-  const TrasportiGrid({Key? key}) : super(key: key);
+  const TrasportiGrid({super.key});
 
   @override
   _TrasportiGridState createState() => _TrasportiGridState();
@@ -50,7 +51,7 @@ class _TrasportiGridState extends State<TrasportiGrid> {
       final token = await getSavedToken();
 
       if (trasportatoreId == null || token == null) {
-        print('Errore: userId o token non trovato');
+        log('Errore: userId o token non trovato');
         return;
       }
       setState(() {
@@ -58,7 +59,7 @@ class _TrasportiGridState extends State<TrasportiGrid> {
       });
       _fetchTransports(token);
     } catch (e) {
-      print('Errore durante il caricamento dei dati utente: $e');
+      log('Errore durante il caricamento dei dati utente: $e');
     }
   }
   String getEsitoString(int esito) {
@@ -91,10 +92,10 @@ class _TrasportiGridState extends State<TrasportiGrid> {
           veicoliFiltrati = List.from(transports);
         });
       } else {
-        print('Errore nell\'API: ${response.statusCode}');
+        log('Errore nell\'API: ${response.statusCode}');
       }
     } catch (e) {
-      print('Errore durante la chiamata API: $e');
+      log('Errore durante la chiamata API: $e');
     }
   }
 
@@ -128,7 +129,7 @@ class _TrasportiGridState extends State<TrasportiGrid> {
                   });
                   Navigator.of(context).pop();
                 } else {
-                  print('Errore nell\'eliminazione: ${response.statusCode}');
+                  log('Errore nell\'eliminazione: ${response.statusCode}');
                   Navigator.of(context).pop();
                   _showErrorMessage();
                 }
@@ -415,7 +416,7 @@ class _TrasportiGridState extends State<TrasportiGrid> {
               if (token != null) {
                 _deleteTransport(token, transport);
               } else {
-                print("Token non trovato");
+                log("Token non trovato");
               }
             },
           ),

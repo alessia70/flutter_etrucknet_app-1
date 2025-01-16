@@ -1,6 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 class SideMenuT extends StatefulWidget {
+  const SideMenuT({super.key});
+
   @override
   _SideMenuTState createState() => _SideMenuTState();
 }
@@ -160,14 +164,13 @@ class _SideMenuTState extends State<SideMenuT> {
           setState(() {
             selectedPage = title;
           });
-          print('Navigating to: $title');
           Navigator.pop(context);
           
           final route = routes[title];
           if (route != null) {
             Navigator.pushNamed(context, route);
           } else {
-            print('Route not found for $title');
+            log('Route not found for $title');
           }
         },
       ),

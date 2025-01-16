@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/camion_disponibili_grid.dart';
@@ -27,13 +28,11 @@ class _AvailableTrucksScreenState extends State<AvailableTrucksScreen> {
   Future<void> saveToken(String token) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('access_token', token);
-    print('Token salvato correttamente: $token');
   }
 
   Future<String?> getSavedToken() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('access_token');
-    print('Token recuperato: $token');
     return token;
   }
 
@@ -47,7 +46,7 @@ class _AvailableTrucksScreenState extends State<AvailableTrucksScreen> {
     final trasportatoreId = await getSavedUserId();
 
     if (token == null || trasportatoreId == null) {
-      print('Token o TrasportatoreId non trovato.');
+      log('Token o TrasportatoreId non trovato.');
       return;
     }
 
@@ -68,7 +67,6 @@ class _AvailableTrucksScreenState extends State<AvailableTrucksScreen> {
     if (response.statusCode == 200) {
       try {
         List<dynamic> data = json.decode(response.body);
-        print("Dati caricati: ${data.length} camion disponibili.");
         setState(() {
           trucks = List<Map<String, dynamic>>.from(
             data.map((item) => {
@@ -88,10 +86,10 @@ class _AvailableTrucksScreenState extends State<AvailableTrucksScreen> {
           filteredTrucks = List.from(trucks);
         });
       } catch (e) {
-        print('Errore nel parsing dei dati: $e');
+        log('Errore nel parsing dei dati: $e');
       }
     } else {
-      print('Errore nella richiesta: ${response.statusCode}');
+      log('Errore nella richiesta: ${response.statusCode}');
     }
   }
 
@@ -113,8 +111,6 @@ class _AvailableTrucksScreenState extends State<AvailableTrucksScreen> {
         return isMatchingCarrier && isMatchingTruck && isMatchingType && isMatchingDateRange;
       }).toList();
     });
-
-    print("Camion filtrati: ${filteredTrucks.length}");
   }
 
   @override

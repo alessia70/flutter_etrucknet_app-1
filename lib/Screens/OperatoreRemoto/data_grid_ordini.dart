@@ -10,11 +10,11 @@ class OrdersGrid extends StatefulWidget {
   final Function(Order) onUpdateOrder;
 
   const OrdersGrid({
-    Key? key,
+    super.key,
     required this.orders,
     required this.onDeleteOrder,
     required this.onUpdateOrder,
-  }) : super(key: key);
+  });
 
   @override
   _OrdersGridState createState() => _OrdersGridState();
@@ -31,7 +31,6 @@ class _OrdersGridState extends State<OrdersGrid> {
 
   @override
   Widget build(BuildContext context) {
-    print("Numero di ordini nella grid: ${orders.length}");
     return ListView.builder(
       itemCount: orders.length,
       itemBuilder: (context, index) {
@@ -61,7 +60,7 @@ class _OrdersGridState extends State<OrdersGrid> {
                         ),
                       ),
                       TextSpan(
-                        text: '${order.date.toLocal().toString().split(' ')[0]}',
+                        text: order.date.toLocal().toString().split(' ')[0],
                         style: const TextStyle(color: Colors.black),
                       ),
                     ],

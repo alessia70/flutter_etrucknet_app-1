@@ -3,7 +3,7 @@ import 'package:flutter_etrucknet_new/Screens/Trasportatore/VenditaTrasporti/det
 
 class GridPreventiviCancellati extends StatefulWidget {
   final List<dynamic> completedTransports;
-  GridPreventiviCancellati({Key? key, required this.completedTransports}) : super(key: key);
+  const GridPreventiviCancellati({super.key, required this.completedTransports});
 
   @override
   _GridPreventiviCancellatiState createState() => _GridPreventiviCancellatiState();

@@ -4,7 +4,7 @@ import 'package:flutter_etrucknet_new/Models/camion_model.dart';
 class AddCamionDialog extends StatefulWidget {
   final Camion? existingCamion;
 
-  const AddCamionDialog({Key? key, this.existingCamion}) : super(key: key);
+  const AddCamionDialog({super.key, this.existingCamion});
 
   @override
   _AddCamionDialogState createState() => _AddCamionDialogState();
@@ -153,7 +153,7 @@ class _AddCamionDialogState extends State<AddCamionDialog> {
               });
             },
           );
-        }).toList(),
+        }),
       ],
     );
   }

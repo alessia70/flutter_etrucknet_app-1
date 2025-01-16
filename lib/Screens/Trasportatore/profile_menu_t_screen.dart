@@ -5,7 +5,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileTrasportatorePage extends StatefulWidget {
-  const ProfileTrasportatorePage({Key? key}) : super(key: key);
+  const ProfileTrasportatorePage({super.key});
 
   @override
   _ProfileTrasportatorePageState createState() => _ProfileTrasportatorePageState();

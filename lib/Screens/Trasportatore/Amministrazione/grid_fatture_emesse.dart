@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_etrucknet_new/Models/fatture_emesse_model.dart';
@@ -11,13 +12,13 @@ class GridFattureEmesse extends StatefulWidget {
   final DateTime endDate;
   final int stato;
 
-  GridFattureEmesse({
-    Key? key,
+  const GridFattureEmesse({
+    super.key,
     required this.trasportatoreId,
     required this.startDate,
     required this.endDate,
     required this.stato,
-  }) : super(key: key);
+  });
 
   @override
   _GridFattureEmesseState createState() => _GridFattureEmesseState();
@@ -61,16 +62,9 @@ class _GridFattureEmesseState extends State<GridFattureEmesse> {
     final startDateFormatted = "${startDate.year}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}";
     final endDateFormatted = "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";
 
-    print("StartDate: $startDateFormatted");
-    print("EndDate: $endDateFormatted");
-    print("Stato: $stato");
-    print("TrasportatoreId: $trasportatoreId");
-
     final url = Uri.parse(
-      'https://etrucknetapi.azurewebsites.net/v1/FattureEmesse?StartDate=${startDateFormatted}&EndDate=${endDateFormatted}&Stato=$stato&TrasportatoreId=$trasportatoreId',
+      'https://etrucknetapi.azurewebsites.net/v1/FattureEmesse?StartDate=$startDateFormatted&EndDate=$endDateFormatted&Stato=$stato&TrasportatoreId=$trasportatoreId',
     );
-    print('URL della richiesta: $url');
-
     final response = await http.get(
       url,
       headers: {
@@ -82,8 +76,8 @@ class _GridFattureEmesseState extends State<GridFattureEmesse> {
       List<dynamic> data = json.decode(response.body);
       return data.map((json) => FatturaEmessa.fromJson(json)).toList();
     } else {
-      print('Errore: ${response.statusCode}');
-      print('Dettaglio risposta: ${response.body}');
+      log('Errore: ${response.statusCode}');
+      log('Dettaglio risposta: ${response.body}');
       throw Exception('Failed to load fatture');
     }
   }

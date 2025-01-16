@@ -76,7 +76,7 @@ class TipoTrasportoService {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
           return AlertDialog(
-            title: Text('${tipoTrasporto.name}'),
+            title: Text(tipoTrasporto.name),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [

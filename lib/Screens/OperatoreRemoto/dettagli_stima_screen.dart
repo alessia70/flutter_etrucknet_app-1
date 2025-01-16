@@ -7,7 +7,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 class DettaglioStimaScreen extends StatefulWidget {
   final Map<String, dynamic> estimate;
 
-  const DettaglioStimaScreen({Key? key, required this.estimate}) : super(key: key);
+  const DettaglioStimaScreen({super.key, required this.estimate});
 
   @override
   _DettaglioStimaScreenState createState() => _DettaglioStimaScreenState();
@@ -223,7 +223,7 @@ class _DettaglioStimaScreenState extends State<DettaglioStimaScreen> {
                           children: [
                             Row(
                               children: [
-                                Icon(FontAwesomeIcons.infoCircle, size: 20, color: Colors.orange),
+                                Icon(FontAwesomeIcons.circleInfo, size: 20, color: Colors.orange),
                                 const SizedBox(width: 8),
                                 const Text(
                                   'Ulteriori Specifiche',
@@ -301,7 +301,7 @@ class _DettaglioStimaScreenState extends State<DettaglioStimaScreen> {
                     children: [
                       Row(
                         children: [
-                          Icon(FontAwesomeIcons.exclamationTriangle, size: 20, color: Colors.orange),
+                          Icon(FontAwesomeIcons.triangleExclamation, size: 20, color: Colors.orange),
                           const SizedBox(width: 8),
                           const Text(
                             'Comunicazioni Importanti',

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Models/order_model.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/add_ordine.dart';
@@ -63,16 +64,16 @@ class _OrdiniScreenState extends State<OrdiniScreen> {
             .where((order) => order.id != 0)
             .toList();
 
-        orders.forEach((order) {
-          print("Ordine ID: ${order.id}, Cliente: ${order.customerName}, Offerta: ${order.offerAmount}");
-        });
+        for (var order in orders) {
+          log("Ordine ID: ${order.id}, Cliente: ${order.customerName}, Offerta: ${order.offerAmount}");
+        }
         return orders;
       } else {
-        print('Errore: risposta non in formato lista o chiave "data" mancante');
+        log('Errore: risposta non in formato lista o chiave "data" mancante');
         return [];
       }
     } catch (e) {
-      print('Errore nel parsing dei dati: $e');
+      log('Errore nel parsing dei dati: $e');
       return [];
     }
   }

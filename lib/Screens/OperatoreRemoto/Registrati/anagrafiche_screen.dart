@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/Registrati/nuovo_committente_screen.dart';
 import 'package:flutter_etrucknet_new/Screens/OperatoreRemoto/Registrati/nuovo_trasportatore_screen.dart';
@@ -81,7 +83,7 @@ class _AnagraficheGridScreenState extends State<AnagraficheGridScreen> {
                 SizedBox(width: 130),
                 ElevatedButton(
                   onPressed: () {
-                    print('Ricerca per: ${_searchController.text}, Categoria: $_selectedCategory');
+                    log('Ricerca per: ${_searchController.text}, Categoria: $_selectedCategory');
                   },
                   child: Text(
                     'Cerca',

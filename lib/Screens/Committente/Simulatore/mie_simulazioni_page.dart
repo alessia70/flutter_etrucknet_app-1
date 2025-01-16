@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Screens/Committente/Simulatore/confronta_simulazioni_page.dart';
 import 'package:flutter_etrucknet_new/Screens/Committente/Simulatore/data_grid_simulazioni.dart';
@@ -74,7 +76,7 @@ class _MieSimulazioniPageState extends State<MieSimulazioniPage> {
     final trasportatoreId = await getSavedUserId();
 
     if (token == null || trasportatoreId == null) {
-      print('Token o TrasportatoreId non trovato.');
+      log('Token o TrasportatoreId non trovato.');
       return;
     }
 
@@ -94,7 +96,7 @@ class _MieSimulazioniPageState extends State<MieSimulazioniPage> {
         final responseData = json.decode(response.body);
         List<dynamic>? data = responseData['data'];
         if (data == null || data.isEmpty) {
-          print("Nessuna proposta trovata.");
+          log("Nessuna proposta trovata.");
           return;
         }
         setState(() {
@@ -110,10 +112,10 @@ class _MieSimulazioniPageState extends State<MieSimulazioniPage> {
           filteredTrucks = List.from(trucks);
         });
       } catch (e) {
-        print('Errore nel parsing dei dati: $e');
+        log('Errore nel parsing dei dati: $e');
       }
     } else {
-      print('Errore nella richiesta: ${response.statusCode}');
+      log('Errore nella richiesta: ${response.statusCode}');
     }
   }
 
@@ -202,7 +204,7 @@ class _MieSimulazioniPageState extends State<MieSimulazioniPage> {
               child: DataGridSimulazioni(
                 key: gridKey,
                 onUpdateVisibleSimulations: (visibleEstimates) {
-                  print('Stime visibili aggiornate: $visibleEstimates');
+                  log('Stime visibili aggiornate: $visibleEstimates');
                 },
               ),
             ),

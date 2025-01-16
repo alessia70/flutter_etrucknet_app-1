@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_etrucknet_new/Models/allestimento_model.dart';
 import 'package:flutter_etrucknet_new/Models/ddt_model.dart';
@@ -84,7 +86,7 @@ class _StimaCostoScreenState extends State<StimaCostoScreen> {
         }
       });
     } catch (e) {
-      print('Errore nel recupero dei tipi di trasporto: $e');
+      log('Errore nel recupero dei tipi di trasporto: $e');
     }
   }
 
@@ -95,7 +97,7 @@ class _StimaCostoScreenState extends State<StimaCostoScreen> {
         allestimenti = allestimentiData;
       });
     } catch (e) {
-      print("Errore nel recupero degli allestimenti: $e");
+      log("Errore nel recupero degli allestimenti: $e");
     }
   }
 
@@ -106,7 +108,7 @@ class _StimaCostoScreenState extends State<StimaCostoScreen> {
         specifiche = specificheData;
       });
     } catch (e) {
-      print("Errore nel recupero degli allestimenti: $e");
+      log("Errore nel recupero degli allestimenti: $e");
     }
   }
   Future<void> _selectPickupDate(BuildContext context) async {
@@ -702,9 +704,6 @@ class _StimaCostoScreenState extends State<StimaCostoScreen> {
       'altezza': double.tryParse(_altezzaController.text) ?? 0.0, 
       'stimato': '1000 USD',
     };
-
-    print(newEstimate);
-
     Provider.of<EstimatesProvider>(context, listen: false).addEstimate(newEstimate);
     Navigator.pop(context); 
   }
