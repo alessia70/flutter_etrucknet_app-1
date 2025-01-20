@@ -27,6 +27,8 @@ class _StimaCostoScreenState extends State<StimaCostoScreen> {
 
   String? _ritiro;
   String? _consegna;
+  DateTime? _dataRitiro;
+  DateTime? _dataConsegna;
   String? _selectedImballo;
   // ignore: unused_field
   String _altreInfo = '';
@@ -56,10 +58,12 @@ class _StimaCostoScreenState extends State<StimaCostoScreen> {
   final TipoAllestimentoService tipoAllestimentoService = TipoAllestimentoService();
   final TipoMezzoSpecificheService tipoSpecificheService = TipoMezzoSpecificheService();
 
+  final TextEditingController _ritiroController = TextEditingController();
+  final TextEditingController _consegnaController = TextEditingController();
+
   List<Merce> merceList = [];
   List<Allestimento> allestimenti = [];
   List<TipoMezzoSpecifiche> specifiche = [];
-  DateTime? _pickupDate;
   TipoMezzoSpecifiche? selectedSpecifica;
 
   @override
@@ -111,19 +115,32 @@ class _StimaCostoScreenState extends State<StimaCostoScreen> {
       log("Errore nel recupero degli allestimenti: $e");
     }
   }
-  Future<void> _selectPickupDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
+  Future<void> _selectDate(BuildContext context, bool isRitiro) async {
+    final DateTime currentDate = DateTime.now();
+    final DateTime initialDate = isRitiro
+        ? (_dataRitiro ?? currentDate)
+        : (_dataConsegna ?? currentDate);
+
+    final DateTime? selectedDate = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2030),
+      initialDate: initialDate,
+      firstDate: currentDate,
+      lastDate: DateTime(currentDate.year + 1),
     );
-    if (picked != null && picked != _pickupDate) {
+
+    if (selectedDate != null) {
       setState(() {
-        _pickupDate = picked;
+        if (isRitiro) {
+          _dataRitiro = selectedDate;
+          _ritiroController.text = "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}";
+        } else {
+          _dataConsegna = selectedDate;
+          _consegnaController.text = "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}";
+        }
       });
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -178,6 +195,10 @@ class _StimaCostoScreenState extends State<StimaCostoScreen> {
                     _consegna = value;
                   });
                 }),
+                SizedBox(height: 20),
+                _buildDateField('Data di Ritiro', _ritiroController, true),
+                SizedBox(height: 20),
+                _buildDateField('Data di Consegna', _consegnaController, false),
                 SizedBox(height: 20),
                 _buildMezzoField(),
                 SizedBox(height: 20),
@@ -382,6 +403,24 @@ class _StimaCostoScreenState extends State<StimaCostoScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildDateField(String label, TextEditingController controller, bool isRitiro) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: TextField(
+        controller: controller,
+        readOnly: true,
+        decoration: InputDecoration(
+          labelText: label,
+          suffixIcon: Icon(Icons.calendar_today),
+          border: OutlineInputBorder(),
+        ),
+        onTap: () {
+          _selectDate(context, isRitiro);
+        },
+      ),
     );
   }
 

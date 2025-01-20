@@ -27,9 +27,13 @@ import 'package:flutter_etrucknet_new/Screens/Trasportatore/VenditaTrasporti/pro
 import 'Widgets/sign_in_form.dart'; 
 import 'Screens/OperatoreRemoto/dashboard.dart';
 import 'package:provider/provider.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  sqfliteFfiInit();
+  databaseFactory = databaseFactoryFfi;
   runApp(
     MultiProvider(
       providers: [

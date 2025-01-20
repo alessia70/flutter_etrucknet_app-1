@@ -1,5 +1,14 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_etrucknet_new/Models/allestimento_model.dart';
+import 'package:flutter_etrucknet_new/Models/mezzo_allestimento_model.dart';
+import 'package:flutter_etrucknet_new/Models/specifiche_model.dart';
 import 'package:flutter_etrucknet_new/Models/stima_model.dart';
+import 'package:flutter_etrucknet_new/Models/tipoTrasporto_model.dart';
+import 'package:flutter_etrucknet_new/Services/mezzo_allestimento_service.dart';
+import 'package:flutter_etrucknet_new/Services/tipoAllestimento_services.dart';
+import 'package:flutter_etrucknet_new/Services/tipo_trasporto_service.dart';
 
 class ChangeSimulazioneToOrder extends StatefulWidget {
   final List<Item> simulazioneList;
@@ -18,31 +27,33 @@ class ChangeSimulazioneToOrder extends StatefulWidget {
 
 class _ChangeSimulazioneToOrderState extends State<ChangeSimulazioneToOrder> {
   late String? _selectedTransportType;
+  
+  double selectedTemperature = 0.0;
+  double selectedTemperatureN = -24.0;
+
+  String selectedMercePericolosa = "";
   String _formatDate(DateTime date) {
     return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
   }
-  final List<String> _transportTypes = [
-    'Seleziona...',
-    'Trasporto Aereo',
-    'Trasporto Marittimo',
-    'Trasporto Stradale',
-    'Trasporto Ferroviario'
-  ];
+  final TipoTrasportoService _service = TipoTrasportoService();
+  List<TipoTrasporto> tipiTrasporto = [];
+  int? _selectedTrasportoId;
 
-  late String _selectedPackagingType;
-  final List<String> _packagingTypes = [
-    'Seleziona...',
-    'Cartone',
-    'Plastica',
-    'Legno',
-    'Metallo'
-  ];
+  final TipoMezzoAllestimentoService _serviceMA = TipoMezzoAllestimentoService();
+  List<TipoMezzoAllestimento> tipiMezzoAllestimento = [];
+  int? _selectedMezzoAllestimentoId;
+  
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
   final TextEditingController _weightController = TextEditingController();
   final TextEditingController _lengthController = TextEditingController();
   final TextEditingController _widthController = TextEditingController();
   final TextEditingController _heightController = TextEditingController();
+
+  final TipoAllestimentoService tipoAllestimentoService = TipoAllestimentoService();
+
+  List<Allestimento> allestimenti = [];
+  List<Specifica> specifiche = [];
 
   List<Item> simulazioneList = [];
   DateTime? _pickupDate;
@@ -76,21 +87,50 @@ class _ChangeSimulazioneToOrderState extends State<ChangeSimulazioneToOrder> {
     }
   }
 
+  Future<void> _fetchTipiTrasporto() async {
+    try {
+      final fetchedTipiTrasporto = await _service.fetchTipiTrasporto();
+      setState(() {
+        tipiTrasporto = fetchedTipiTrasporto;
+        if (tipiTrasporto.isNotEmpty) {
+          _selectedTrasportoId = tipiTrasporto.first.id;
+        }
+      });
+    } catch (e) {
+      log('Errore nel recupero dei tipi di trasporto: $e');
+    }
+  }
+
+  void _fetchTipiMezzoAllestimento() async {
+    List<TipoMezzoAllestimento> fetchedTipi = await _serviceMA.fetchTipiMezzoAllestimento();
+    setState(() {
+      tipiMezzoAllestimento = fetchedTipi;
+    });
+  }
+
+  Future<void> _loadAllestimenti() async {
+    try {
+      final allestimentiData = await tipoAllestimentoService.fetchTipoAllestimenti();
+      setState(() {
+        allestimenti = allestimentiData;
+      });
+    } catch (e) {
+      log("Errore nel recupero degli allestimenti: $e");
+    }
+  }
+
+
   @override
   void initState() {
     super.initState();
-    if (_transportTypes.contains(widget.simulazioneTransportType)) {
-      _selectedTransportType = widget.simulazioneTransportType;
-    } else {
-      _selectedTransportType = _transportTypes[0];
-    }
-    simulazioneList = widget.simulazioneList;
-    _selectedPackagingType = _packagingTypes[0];
+    _loadAllestimenti();
+    _fetchTipiTrasporto();
+    _fetchTipiMezzoAllestimento();
   }
 
   void _addSimulazione() {
     final newSimulazione = Item(
-      packagingType: _selectedPackagingType,
+      packagingType: _selectedTransportType!,
       description: _descriptionController.text,
       quantity: int.tryParse(_quantityController.text) ?? 0,
       weight: double.tryParse(_weightController.text) ?? 0.0,
@@ -102,7 +142,7 @@ class _ChangeSimulazioneToOrderState extends State<ChangeSimulazioneToOrder> {
 
     setState(() {
       simulazioneList.add(newSimulazione);
-      _selectedPackagingType = 'Seleziona...';
+      _selectedTransportType = 'Seleziona...';
       _descriptionController.clear();
       _quantityController.clear();
       _weightController.clear();
@@ -128,6 +168,9 @@ class _ChangeSimulazioneToOrderState extends State<ChangeSimulazioneToOrder> {
 
   @override
   Widget build(BuildContext context) {
+    TipoTrasporto tipoTrasporto = TipoTrasporto(id: -1, name: 'Sconosciuto');
+    List<int> transportBlockedIds = [4, 10, 24];
+    bool isTransportBlocked = transportBlockedIds.contains(tipoTrasporto.id);
     return Scaffold(
       appBar: AppBar(
         title: Text('Modifica Simulazione'),
@@ -156,30 +199,50 @@ class _ChangeSimulazioneToOrderState extends State<ChangeSimulazioneToOrder> {
               ),
               SizedBox(height: 10),
               Container(
-                height: 40,
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: DropdownButton<String>(
-                  value: _transportTypes.contains(_selectedTransportType)
-                    ? _selectedTransportType
-                    : _transportTypes[0],
-                  isExpanded: true,
-                  underline: SizedBox(),
-                  items: _transportTypes.map((String type) {
-                    return DropdownMenuItem<String>(
-                      value: type,
-                      child: Text(type),
-                    );
-                  }).toList(),
-                  onChanged: (newValue) {
-                    setState(() {
-                      _selectedTransportType = newValue!;
-                    });
-                  },
-                ),
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.grey[100],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if(_selectedTrasportoId == 2)
+                            Row(
+                              children: [
+                                Icon(Icons.thermostat, color: Colors.orange),
+                                SizedBox(width: 8),
+                                 Text(
+                                  'Temperatura positiva selezionata: ${selectedTemperature.toStringAsFixed(1)} °C',
+                                  style: TextStyle(fontSize: 14),
+                                ),
+                              ],
+                            ),
+                          if(_selectedTrasportoId == 3)
+                            Row(
+                              children: [
+                                Icon(Icons.thermostat, color: Colors.orange),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Temperatura negativa selezionata: ${selectedTemperatureN.toStringAsFixed(1)} °C',
+                                  style: TextStyle(fontSize: 14),
+                                ),
+                              ],
+                            ),
+                          if(_selectedTrasportoId == 5)
+                            Row(
+                              children: [
+                                Icon(Icons.warning, color: Colors.orange),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Tipologia di merce pericolosa selezionata: ${selectedMercePericolosa}',
+                                  style: TextStyle(fontSize: 14),
+                                ),
+                              ],
+                            )
+                        ],
+                      ),
               ),
               SizedBox(height: 20),
               Divider(color: Colors.grey, thickness: 1),
@@ -199,29 +262,42 @@ class _ChangeSimulazioneToOrderState extends State<ChangeSimulazioneToOrder> {
               ),
               SizedBox(height: 10),
               Container(
-                height: 40,
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: DropdownButton<String>(
-                  value: _selectedPackagingType,
-                  isExpanded: true,
-                  underline: SizedBox(),
-                  items: _packagingTypes.map((String type) {
-                    return DropdownMenuItem<String>(
-                      value: type,
-                      child: Text(type),
-                    );
-                  }).toList(),
-                  onChanged: (newValue) {
-                    setState(() {
-                      _selectedPackagingType = newValue!;
-                    });
-                  },
-                ),
-              ),
+                    height: 40,
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: DropdownButton<int>(
+                      value: _selectedMezzoAllestimentoId,
+                      isExpanded: true,
+                      underline: SizedBox(),
+                      items: tipiMezzoAllestimento.map((allestimento) {
+                        return DropdownMenuItem<int>(
+                          value: allestimento.id,
+                          child: Text(allestimento.name),
+                        );
+                      }).toList(),
+                      onChanged: isTransportBlocked
+                          ? null
+                          : (newValue) {
+                              setState(() {
+                                _selectedMezzoAllestimentoId = newValue!;
+                              });
+                            },
+                    ),
+                  ),
+                  if (isTransportBlocked)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        "Per la tipologia di trasporto indicata non è possibile selezionare allestimenti differenti.",
+                        style: TextStyle(
+                          color: Colors.orange,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ),
               SizedBox(height: 20),
               TextField(
                 controller: _descriptionController,

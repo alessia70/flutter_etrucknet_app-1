@@ -13,6 +13,7 @@ import 'package:flutter_etrucknet_new/Services/tipoAllestimento_services.dart';
 import 'package:flutter_etrucknet_new/Services/tipo_trasporto_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sqflite/sqflite.dart';
 
 class NuovaRichiestaSubvezioneScreen extends StatefulWidget {
   const NuovaRichiestaSubvezioneScreen({super.key});
@@ -24,6 +25,8 @@ class NuovaRichiestaSubvezioneScreen extends StatefulWidget {
 class _NuovaRichiestaSubvezioneScreenState extends State<NuovaRichiestaSubvezioneScreen> {
   String? _ritiro;
   String? _consegna;
+  DateTime? _dataRitiro;
+  DateTime? _dataConsegna;
   String? _selectedImballo;
   // ignore: unused_field
   String _altreInfo = '';
@@ -53,6 +56,8 @@ class _NuovaRichiestaSubvezioneScreenState extends State<NuovaRichiestaSubvezion
   final TextEditingController _altezzaController = TextEditingController();
   final TipoAllestimentoService tipoAllestimentoService = TipoAllestimentoService();
   final TipiSpecificheService tipoSpecificaService = TipiSpecificheService();
+  final TextEditingController _ritiroController = TextEditingController();
+  final TextEditingController _consegnaController = TextEditingController();
 
   List<Allestimento> allestimenti = [];
   List<Specifica> specifiche = [];
@@ -107,10 +112,35 @@ class _NuovaRichiestaSubvezioneScreenState extends State<NuovaRichiestaSubvezion
         specifiche = specificheData;
       });
     } catch (e) {
-      log("Errore nel recupero degli allestimenti: $e");
+      log("Errore nel recupero delle specifiche: $e");
     }
   }
 
+  Future<void> _selectDate(BuildContext context, bool isRitiro) async {
+    final DateTime currentDate = DateTime.now();
+    final DateTime initialDate = isRitiro
+        ? (_dataRitiro ?? currentDate)
+        : (_dataConsegna ?? currentDate);
+
+    final DateTime? selectedDate = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: currentDate,
+      lastDate: DateTime(currentDate.year + 1),
+    );
+
+    if (selectedDate != null) {
+      setState(() {
+        if (isRitiro) {
+          _dataRitiro = selectedDate;
+          _ritiroController.text = "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}";
+        } else {
+          _dataConsegna = selectedDate;
+          _consegnaController.text = "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}";
+        }
+      });
+    }
+  }
   
   @override
   void initState() {
@@ -165,6 +195,10 @@ class _NuovaRichiestaSubvezioneScreenState extends State<NuovaRichiestaSubvezion
                     _consegna = value;
                   });
                 }),
+                SizedBox(height: 20),
+                _buildDateField('Data di Ritiro', _ritiroController, true),
+                SizedBox(height: 20),
+                _buildDateField('Data di Consegna', _consegnaController, false),
                 SizedBox(height: 20),
                 _buildMezzoField(tipiTrasporto.firstWhere((tipo) => tipo.id == _selectedTrasportoId)),
                 SizedBox(height: 20),
@@ -393,6 +427,24 @@ class _NuovaRichiestaSubvezioneScreenState extends State<NuovaRichiestaSubvezion
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildDateField(String label, TextEditingController controller, bool isRitiro) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: TextField(
+        controller: controller,
+        readOnly: true,
+        decoration: InputDecoration(
+          labelText: label,
+          suffixIcon: Icon(Icons.calendar_today),
+          border: OutlineInputBorder(),
+        ),
+        onTap: () {
+          _selectDate(context, isRitiro);
+        },
+      ),
     );
   }
 
@@ -699,6 +751,28 @@ class _NuovaRichiestaSubvezioneScreenState extends State<NuovaRichiestaSubvezion
       ],
     );
   }
+
+  Future<int> getLastOrderId() async {
+    final Database db = await openDatabase('etrucknetapi.azurewebsites.net');
+    
+    try {
+      final result = await db.rawQuery(
+        'SELECT id FROM orders ORDER BY id DESC LIMIT 1',
+      );
+      if (result.isEmpty) {
+        return 1;
+      } else {
+        return (result.first['id'] as int) + 1;
+      }
+    } catch (e) {
+      print('Errore durante l\'ottenimento dell\'ultimo ID ordine: $e');
+      return 1;
+    } finally {
+      await db.close();
+    }
+  }
+
+
   void _salvaStima() async {
     final trasportatoreId = await getSavedUserId();
     if (_ritiro == null || _consegna == null || _quantitaController.text.isEmpty || _pesoController.text.isEmpty) {
@@ -707,6 +781,7 @@ class _NuovaRichiestaSubvezioneScreenState extends State<NuovaRichiestaSubvezion
       );
       return;
     }
+    final ordineId = await getLastOrderId();
 
     final newEstimate = {
       'data': DateTime.now().toString(),
@@ -721,7 +796,7 @@ class _NuovaRichiestaSubvezioneScreenState extends State<NuovaRichiestaSubvezion
       'stimato': '1000 USD',
     };
 
-    final String apiUrl = 'https://etrucknetapi.azurewebsites.net/v1/offerte/$trasportatoreId/456';
+    final String apiUrl = 'https://etrucknetapi.azurewebsites.net/v1/offerte/$trasportatoreId/$ordineId';
     
     try {
       final response = await http.post(
@@ -738,7 +813,7 @@ class _NuovaRichiestaSubvezioneScreenState extends State<NuovaRichiestaSubvezion
       } else {
         log('Errore durante l\'invio dell\'offerta: ${response.statusCode}');
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Errore durante l\'invio dell\'offerta')),
+          SnackBar(content: Text('Errore durante l\'invio della stima')),
         );
       }
     } catch (e) {
